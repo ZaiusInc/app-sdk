@@ -1,6 +1,6 @@
 {
   "name": "@zaius/zap",
-  "version": "1.0.0-pre",
+  "version": "0.1.0",
   "description": "Zaius App (Zap) SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/node-sdk",
   "license": "UNLICENSED",
