@@ -1,0 +1,127 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ZapFunction": {
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "method": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "enum": [
+                                    "CONNECT",
+                                    "DELETE",
+                                    "GET",
+                                    "HEAD",
+                                    "OPTIONS",
+                                    "PATCH",
+                                    "POST",
+                                    "PUT",
+                                    "TRACE"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "enum": [
+                                "CONNECT",
+                                "DELETE",
+                                "GET",
+                                "HEAD",
+                                "OPTIONS",
+                                "PATCH",
+                                "POST",
+                                "PUT",
+                                "TRACE"
+                            ],
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "ZapJob": {
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "defaults": {
+            "properties": {
+                "environment": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object"
+                },
+                "permissions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "functions": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ZapFunction"
+            },
+            "type": "object"
+        },
+        "jobs": {
+            "additionalProperties": {
+                "$ref": "#/definitions/ZapJob"
+            },
+            "type": "object"
+        },
+        "meta": {
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "contact_email": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "support_url": {
+                    "type": "string"
+                },
+                "vendor": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "runtime": {
+            "enum": [
+                "node11"
+            ],
+            "type": "string"
+        }
+    },
+    "type": "object"
+}
+
