@@ -2,7 +2,7 @@
   "name": "@zaius/zap",
   "version": "0.1.0",
   "description": "Zaius App (Zap) SDK and interfaces",
-  "repository": "https://github.com/ZaiusInc/node-sdk",
+  "repository": "https://github.com/ZaiusInc/zap",
   "license": "UNLICENSED",
   "author": "Zaius, Inc",
   "files": [
