@@ -1,10 +1,10 @@
 import 'jest';
-import {Request} from './lib';
+import {Request, Response} from './lib';
 import {RequestHandler} from './RequestHandler';
 
 class SubClass extends RequestHandler {
   public async perform() {
-    return this.response;
+    return new Response();
   }
 }
 
