@@ -36,6 +36,10 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'functions', fn.entry_point)))[fn.entry_point];
   }
 
+  public async getLifecycleClass() {
+    return (await this.import(join(this.dirName, 'lifecycle', 'Lifecycle')))['Lifecycle'];
+  }
+
   public toJson() {
     return JSON.stringify({
       manifest: this.manifest,

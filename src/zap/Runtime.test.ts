@@ -107,4 +107,16 @@ describe('Runtime', () => {
       }
     });
   });
+
+  describe('getLifecycleClass', () => {
+    it('loads the lifecycle module', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockReturnValue({Lifecycle: 'Lifecycle'});
+
+      const lifecycle = await runtime.getLifecycleClass();
+
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/lifecycle/Lifecycle');
+      expect(lifecycle).toEqual('Lifecycle');
+    });
+  });
 });
