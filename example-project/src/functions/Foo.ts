@@ -1,8 +1,7 @@
-import * as Zap from '@zaius/zap';
 
-export class Foo extends Zap.Function {
-  public async perform(): Promise<Zap.Response> {
-    const response = new Zap.Response();
+export class Foo extends App.Function {
+  public async perform(): Promise<App.Response> {
+    const response = new App.Response();
     response.status = 200;
     response.bodyJSON = {
       test: 'foo'

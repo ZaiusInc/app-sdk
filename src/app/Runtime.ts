@@ -1,11 +1,11 @@
 import {Ajv} from 'ajv';
 import {readFileSync} from 'fs';
 import {join} from 'path';
-import {ZapManifest} from './types';
-import * as manifestSchema from './types/ZapManifest.schema.json';
+import {AppManifest} from './types';
+import * as manifestSchema from './types/AppManifest.schema.json';
 
 interface SerializedRuntime {
-  manifest: ZapManifest;
+  manifest: AppManifest;
   dirName: string;
 }
 
@@ -23,7 +23,7 @@ export class Runtime {
     return runtime;
   }
 
-  private manifest!: ZapManifest;
+  private manifest!: AppManifest;
   private dirName!: string;
 
   public async getFunctionClass(name: string) {
@@ -61,17 +61,17 @@ export class Runtime {
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
     const ajv: Ajv = new (require('ajv') as any)();
     const manifest = (await import('js-yaml')).safeLoad(
-      readFileSync(join(dirName, 'zap.yml'), 'utf8')
+      readFileSync(join(dirName, 'app.yml'), 'utf8')
     ) as unknown;
 
     if (!this.validateManifest(ajv, manifest)) {
-      throw new Error('Invalid zap.yml manifest (failed JSON schema validation)');
+      throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
     }
 
     this.manifest = manifest;
   }
 
-  private validateManifest(ajv: Ajv, manifest: unknown): manifest is ZapManifest {
+  private validateManifest(ajv: Ajv, manifest: unknown): manifest is AppManifest {
     return ajv.validate(manifestSchema, manifest) as boolean;
   }
 }

@@ -1,6 +1,5 @@
-import * as Zap from '@zaius/zap';
 
-export class Foo extends Zap.Job {
+export class Foo extends App.Job {
   public async perform(state: any): Promise<any> {
 
     // ... do a batch of work ...

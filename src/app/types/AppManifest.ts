@@ -1,19 +1,19 @@
 import {HttpMethod} from './HttpMethod';
 
 // regenerate JSON schema with `yarn run update-schema`
-export interface ZapFunction {
+export interface AppFunction {
   method: HttpMethod | HttpMethod[];
   entry_point: string;
   description: string;
 }
 
-export interface ZapJob {
+export interface AppJob {
   entry_point: string;
   timeout: string;
   // TODO
 }
 
-export interface ZapManifest {
+export interface AppManifest {
   meta: {
     app_id: string;
     display_name: string;
@@ -31,9 +31,9 @@ export interface ZapManifest {
     };
   };
   functions?: {
-    [name: string]: ZapFunction;
+    [name: string]: AppFunction;
   };
   jobs?: {
-    [name: string]: ZapJob;
+    [name: string]: AppJob;
   };
 }
