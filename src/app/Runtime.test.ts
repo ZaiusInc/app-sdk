@@ -3,7 +3,7 @@ import 'jest';
 import * as jsYaml from 'js-yaml';
 import * as mockFs from 'mock-fs';
 import {Runtime} from './Runtime';
-import {ZapManifest} from './types';
+import {AppManifest} from './types';
 import deepFreeze = require('deep-freeze');
 
 jest.mock('js-yaml');
@@ -26,13 +26,13 @@ const manifest = deepFreeze({
       description: 'gets foo'
     }
   }
-} as ZapManifest);
+} as AppManifest);
 
 describe('Runtime', () => {
   beforeAll(() => {
     mockFs({
       '/tmp/foo/': {
-        'zap.yml': JSON.stringify(manifest)
+        'app.yml': JSON.stringify(manifest)
       }
     });
   });
@@ -64,7 +64,7 @@ describe('Runtime', () => {
       try {
         await Runtime.initialize('/tmp/foo');
       } catch (e) {
-        expect(e.message).toMatch(/Invalid zap.yml manifest/);
+        expect(e.message).toMatch(/Invalid app.yml manifest/);
       }
     });
   });

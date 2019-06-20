@@ -1,2 +1,2 @@
-# Zap SDK
-Zaius App (Zap) SDK and interfaces
+# App SDK
+Zaius App SDK and interfaces

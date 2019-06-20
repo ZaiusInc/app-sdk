@@ -1,1 +1,1 @@
-export * from './zap';
+export * from './app';

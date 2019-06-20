@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "ZapFunction": {
+        "AppFunction": {
             "properties": {
                 "description": {
                     "type": "string"
@@ -47,7 +47,7 @@
             },
             "type": "object"
         },
-        "ZapJob": {
+        "AppJob": {
             "properties": {
                 "entry_point": {
                     "type": "string"
@@ -79,13 +79,13 @@
         },
         "functions": {
             "additionalProperties": {
-                "$ref": "#/definitions/ZapFunction"
+                "$ref": "#/definitions/AppFunction"
             },
             "type": "object"
         },
         "jobs": {
             "additionalProperties": {
-                "$ref": "#/definitions/ZapJob"
+                "$ref": "#/definitions/AppJob"
             },
             "type": "object"
         },
@@ -124,4 +124,3 @@
     },
     "type": "object"
 }
-
