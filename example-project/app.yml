@@ -9,8 +9,7 @@ meta:
 
 runtime: node11
 
-#Rely on conventions for lifecycle (install, upgrade, uninstall, etc.)
-#i.e. install.js, upgrade.js, uninstall.js for node11
+#Rely on convention for lifecycle (lifecycle/Lifecycle.ts)
 defaults:
     permissions:
       -READ_WRITE_KV

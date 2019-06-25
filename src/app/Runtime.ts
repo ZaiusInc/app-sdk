@@ -1,7 +1,9 @@
 import {Ajv} from 'ajv';
 import {readFileSync} from 'fs';
 import {join} from 'path';
+import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
 import {AppManifest} from './types';
+import {Function} from './Function';
 import * as manifestSchema from './types/AppManifest.schema.json';
 
 interface SerializedRuntime {
@@ -47,8 +49,57 @@ export class Runtime {
     } as SerializedRuntime);
   }
 
-  public validate() {
-    // TODO: validate all jobs/functions exist, etc
+  /**
+   * Validates that all of the required pieces of the app are accounted for.
+   *
+   * @return array of error messages, if there were any, otherwise an empty array
+   */
+  public async validate(): Promise<string[]> {
+    const errors: string[] = [];
+
+    // Make sure all the functions listed in the manifest actually exist and are implemented
+    if (this.manifest.functions) {
+      for (const name of Object.keys(this.manifest.functions)) {
+        let fnClass = null;
+        try {
+          fnClass = await this.getFunctionClass(name);
+        } catch (e) {
+          console.error(e);
+        }
+        if (!fnClass) {
+          errors.push(`Entry point not found for function: ${name}`);
+        } else if (!(fnClass.prototype instanceof Function)) {
+          errors.push(
+            `Function entry point does not extend App.Function: ${this.manifest.functions![name].entry_point}`
+          );
+        } else if (typeof(fnClass.prototype.perform) !== 'function') {
+          errors.push(
+            `Function entry point is missing the perform method: ${this.manifest.functions![name].entry_point}`
+          );
+        }
+      }
+    }
+
+    // Make sure the lifecycle exists and is implemented
+    let lcClass = null;
+    try {
+      lcClass = await this.getLifecycleClass();
+    } catch (e) {
+      console.error(e);
+    }
+    if (!lcClass) {
+      errors.push('Lifecycle implementation not found');
+    } else if (!(lcClass.prototype instanceof Lifecycle)) {
+      errors.push('Lifecycle implementation does not extend App.Lifecycle');
+    } else {
+      for (const method of LIFECYCLE_REQUIRED_METHODS) {
+        if (typeof(lcClass.prototype[method]) !== 'function') {
+          errors.push(`Lifecycle implementation is missing the ${method} method`);
+        }
+      }
+    }
+
+    return errors;
   }
 
   // necessary for test purposes
