@@ -180,74 +180,50 @@ describe('Runtime', () => {
   describe('validate', () => {
     it('detects missing function entry point', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(null);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(null);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual(['Entry point not found for function: foo']);
+      expect(await runtime.validate()).toEqual(['Entry point not found for function: foo']);
     });
 
     it('detects non-extended function entry point', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(NonExtendedFoo);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(NonExtendedFoo);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual(['Function entry point does not extend App.Function: Foo']);
+      expect(await runtime.validate()).toEqual(['Function entry point does not extend App.Function: Foo']);
     });
 
     it('detects partial function entry point', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(PartialFoo);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(PartialFoo);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(ProperLifecycle);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual(['Function entry point is missing the perform method: Foo']);
+      expect(await runtime.validate()).toEqual(['Function entry point is missing the perform method: Foo']);
     });
 
     it('detects missing lifecycle implementation', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(null);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(null);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual(['Lifecycle implementation not found']);
+      expect(await runtime.validate()).toEqual(['Lifecycle implementation not found']);
     });
 
     it('detects non-extended lifecycle implementation', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(NonExtendedLifecycle);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(NonExtendedLifecycle);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual(['Lifecycle implementation does not extend App.Lifecycle']);
+      expect(await runtime.validate()).toEqual(['Lifecycle implementation does not extend App.Lifecycle']);
     });
 
     it('detects partial lifecycle implementation', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
-      const getLifecycleClass = jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(PartialLifecycle);
+      jest.spyOn(runtime as any, 'getFunctionClass').mockReturnValue(ProperFoo);
+      jest.spyOn(runtime as any, 'getLifecycleClass').mockReturnValue(PartialLifecycle);
 
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(errors).toEqual([
+      expect(await runtime.validate()).toEqual([
         'Lifecycle implementation is missing the onSetupForm method',
         'Lifecycle implementation is missing the onUpgrade method',
         'Lifecycle implementation is missing the onFinalizeUpgrade method',
