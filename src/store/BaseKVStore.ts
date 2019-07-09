@@ -13,8 +13,8 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param fields to retrieve from the stored object, or undefined to retrieve the full object
-   * @returns the complete object or the object with a subset of fields.
-   * An empty object is returned if the object (or all specified fields) does not exist.
+   * @returns hash of the complete object or only the specified fields, if supplied.
+   * An empty object is returned if the object, or all specified fields, does not exist.
    */
   get(key: string, fields?: string[]): Promise<ValueHash>;
 
@@ -23,7 +23,7 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param value complete hash to write
-   * @returns hash of the previous values before the write.
+   * @returns hash of all previous fields and values before the write.
    * An empty object is returned if the object previously did not exist.
    */
   put(key: string, value: ValueHash): Promise<ValueHash>;
@@ -33,7 +33,7 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
-   * @returns the previous value of the field before the write
+   * @returns hash of the previous fields and values before the write for the specified fields only.
    * An empty object is returned if the specified fields previously did not exist.
    */
   patch(key: string, value: ValueHash): Promise<ValueHash>;
@@ -44,7 +44,7 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param fields to delete or undefined to delete all fields
-   * @returns the previous value of the object or specified fields before the delete.
+   * @returns hash of all previous fields and values or only specified fields, if supplied, before the delete.
    * An empty object is returned if the object previously did not exist.
    */
   delete(key: string, fields?: string[]): Promise<ValueHash>;
