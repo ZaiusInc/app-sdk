@@ -1,2 +1,2 @@
-export * from './KeyValueStore';
-export * from './SecretStore';
+export * from './BaseKVStore';
+export * from './stores';
