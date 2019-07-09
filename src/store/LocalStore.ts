@@ -10,11 +10,11 @@ export class LocalStore implements BaseKVStore {
     throw new Error('Method not implemented.');
   }
 
-  public put(
-    _key: string,
-    _fieldsOrValue?: string[] | ValueHash,
-    _value?: ValueHash
-  ): Promise<ValueHash> {
+  public put(_key: string, _value?: ValueHash): Promise<ValueHash> {
+    throw new Error('Method not implemented.');
+  }
+
+  public patch(_key: string, _value?: ValueHash): Promise<ValueHash> {
     throw new Error('Method not implemented.');
   }
 

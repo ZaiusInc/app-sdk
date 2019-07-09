@@ -22,22 +22,21 @@ export interface BaseKVStore {
    * Write an object to the store at a given key. Overwrites the entire object.
    * @async
    * @param key of the stored object
-   * @param value hash to write or undefined to delete the value
+   * @param value complete hash to write
    * @returns hash of the previous values before the write.
    * An empty object is returned if the object previously did not exist.
    */
-  put(key: string, value: ValueHash | undefined): Promise<ValueHash>;
+  put(key: string, value: ValueHash): Promise<ValueHash>;
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
    * @async
    * @param key of the stored object
-   * @param fields to overwrite using values from the value hash
-   * @param value hash to update the object with
+   * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
    * @returns the previous value of the field before the write
    * An empty object is returned if the specified fields previously did not exist.
    */
-  put(key: string, fields: string[], value: ValueHash): Promise<ValueHash>;
+  patch(key: string, value: ValueHash): Promise<ValueHash>;
 
   /**
    * Delete an object or a single field from the store at a given key.
