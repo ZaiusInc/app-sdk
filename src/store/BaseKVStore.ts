@@ -1,5 +1,5 @@
-export type PrimitiveValue = string | number | boolean;
-export type Value = PrimitiveValue[] | null;
+export type PrimitiveValue = string | number | boolean | null;
+export type Value = PrimitiveValue | PrimitiveValue[];
 export interface ValueHash {
   [field: string]: Value | undefined;
 }

@@ -6,7 +6,7 @@ import {BaseKVStore, ValueHash} from './BaseKVStore';
  * @TODO impelement the stub for local development purposes
  */
 export class LocalStore implements BaseKVStore {
-  public get(_key: string, _fields?: string[] | undefined): Promise<ValueHash> {
+  public get(_key: string, _fields?: string[]): Promise<ValueHash> {
     throw new Error('Method not implemented.');
   }
 
