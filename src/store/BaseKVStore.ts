@@ -1,8 +1,11 @@
+// tslint:disable:unified-signatures
+
 export type PrimitiveValue = string | number | boolean | null;
-export type Value = PrimitiveValue | PrimitiveValue[];
+export type Value = PrimitiveValue | PrimitiveValue[] | {[key: string]: Value};
 export interface ValueHash {
-  [field: string]: Value | undefined;
+  [field: string]: Value;
 }
+export type PatchUpdater = (previous: ValueHash) => ValueHash;
 
 /**
  * An interface all key-value stores implement
@@ -26,17 +29,27 @@ export interface BaseKVStore {
    * @returns hash of all previous fields and values before the write.
    * An empty object is returned if the object previously did not exist.
    */
-  put(key: string, value: ValueHash): Promise<ValueHash>;
+  put(key: string, value: ValueHash): Promise<true>;
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
    * @async
    * @param key of the stored object
    * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
-   * @returns hash of the previous fields and values before the write for the specified fields only.
-   * An empty object is returned if the specified fields previously did not exist.
+   * @returns the complete object from before the update
+   * An empty object is returned if the object previously did not exist.
    */
   patch(key: string, value: ValueHash): Promise<ValueHash>;
+
+  /**
+   * Update a stored object using a callback to make changes
+   * @async
+   * @param key of the stored object
+   * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
+   * @returns the complete object from before the update
+   * An empty object is returned if the object previously did not exist.
+   */
+  patch(key: string, updater: PatchUpdater): Promise<ValueHash>;
 
   /**
    * Delete an object or a single field from the store at a given key.
@@ -47,5 +60,5 @@ export interface BaseKVStore {
    * @returns hash of all previous fields and values or only specified fields, if supplied, before the delete.
    * An empty object is returned if the object previously did not exist.
    */
-  delete(key: string, fields?: string[]): Promise<ValueHash>;
+  delete(key: string, fields?: string[]): Promise<true>;
 }
