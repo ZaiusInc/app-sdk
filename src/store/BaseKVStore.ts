@@ -26,8 +26,7 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param value complete hash to write
-   * @returns hash of all previous fields and values before the write.
-   * An empty object is returned if the object previously did not exist.
+   * @returns true if successful. Otherwise throws an error.
    */
   put(key: string, value: ValueHash): Promise<true>;
 
@@ -57,8 +56,7 @@ export interface BaseKVStore {
    * @async
    * @param key of the stored object
    * @param fields to delete or undefined to delete all fields
-   * @returns hash of all previous fields and values or only specified fields, if supplied, before the delete.
-   * An empty object is returned if the object previously did not exist.
+   * @returns true if successful. Otherwise throws an error.
    */
   delete(key: string, fields?: string[]): Promise<true>;
 }
