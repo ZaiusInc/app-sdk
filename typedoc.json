@@ -1,0 +1,11 @@
+{
+  "out": "./docs/",
+  "name": "Zaius App SDK",
+  "mode": "file",
+  "module": "commonjs",
+  "target": "ES6",
+  "theme": "./doc-theme",
+  "stripInternal": true,
+  "excludeNotExported": false,
+  "excludePrivate": true
+}

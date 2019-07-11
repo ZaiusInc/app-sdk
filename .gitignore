@@ -31,3 +31,6 @@ coverage/
 
 .yalc/
 yalc.lock
+
+docs/
+.vscode/
