@@ -33,6 +33,7 @@
     "@types/js-yaml": "^3.12.1",
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^11.13.4",
+    "@zaiusinc/tslint-presets": "^1.0.1",
     "deep-freeze": "^0.0.1",
     "jest": "^24.5.0",
     "mock-fs": "^4.8.0",
