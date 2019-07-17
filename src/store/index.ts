@@ -1,2 +1,2 @@
 export * from './BaseKVStore';
-export * from './stores';
+export * from './storage';
