@@ -32,4 +32,3 @@ jobs:
       cron: <cron_expression>
       #Always allow via webhook for testing/debugging
       #Future: events
-    timeout: 10 minutes #Can apply a limit to this at compile time to sanity check

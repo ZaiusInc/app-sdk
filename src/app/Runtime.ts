@@ -1,9 +1,11 @@
 import {Ajv} from 'ajv';
 import {readFileSync} from 'fs';
 import {join} from 'path';
+import {Function} from './Function';
+import {Job, JobInvocation} from './Job';
+import {Request} from './lib/Request';
 import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
 import {AppManifest} from './types';
-import {Function} from './Function';
 import * as manifestSchema from './types/AppManifest.schema.json';
 
 interface SerializedRuntime {
@@ -28,7 +30,8 @@ export class Runtime {
   private manifest!: AppManifest;
   private dirName!: string;
 
-  public async getFunctionClass(name: string) {
+  // tslint:disable-next-line:ban-types
+  public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;
     if (!functions || !functions[name]) {
       throw new Error(`No function named ${name} defined in manifest`);
@@ -38,8 +41,18 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'functions', fn.entry_point)))[fn.entry_point];
   }
 
-  public async getLifecycleClass() {
+  public async getLifecycleClass<T extends Lifecycle>(): Promise<new () => T> {
     return (await this.import(join(this.dirName, 'lifecycle', 'Lifecycle')))['Lifecycle'];
+  }
+
+  public async getJobClass<T extends Job>(name: string): Promise<new (invocation: JobInvocation) => T> {
+    const jobs = this.manifest.jobs;
+    if (!jobs || !jobs[name]) {
+      throw new Error(`No job named ${name} defined in manifest`);
+    }
+
+    const fn = jobs[name];
+    return (await this.import(join(this.dirName, 'jobs', fn.entry_point)))[fn.entry_point];
   }
 
   public toJson() {
@@ -72,7 +85,7 @@ export class Runtime {
           errors.push(
             `Function entry point does not extend App.Function: ${this.manifest.functions![name].entry_point}`
           );
-        } else if (typeof(fnClass.prototype.perform) !== 'function') {
+        } else if (typeof (fnClass.prototype.perform) !== 'function') {
           errors.push(
             `Function entry point is missing the perform method: ${this.manifest.functions![name].entry_point}`
           );
@@ -93,8 +106,38 @@ export class Runtime {
       errors.push('Lifecycle implementation does not extend App.Lifecycle');
     } else {
       for (const method of LIFECYCLE_REQUIRED_METHODS) {
-        if (typeof(lcClass.prototype[method]) !== 'function') {
+        if (typeof (lcClass.prototype as any)[method] !== 'function') {
           errors.push(`Lifecycle implementation is missing the ${method} method`);
+        }
+      }
+    }
+
+    // Make sure all the jobs listed in the manifest actually exist and are implemented
+    if (this.manifest.jobs) {
+      for (const name of Object.keys(this.manifest.jobs)) {
+        let jobClass = null;
+        try {
+          jobClass = await this.getJobClass(name);
+        } catch (e) {
+          console.error(e);
+        }
+        if (!jobClass) {
+          errors.push(`Entry point not found for job: ${name}`);
+        } else if (!(jobClass.prototype instanceof Job)) {
+          errors.push(
+            `Job entry point does not extend App.Job: ${this.manifest.jobs![name].entry_point}`
+          );
+        } else {
+          if (typeof (jobClass.prototype.prepare) !== 'function') {
+            errors.push(
+              `Job entry point is missing the prepare method: ${this.manifest.jobs![name].entry_point}`
+            );
+          }
+          if (typeof (jobClass.prototype.perform) !== 'function') {
+            errors.push(
+              `Job entry point is missing the perform method: ${this.manifest.jobs![name].entry_point}`
+            );
+          }
         }
       }
     }

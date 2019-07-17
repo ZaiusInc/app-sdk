@@ -9,7 +9,6 @@ export interface AppFunction {
 
 export interface AppJob {
   entry_point: string;
-  timeout: string;
   // TODO
 }
 
