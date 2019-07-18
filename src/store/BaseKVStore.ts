@@ -1,9 +1,8 @@
 // tslint:disable:unified-signatures
 
-export type PrimitiveValue = string | number | boolean | null;
-export type Value = PrimitiveValue | PrimitiveValue[] | {[key: string]: Value};
+export type Value = string | number | boolean | null | ValueHash;
 export interface ValueHash {
-  [field: string]: Value;
+  [field: string]: Value | Value[] | undefined;
 }
 export type PatchUpdater = (previous: ValueHash) => ValueHash;
 

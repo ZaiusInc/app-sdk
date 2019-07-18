@@ -51,9 +51,6 @@
             "properties": {
                 "entry_point": {
                     "type": "string"
-                },
-                "timeout": {
-                    "type": "string"
                 }
             },
             "type": "object"
@@ -124,3 +121,4 @@
     },
     "type": "object"
 }
+
