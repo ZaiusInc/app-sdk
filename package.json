@@ -1,6 +1,6 @@
 {
   "name": "@zaius/app-sdk",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Zaius App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "UNLICENSED",
@@ -18,7 +18,7 @@
     "build-watch": "tsc -w",
     "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
     "test": "jest",
-    "update-schema": "typescript-json-schema tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json",
+    "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json",
     "generate-docs": "typedoc ./src/index.ts"
   },
   "dependencies": {
