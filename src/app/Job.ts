@@ -24,9 +24,10 @@ export abstract class Job {
    * Prepares to run a job. Prepare is called at the start of a job
    * and again only if the job was interrupted and is being resumed.
    * Use this function to read secrets and establish connections to simplify the job loop (perform).
+   * @param params a hash if params were supplied to the job run, otherwise an empty hash
    * @param status if job was interrupted and should continue from the last known state
    */
-  public abstract async prepare(status?: JobStatus): Promise<JobStatus>;
+  public abstract async prepare(params: ValueHash, status?: JobStatus): Promise<JobStatus>;
 
   /**
    * Performs a unit of work. Jobs should perform a small unit of work and then return the current state.

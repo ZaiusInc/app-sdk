@@ -2,6 +2,7 @@ import * as Ajv from 'ajv';
 import 'jest';
 import * as jsYaml from 'js-yaml';
 import * as mockFs from 'mock-fs';
+import {ValueHash} from '../store';
 import {Function} from './Function';
 import {Job, JobStatus} from './Job';
 import {Request, Response} from './lib';
@@ -104,8 +105,8 @@ class PartialBar extends Job {
 }
 
 class ProperBar extends Job {
-  public async prepare(_status?: JobStatus): Promise<JobStatus> {
-    return {complete: false, state: {}};
+  public async prepare(params: ValueHash, _status?: JobStatus): Promise<JobStatus> {
+    return {complete: false, state: params};
   }
   public async perform(status: JobStatus): Promise<JobStatus> {
     return status;

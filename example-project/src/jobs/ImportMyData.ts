@@ -1,17 +1,18 @@
 import * as app from '@zaius/app-sdk';
+import {JobStatus, ValueHash} from '@zaius/app-sdk';
 
-interface importJobStatus extends app.JobStatus {
+interface ImportJobStatus extends app.JobStatus {
   state: {
     counter: number;
   };
 }
 
 export class ImportMyData extends app.Job {
-  public prepare(state?: importJobStatus): Promise<app.JobState> {
+  public prepare(params: ValueHash, state?: ImportJobStatus): Promise<JobStatus> {
     return Promise.resolve({state: {counter: 0}, complete: false});
   }
 
-  public perform(status: importJobStatus): Promise<app.JobState> {
+  public perform(status: ImportJobStatus): Promise<JobStatus> {
     return new Promise((resolve, _reject) => {
       // pretend to do some work...
       setTimeout(() => {
