@@ -51,8 +51,8 @@ export class Runtime {
       throw new Error(`No job named ${name} defined in manifest`);
     }
 
-    const fn = jobs[name];
-    return (await this.import(join(this.dirName, 'jobs', fn.entry_point)))[fn.entry_point];
+    const job = jobs[name];
+    return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
   public toJson() {
