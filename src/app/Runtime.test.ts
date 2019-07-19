@@ -13,7 +13,7 @@ import deepFreeze = require('deep-freeze');
 
 jest.mock('js-yaml');
 
-const manifest = deepFreeze({
+const appManifest = deepFreeze({
   meta: {
     app_id: 'appid',
     display_name: 'Display Name',
@@ -118,7 +118,7 @@ describe('Runtime', () => {
   beforeAll(() => {
     mockFs({
       '/tmp/foo/': {
-        'app.yml': JSON.stringify(manifest)
+        'app.yml': JSON.stringify(appManifest)
       }
     });
   });
@@ -137,7 +137,7 @@ describe('Runtime', () => {
       expect(validateFn).toHaveBeenCalled();
 
       expect(JSON.parse(runtime.toJson())).toEqual({
-        manifest,
+        appManifest,
         dirName: '/tmp/foo'
       });
     });
@@ -146,7 +146,6 @@ describe('Runtime', () => {
       jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
       jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(false);
 
-      expect.assertions(1);
       try {
         await Runtime.initialize('/tmp/foo');
       } catch (e) {
@@ -157,15 +156,15 @@ describe('Runtime', () => {
 
   describe('fromJson', () => {
     it('restores from serialized json', () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
-      expect(runtime['manifest']).toEqual(manifest);
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      expect(runtime.manifest).toEqual(appManifest);
       expect(runtime['dirName']).toEqual('/tmp/foo');
     });
   });
 
   describe('toJson', () => {
     it('serializes to json', () => {
-      const json = JSON.stringify({manifest, dirName: '/tmp/foo'});
+      const json = JSON.stringify({appManifest, dirName: '/tmp/foo'});
       const runtime = Runtime.fromJson(json);
       expect(runtime.toJson()).toEqual(json);
     });
@@ -173,7 +172,7 @@ describe('Runtime', () => {
 
   describe('getFunctionClass', () => {
     it('loads the specified module', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Foo: 'Foo'});
 
       const foo = await runtime.getFunctionClass('foo');
@@ -183,9 +182,8 @@ describe('Runtime', () => {
     });
 
     it("throws an error the function isn't in the manifest", async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
-      expect.assertions(1);
       try {
         await runtime.getFunctionClass('bar');
       } catch (e) {
@@ -196,7 +194,7 @@ describe('Runtime', () => {
 
   describe('getJobClass', () => {
     it('loads the specified module', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Bar: 'Bar'});
 
       const bar = await runtime.getJobClass('bar');
@@ -206,9 +204,8 @@ describe('Runtime', () => {
     });
 
     it("throws an error the job isn't in the manifest", async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
-      expect.assertions(1);
       try {
         await runtime.getJobClass('foo');
       } catch (e) {
@@ -219,7 +216,7 @@ describe('Runtime', () => {
 
   describe('getLifecycleClass', () => {
     it('loads the lifecycle module', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Lifecycle: 'Lifecycle'});
 
       const lifecycle = await runtime.getLifecycleClass();
@@ -241,42 +238,42 @@ describe('Runtime', () => {
     });
 
     it('detects missing function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getFunctionClass').mockRejectedValue(new Error('not found'));
 
       expect(await runtime.validate()).toEqual(['Entry point not found for function: foo']);
     });
 
     it('detects non-extended function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(NonExtendedFoo as any);
 
       expect(await runtime.validate()).toEqual(['Function entry point does not extend App.Function: Foo']);
     });
 
     it('detects partial function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(PartialFoo as any);
 
       expect(await runtime.validate()).toEqual(['Function entry point is missing the perform method: Foo']);
     });
 
     it('detects missing lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getLifecycleClass').mockRejectedValue(new Error('not found'));
 
       expect(await runtime.validate()).toEqual(['Lifecycle implementation not found']);
     });
 
     it('detects non-extended lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(NonExtendedLifecycle as any);
 
       expect(await runtime.validate()).toEqual(['Lifecycle implementation does not extend App.Lifecycle']);
     });
 
     it('detects partial lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(PartialLifecycle as any);
 
       expect(await runtime.validate()).toEqual([
@@ -288,21 +285,21 @@ describe('Runtime', () => {
     });
 
     it('detects missing job entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getJobClass').mockRejectedValue(new Error('not found'));
 
       expect(await runtime.validate()).toEqual(['Entry point not found for job: bar']);
     });
 
     it('detects non-extended job entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime, 'getJobClass').mockReturnValue(NonExtendedBar as any);
 
       expect(await runtime.validate()).toEqual(['Job entry point does not extend App.Job: Bar']);
     });
 
     it('detects partial function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       jest.spyOn(runtime as any, 'getJobClass').mockReturnValue(PartialBar);
 
       expect(await runtime.validate()).toEqual([
@@ -312,7 +309,7 @@ describe('Runtime', () => {
     });
 
     it('succeeds with a proper definition', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({manifest, dirName: '/tmp/foo'}));
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const getFunctionClass = jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(ProperFoo);
       const getLifecycleClass = jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(ProperLifecycle);
       const getJobClass = jest.spyOn(runtime, 'getJobClass').mockResolvedValue(ProperBar);

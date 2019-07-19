@@ -14,7 +14,8 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['./src/test/setup.ts'],
   verbose: true,
-  collectCoverageFrom: ['src/**/*.ts', '!src/test/**/*', '!src/**/index.ts'],
+  // note: jobApi.ts is presently only interfaces. see: https://github.com/kulshekhar/ts-jest/issues/378
+  collectCoverageFrom: ['src/**/*.ts', '!src/**.index.ts', '!src/test/**/*', '!src/jobs/JobApi.ts'],
   coverageThreshold: {
     global: {
       branches: 90,

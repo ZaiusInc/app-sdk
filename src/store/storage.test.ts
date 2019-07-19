@@ -1,5 +1,5 @@
 import 'jest';
-import {BaseKVStore, initializeStores, storage} from '../app';
+import {BaseKVStore, initializeStores, storage} from '../store';
 import {LocalStore} from './LocalStore';
 
 // @ts-ignore
