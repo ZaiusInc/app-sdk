@@ -77,7 +77,7 @@ export class Runtime {
         try {
           fnClass = await this.getFunctionClass(name);
         } catch (e) {
-          console.error(e);
+          // Failed to load
         }
         if (!fnClass) {
           errors.push(`Entry point not found for function: ${name}`);
