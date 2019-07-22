@@ -7,9 +7,10 @@ import {Request} from './lib/Request';
 import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
+import deepFreeze = require('deep-freeze');
 
 interface SerializedRuntime {
-  manifest: AppManifest;
+  appManifest: AppManifest;
   dirName: string;
 }
 
@@ -27,8 +28,12 @@ export class Runtime {
     return runtime;
   }
 
-  private manifest!: AppManifest;
+  private appManifest!: Readonly<AppManifest>;
   private dirName!: string;
+
+  public get manifest(): Readonly<AppManifest> {
+    return this.appManifest;
+  }
 
   // tslint:disable-next-line:ban-types
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
@@ -57,7 +62,7 @@ export class Runtime {
 
   public toJson() {
     return JSON.stringify({
-      manifest: this.manifest,
+      appManifest: this.manifest,
       dirName: this.dirName
     } as SerializedRuntime);
   }
@@ -162,7 +167,7 @@ export class Runtime {
       throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
     }
 
-    this.manifest = manifest;
+    this.appManifest = deepFreeze(manifest) as AppManifest;
   }
 
   private validateManifest(ajv: Ajv, manifest: unknown): manifest is AppManifest {
