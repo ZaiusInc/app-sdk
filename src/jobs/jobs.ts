@@ -9,7 +9,7 @@ export const initializeJobApi = (api: JobApi) => {
 };
 
 // tslint:disable-next-line:variable-name
-export const Jobs: JobApi = {
+export const jobs: JobApi = {
   trigger(jobName: string, parameters: ValueHash): Promise<JobDetail> {
     return jobsApi.trigger(jobName, parameters);
   },
