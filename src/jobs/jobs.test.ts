@@ -1,5 +1,5 @@
 import 'jest';
-import {initializeJobApi, Jobs} from './Jobs';
+import {initializeJobApi, jobs} from './jobs';
 
 describe('Jobs', () => {
   const mockJobApi = {
@@ -15,19 +15,19 @@ describe('Jobs', () => {
 
   it('uses the configured implementation for trigger', () => {
     initializeJobApi(mockJobApi);
-    Jobs.trigger('foo', {});
+    jobs.trigger('foo', {});
     expect(mockJobApi.trigger).toHaveBeenCalled();
   });
 
   it('uses the configured implementation for getJobDetail', () => {
     initializeJobApi(mockJobApi);
-    Jobs.getDetail(mockJobId);
+    jobs.getDetail(mockJobId);
     expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
   });
 
   it('uses the configured implementation for getStatus', () => {
     initializeJobApi(mockJobApi);
-    Jobs.getStatus(mockJobId);
+    jobs.getStatus(mockJobId);
     expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
   });
 });
