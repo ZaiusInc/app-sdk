@@ -1,4 +1,5 @@
 import 'jest';
+import {Headers} from './Headers';
 import {Response} from './Response';
 
 describe('Response', () => {
@@ -6,6 +7,22 @@ describe('Response', () => {
 
   beforeEach(() => {
     response = new Response();
+  });
+
+  describe('constructor', () => {
+    it('sets status if provided', () => {
+      expect(new Response(202).status).toBe(202);
+    });
+
+    it('sets bodyJSON if provided', () => {
+      const data = new Response(200, {foo: 'bar'})['bodyData']!;
+      expect(JSON.parse(Buffer.from(data).toString('utf8'))).toEqual({foo: 'bar'});
+    });
+
+    it('sets headers if provided', () => {
+      const headers = new Response(200, {status: 'OK'}, new Headers([['z-header', 'foo']])).headers;
+      expect(headers.get('z-header')).toBe('foo');
+    });
   });
 
   describe('body', () => {
