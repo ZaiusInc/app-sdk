@@ -1,6 +1,10 @@
 import * as App from '@zaius/app-sdk';
 
 export class Lifecycle extends App.Lifecycle {
+  public async onInstall(): Promise<App.LifecycleResult> {
+    return Promise.resolve({success: true});
+  }
+
   public async onSetupForm(_page: string, _action: string, _formData: object): Promise<App.Response> {
     const response = new App.Response();
     response.status = 200;

@@ -74,6 +74,10 @@ class ProperLifecycle extends Lifecycle {
     super();
   }
 
+  public async onInstall(): Promise<LifecycleResult> {
+    return {success: true};
+  }
+
   public async onSetupForm(_page: string, _action: string, _formData: object): Promise<Response> {
     return new Response();
   }
@@ -277,6 +281,7 @@ describe('Runtime', () => {
       jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(PartialLifecycle as any);
 
       expect(await runtime.validate()).toEqual([
+        'Lifecycle implementation is missing the onInstall method',
         'Lifecycle implementation is missing the onSetupForm method',
         'Lifecycle implementation is missing the onUpgrade method',
         'Lifecycle implementation is missing the onFinalizeUpgrade method',
