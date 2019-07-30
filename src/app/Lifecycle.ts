@@ -2,6 +2,8 @@ import {Response} from './lib';
 import {LifecycleResult} from './types';
 
 export abstract class Lifecycle {
+  public abstract async onInstall(): Promise<LifecycleResult>;
+
   public abstract async onSetupForm(page: string, action: string, formData: object): Promise<Response>;
 
   public abstract async onUpgrade(fromVersion: string): Promise<LifecycleResult>;
@@ -11,4 +13,4 @@ export abstract class Lifecycle {
   public abstract async onUninstall(): Promise<LifecycleResult>;
 }
 
-export const LIFECYCLE_REQUIRED_METHODS = ['onSetupForm', 'onUpgrade', 'onFinalizeUpgrade', 'onUninstall'];
+export const LIFECYCLE_REQUIRED_METHODS = ['onInstall', 'onSetupForm', 'onUpgrade', 'onFinalizeUpgrade', 'onUninstall'];

@@ -5,6 +5,18 @@ export class Response {
   public headers: Headers = new Headers();
   private bodyData?: Uint8Array;
 
+  constructor(status?: number, bodyJSON?: any, headers?: Headers) {
+    if (status !== undefined) {
+      this.status = status;
+    }
+    if (bodyJSON !== undefined) {
+      this.bodyJSON = bodyJSON;
+    }
+    if (headers !== undefined) {
+      this.headers = headers;
+    }
+  }
+
   public set body(body: string | null) {
     if (body === null || typeof body !== 'string') {
       this.bodyData = undefined;
