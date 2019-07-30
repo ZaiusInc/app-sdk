@@ -24,6 +24,7 @@
   "dependencies": {
     "ajv": "^6.10.0",
     "axios": "^0.18.0",
+    "deep-freeze": "^0.0.1",
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {
@@ -34,7 +35,6 @@
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^11.13.4",
     "@zaiusinc/tslint-presets": "^1.0.1",
-    "deep-freeze": "^0.0.1",
     "jest": "^24.5.0",
     "mock-fs": "^4.8.0",
     "ts-jest": "^24.0.0",
