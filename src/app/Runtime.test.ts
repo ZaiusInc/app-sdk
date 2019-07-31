@@ -33,7 +33,8 @@ const appManifest = deepFreeze({
   },
   jobs: {
     bar: {
-      entry_point: 'Bar'
+      entry_point: 'Bar',
+      description: 'Does a thing'
     }
   }
 } as AppManifest);

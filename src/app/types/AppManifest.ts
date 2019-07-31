@@ -9,7 +9,9 @@ export interface AppFunction {
 
 export interface AppJob {
   entry_point: string;
-  // TODO
+  description: string;
+  cron?: string;
+  parameters?: string;
 }
 
 export interface AppManifest {

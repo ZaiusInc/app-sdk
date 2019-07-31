@@ -57,11 +57,21 @@
         "AppJob": {
             "additionalProperties": false,
             "properties": {
+                "cron": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
                 "entry_point": {
+                    "type": "string"
+                },
+                "parameters": {
                     "type": "string"
                 }
             },
             "required": [
+                "description",
                 "entry_point"
             ],
             "type": "object"
