@@ -1,3 +1,4 @@
+import {ValueHash} from '../../store';
 import {HttpMethod} from './HttpMethod';
 
 // regenerate JSON schema with `yarn run update-schema`
@@ -11,7 +12,7 @@ export interface AppJob {
   entry_point: string;
   description: string;
   cron?: string;
-  parameters?: string;
+  parameters?: ValueHash;
 }
 
 export interface AppManifest {

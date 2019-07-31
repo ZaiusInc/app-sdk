@@ -67,13 +67,49 @@
                     "type": "string"
                 },
                 "parameters": {
-                    "type": "string"
+                    "$ref": "#/definitions/ValueHash"
                 }
             },
             "required": [
                 "description",
                 "entry_point"
             ],
+            "type": "object"
+        },
+        "ValueHash": {
+            "additionalProperties": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/ValueHash"
+                    },
+                    {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/definitions/ValueHash"
+                                },
+                                {
+                                    "type": [
+                                        "null",
+                                        "string",
+                                        "number",
+                                        "boolean"
+                                    ]
+                                }
+                            ]
+                        },
+                        "type": "array"
+                    },
+                    {
+                        "type": [
+                            "null",
+                            "string",
+                            "number",
+                            "boolean"
+                        ]
+                    }
+                ]
+            },
             "type": "object"
         }
     },
