@@ -1,7 +1,7 @@
 import 'jest';
 import {initializeJobApi, jobs} from './jobs';
 
-describe('Jobs', () => {
+describe('jobs', () => {
   const mockJobApi = {
     trigger: jest.fn(),
     getDetail: jest.fn(),
