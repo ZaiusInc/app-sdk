@@ -3,7 +3,7 @@ import {BaseKVStore, PatchUpdater, ValueHash} from './BaseKVStore';
 /**
  * A stub of the key value store
  *
- * @TODO impelement the stub for local development purposes
+ * @TODO implement the stub for local development purposes
  */
 export class LocalStore implements BaseKVStore {
   public get(_key: string, _fields?: string[]): Promise<ValueHash> {

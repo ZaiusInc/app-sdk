@@ -4,11 +4,16 @@ import {LocalJobApi} from './LocalJobApi';
 
 let jobsApi: JobApi = new LocalJobApi();
 
+/**
+ * @hidden
+ */
 export const initializeJobApi = (api: JobApi) => {
   jobsApi = api;
 };
 
-// tslint:disable-next-line:variable-name
+/**
+ * The jobs api implementation
+ */
 export const jobs: JobApi = {
   trigger(jobName: string, parameters: ValueHash): Promise<JobDetail> {
     return jobsApi.trigger(jobName, parameters);
