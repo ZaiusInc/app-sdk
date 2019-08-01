@@ -8,10 +8,7 @@ export const initializeFunctionApi = (api: FunctionApi) => {
 };
 
 export const functions: FunctionApi = {
-  getEndpoint(functionName: string): Promise<string> {
-    return functionApi.getEndpoint(functionName);
-  },
-  getAllEndpoints(): Promise<{[name: string]: string}> {
-    return functionApi.getAllEndpoints();
+  getEndpoints(): Promise<{[name: string]: string}> {
+    return functionApi.getEndpoints();
   }
 };

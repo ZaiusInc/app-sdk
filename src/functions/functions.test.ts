@@ -1,25 +1,18 @@
 import 'jest';
-import {initializeFunctionApi, functions} from './functions';
+import {functions, initializeFunctionApi} from './functions';
 
 describe('functions', () => {
   const mockFunctionApi = {
-    getEndpoint: jest.fn(),
-    getAllEndpoints: jest.fn()
+    getEndpoints: jest.fn()
   };
 
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  it('uses the configured implementation for getEndpoint', () => {
-    initializeFunctionApi(mockFunctionApi);
-    functions.getEndpoint('foo');
-    expect(mockFunctionApi.getEndpoint).toHaveBeenCalledWith('foo');
-  });
-
   it('uses the configured implementation for getAllEndpoints', () => {
     initializeFunctionApi(mockFunctionApi);
-    functions.getAllEndpoints();
-    expect(mockFunctionApi.getAllEndpoints).toHaveBeenCalled();
+    functions.getEndpoints();
+    expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
   });
 });
