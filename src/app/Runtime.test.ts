@@ -23,7 +23,7 @@ const appManifest = deepFreeze({
     summary: '',
     contact_email: '',
   },
-  runtime: 'node11',
+  runtime: 'node12',
   functions: {
     foo: {
       method: 'GET',

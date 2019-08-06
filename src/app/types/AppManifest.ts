@@ -25,7 +25,7 @@ export interface AppManifest {
     summary: string;
     contact_email: string;
   };
-  runtime: 'node11';
+  runtime: 'node12';
   defaults?: {
     permissions?: string[];
     environment?: {

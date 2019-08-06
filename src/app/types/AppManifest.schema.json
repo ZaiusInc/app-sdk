@@ -182,7 +182,7 @@
         },
         "runtime": {
             "enum": [
-                "node11"
+                "node12"
             ],
             "type": "string"
         }
