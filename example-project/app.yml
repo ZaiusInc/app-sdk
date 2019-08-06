@@ -7,7 +7,7 @@ meta:
   summary:
   contact_email:
 
-runtime: node11
+runtime: node12
 
 #Rely on convention for lifecycle (lifecycle/Lifecycle.ts)
 defaults:
