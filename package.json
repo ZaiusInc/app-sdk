@@ -1,6 +1,6 @@
 {
   "name": "@zaius/app-sdk",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "Zaius App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "UNLICENSED",

@@ -22,6 +22,7 @@ const appManifest = deepFreeze({
     support_url: '',
     summary: '',
     contact_email: '',
+    categories: ['eCommerce']
   },
   runtime: 'node12',
   functions: {
@@ -240,6 +241,35 @@ describe('Runtime', () => {
 
     afterAll(() => {
       jest.restoreAllMocks();
+    });
+
+    it('detects missing categories', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, categories: []}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(
+        ['Apps must specify 1 or 2 categories under meta.categories in the app.yml']
+      );
+    });
+
+    it('detects too many categories', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, categories: [
+        'eCommerce', 'Point of Sale', 'Lead Capture'
+      ]}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(
+        ['Apps must specify 1 or 2 categories under meta.categories in the app.yml']
+      );
+    });
+
+    it('detects duplicate categories', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['eCommerce', 'eCommerce']}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(
+        ['Two identical categories found under meta.categories in the app.yml']
+      );
     });
 
     it('detects missing function entry point', async () => {
