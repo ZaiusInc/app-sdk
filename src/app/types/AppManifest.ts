@@ -15,6 +15,12 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
+export type AppCategory = 'eCommerce' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing Automation'
+  | 'Channel' | 'Loyalty & Offers' | 'Customer Success' | 'Analytics & Reporting' | 'Surveys & Feedback'
+  | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
+  | 'Accounting & Finance' | 'Database / Connector' | 'Attribution & Linking' | 'Testing & Utilities'
+  | 'Personalization & Content';
+
 export interface AppManifest {
   meta: {
     app_id: string;
@@ -24,6 +30,7 @@ export interface AppManifest {
     support_url: string;
     summary: string;
     contact_email: string;
+    categories: AppCategory[];
   };
   runtime: 'node12';
   defaults?: {

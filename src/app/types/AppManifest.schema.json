@@ -150,6 +150,34 @@
                 "app_id": {
                     "type": "string"
                 },
+                "categories": {
+                    "items": {
+                        "enum": [
+                            "Accounting & Finance",
+                            "Advertising",
+                            "Analytics & Reporting",
+                            "Attribution & Linking",
+                            "CRM",
+                            "Channel",
+                            "Content Management",
+                            "Customer Success",
+                            "Data Quality & Enrichment",
+                            "Database / Connector",
+                            "Lead Capture",
+                            "Loyalty & Offers",
+                            "Marketing Automation",
+                            "Personalization & Content",
+                            "Point of Sale",
+                            "Productivity",
+                            "Reviews & Ratings",
+                            "Surveys & Feedback",
+                            "Testing & Utilities",
+                            "eCommerce"
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "contact_email": {
                     "type": "string"
                 },
@@ -171,6 +199,7 @@
             },
             "required": [
                 "app_id",
+                "categories",
                 "contact_email",
                 "display_name",
                 "summary",

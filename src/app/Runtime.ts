@@ -75,6 +75,15 @@ export class Runtime {
   public async validate(): Promise<string[]> {
     const errors: string[] = [];
 
+    // Make sure there are exactly 1 to 2 categories listed
+    const categories = this.manifest.meta.categories || [];
+    if (categories.length > 2 || categories.length < 1) {
+      errors.push('Apps must specify 1 or 2 categories under meta.categories in the app.yml');
+    }
+    if (categories.length === 2 && categories[0] === categories[1]) {
+      errors.push('Two identical categories found under meta.categories in the app.yml');
+    }
+
     // Make sure all the functions listed in the manifest actually exist and are implemented
     if (this.manifest.functions) {
       for (const name of Object.keys(this.manifest.functions)) {
