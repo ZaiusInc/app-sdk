@@ -16,7 +16,7 @@ export interface AppJob {
 }
 
 export type AppCategory = 'eCommerce' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing Automation'
-  | 'Channel' | 'Loyalty & Offers' | 'Customer Success' | 'Analytics & Reporting' | 'Surveys & Feedback'
+  | 'Channel' | 'Loyalty & Rewards' | 'Customer Success' | 'Analytics & Reporting' | 'Surveys & Feedback'
   | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
   | 'Accounting & Finance' | 'Database / Connector' | 'Attribution & Linking' | 'Testing & Utilities'
   | 'Personalization & Content';
