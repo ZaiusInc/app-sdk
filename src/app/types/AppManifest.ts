@@ -46,3 +46,6 @@ export interface AppManifest {
     [name: string]: AppJob;
   };
 }
+
+export const APP_ID_FORMAT = /^[a-z][a-z_0-9]{2,31}$/;
+export const VENDOR_FORMAT = /^[a-z0-9]+(_[a-z0-9]+)*$/;
