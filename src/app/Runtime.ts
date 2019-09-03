@@ -1,11 +1,13 @@
 import {Ajv} from 'ajv';
+import * as EmailValidator from 'email-validator';
 import {readFileSync} from 'fs';
 import {join} from 'path';
+import * as urlRegex from 'url-regex';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
-import {Request} from './lib/Request';
+import {Request} from './lib';
 import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
-import {AppManifest} from './types';
+import {APP_ID_FORMAT, AppManifest, VENDOR_FORMAT} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
 import deepFreeze = require('deep-freeze');
 
@@ -75,8 +77,31 @@ export class Runtime {
   public async validate(): Promise<string[]> {
     const errors: string[] = [];
 
+    const {app_id, vendor, support_url, contact_email, summary, categories} = this.manifest.meta;
+
+    // App ID, vendor, support url, and contact email must be in the correct format
+    if (!app_id.match(APP_ID_FORMAT)) {
+      errors.push(
+        'App ID must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
+        `and be between 3 and 32 characters long: ${APP_ID_FORMAT}`
+      );
+    }
+    if (!vendor.match(VENDOR_FORMAT)) {
+      errors.push(`Vendor must be lower snake case: ${VENDOR_FORMAT}`);
+    }
+    if (!support_url.match(urlRegex({exact: true})) || !support_url.startsWith('http')) {
+      errors.push('Support url must be a valid web address');
+    }
+    if (!EmailValidator.validate(contact_email)) {
+      errors.push('Contact email must be a valid email address');
+    }
+
+    // Summary must not be blank
+    if (!(summary && summary.trim())) {
+      errors.push('Summary must not be blank');
+    }
+
     // Make sure there are exactly 1 to 2 categories listed
-    const categories = this.manifest.meta.categories || [];
     if (categories.length > 2 || categories.length < 1) {
       errors.push('Apps must specify 1 or 2 categories under meta.categories in the app.yml');
     }

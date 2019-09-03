@@ -18,10 +18,10 @@ const appManifest = deepFreeze({
     app_id: 'appid',
     display_name: 'Display Name',
     version: '1.0.0',
-    vendor: 'Zaius',
-    support_url: '',
-    summary: '',
-    contact_email: '',
+    vendor: 'zaius',
+    support_url: 'https://zaius.com',
+    summary: 'This is an interesting app',
+    contact_email: 'support@zaius.com',
     categories: ['eCommerce']
   },
   runtime: 'node12',
@@ -243,13 +243,51 @@ describe('Runtime', () => {
       jest.restoreAllMocks();
     });
 
+    it('detects invalid app id', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, app_id: 'MyApp'}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual([
+        'App ID must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
+        'and be between 3 and 32 characters long: /^[a-z][a-z_0-9]{2,31}$/'
+      ]);
+    });
+
+    it('detects invalid vendor', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, vendor: 'MyCompany'}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(['Vendor must be lower snake case: /^[a-z0-9]+(_[a-z0-9]+)*$/']);
+    });
+
+    it('detects invalid support url', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, support_url: 'foo.bar'}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(['Support url must be a valid web address']);
+    });
+
+    it('detects invalid contact email', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, contact_email: 'foo@bar'}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(['Contact email must be a valid email address']);
+    });
+
+    it('detects blank summary', async () => {
+      const manifest = {...appManifest, meta: {...appManifest.meta, summary: '  '}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await runtime.validate()).toEqual(['Summary must not be blank']);
+    });
+
     it('detects missing categories', async () => {
       const manifest = {...appManifest, meta: {...appManifest.meta, categories: []}};
       const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
-      expect(await runtime.validate()).toEqual(
-        ['Apps must specify 1 or 2 categories under meta.categories in the app.yml']
-      );
+      expect(await runtime.validate()).toEqual([
+        'Apps must specify 1 or 2 categories under meta.categories in the app.yml'
+      ]);
     });
 
     it('detects too many categories', async () => {
@@ -258,18 +296,16 @@ describe('Runtime', () => {
       ]}};
       const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
-      expect(await runtime.validate()).toEqual(
-        ['Apps must specify 1 or 2 categories under meta.categories in the app.yml']
-      );
+      expect(await runtime.validate()).toEqual([
+        'Apps must specify 1 or 2 categories under meta.categories in the app.yml'
+      ]);
     });
 
     it('detects duplicate categories', async () => {
       const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['eCommerce', 'eCommerce']}};
       const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
-      expect(await runtime.validate()).toEqual(
-        ['Two identical categories found under meta.categories in the app.yml']
-      );
+      expect(await runtime.validate()).toEqual(['Two identical categories found under meta.categories in the app.yml']);
     });
 
     it('detects missing function entry point', async () => {
