@@ -2,7 +2,8 @@ import {isEqual} from 'lodash';
 import * as util from 'util';
 
 // silence logs during tests
-process.env.LOG_LEVEL = 'NEVER';
+jest.spyOn(process.stdout, 'write').mockImplementation();
+jest.spyOn(process.stderr, 'write').mockImplementation();
 
 expect.extend({
   jsonContaining(json: string, expected: any) {
