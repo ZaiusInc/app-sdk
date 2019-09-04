@@ -57,9 +57,9 @@ interface LogMessage {
 export interface LogContext {
   app_id: string;
   app_version: string;
-  account: string; // tracker_id:vdl or account_id:123
-  install_id: number;
-  entry_point: string; // e.g., function:fn_name
+  account?: string; // tracker_id:vdl or account_id:123
+  install_id?: number;
+  entry_point?: string; // e.g., function:fn_name
 }
 
 const visibilityValues = new Set([

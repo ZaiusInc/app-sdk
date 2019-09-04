@@ -33,7 +33,7 @@ describe('Logger', () => {
       setLogContext({
         app_id: 'sample',
         app_version: '1.0.0',
-        account: 'vdl',
+        account: 'tracker_id:vdl',
         install_id: 1234,
         entry_point: 'job:foo'
       });
@@ -42,7 +42,7 @@ describe('Logger', () => {
         context: {
           app_id: 'sample',
           app_version: '1.0.0',
-          account: 'vdl',
+          account: 'tracker_id:vdl',
           install_id: 1234,
           entry_point: 'job:foo'
         }
@@ -205,7 +205,7 @@ describe('Logger', () => {
       setLogContext({
         app_id: 'sample1',
         app_version: '1.1.0',
-        account: '12345',
+        account: 'tracker_id:abc123',
         install_id: 123,
         entry_point: 'function:foo'
       });
@@ -219,7 +219,7 @@ describe('Logger', () => {
         context: {
           app_id: 'sample1',
           app_version: '1.1.0',
-          account: '12345',
+          account: 'tracker_id:abc123',
           install_id: 123,
           entry_point: 'function:foo'
         }
