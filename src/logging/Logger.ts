@@ -275,4 +275,4 @@ export class Logger implements ILogger {
  *   LOG_LEVEL=warn
  * Accepted levels include debug, info, warn, error
  */
-export const logger = new Logger(LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug);
+export const logger: ILogger = new Logger(LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug);
