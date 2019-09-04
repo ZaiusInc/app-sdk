@@ -3,11 +3,12 @@ import * as EmailValidator from 'email-validator';
 import {readFileSync} from 'fs';
 import {join} from 'path';
 import * as urlRegex from 'url-regex';
+import {logger} from '../logging/Logger';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Request} from './lib';
 import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
-import {APP_ID_FORMAT, AppManifest, VENDOR_FORMAT} from './types';
+import {AppManifest, APP_ID_FORMAT, VENDOR_FORMAT} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
 import deepFreeze = require('deep-freeze');
 
@@ -137,7 +138,7 @@ export class Runtime {
     try {
       lcClass = await this.getLifecycleClass();
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
     if (!lcClass) {
       errors.push('Lifecycle implementation not found');
@@ -158,7 +159,7 @@ export class Runtime {
         try {
           jobClass = await this.getJobClass(name);
         } catch (e) {
-          console.error(e);
+          logger.error(e);
         }
         if (!jobClass) {
           errors.push(`Entry point not found for job: ${name}`);
@@ -205,6 +206,10 @@ export class Runtime {
   }
 
   private validateManifest(ajv: Ajv, manifest: unknown): manifest is AppManifest {
-    return ajv.validate(manifestSchema, manifest) as boolean;
+    const result = ajv.validate(manifestSchema, manifest) as boolean;
+    if (!result) {
+      logger.error('Schema Validation Errors: ', ajv.errors);
+    }
+    return result;
   }
 }
