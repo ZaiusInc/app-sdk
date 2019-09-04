@@ -3,27 +3,37 @@ import {CustomerVisibleError} from './CustomerVisibleError';
 
 /**
  * Supported log levels, in order of least important to most.
- * NEVER should only be used for testing purposes to silence all logs
  */
 export enum LogLevel {
   Debug = 1,
   Info = 2,
   Warn = 3,
   Error = 4,
+  /**
+   * NEVER should only be used for testing purposes to silence all logs
+   */
   NEVER = 5
 }
 
 /**
- * Visibility of the log:
- *  Auto: sets to Customer if you log an error that extends CustomerVisibleError, otherwise Developer
- *  Zaius: for SDK internal use only
- *  Developer: Make the log visible to app developers, but not customers using the apps
- *  Customer: Make the log visible to the customer who installed the app
+ * Visibility of the log output
  */
 export enum LogVisibility {
+  /**
+   * Auto: sets to Customer if you log an error that extends CustomerVisibleError, otherwise Developer
+   */
   Auto = 'auto',
+  /**
+   * Zaius: for SDK internal use only
+   */
   Zaius = 'zaius',
+  /**
+   * Developer: Make the log visible to app developers, but not customers using the apps
+   */
   Developer = 'developer',
+  /**
+   * Customer: Make the log visible to the customer who installed the app
+   */
   Customer = 'customer'
 }
 
@@ -65,7 +75,7 @@ const LOG_LEVELS = {
   [LogLevel.NEVER]: 'NEVER',
 };
 
-const LOG_LEVEL_FROM_ENV = {
+const LOG_LEVEL_FROM_ENV: {[key: string]: LogLevel} = {
   debug: LogLevel.Debug,
   info: LogLevel.Info,
   warn: LogLevel.Warn,
@@ -273,6 +283,6 @@ export class Logger implements ILogger {
  * Logger instance to be used by Zaius apps.
  * Minimum log level can be configured by setting a environment variable, e.g.:
  *   LOG_LEVEL=warn
- * Accepted levels include debug, info, warn, error
+ * Accepted levels include debug, info, warn, error (or NEVER for silencing logs)
  */
 export const logger: ILogger = new Logger(LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug);
