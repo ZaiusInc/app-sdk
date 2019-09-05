@@ -60,6 +60,7 @@ export interface LogContext {
   account?: string; // tracker_id:vdl or account_id:123
   install_id?: number;
   entry_point?: string; // e.g., function:fn_name
+  task_id?: string;
 }
 
 const visibilityValues = new Set([
@@ -119,7 +120,7 @@ export interface ILogger {
   /**
    * Write something to the logs at the Debug level
    * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: this is automatic if you log error that extend form CustomerVisibleError
+   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
    * @param args One or more values to log.
    *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
    *   Multiple values are concatenated with a space between
@@ -137,7 +138,7 @@ export interface ILogger {
   /**
    * Write something to the logs at the Info level
    * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: this is automatic if you log error that extend form CustomerVisibleError
+   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
    * @param args One or more values to log.
    *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
    *   Multiple values are concatenated with a space between
@@ -155,7 +156,7 @@ export interface ILogger {
   /**
    * Write something to the logs at the Warning level
    * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: this is automatic if you log error that extend form CustomerVisibleError
+   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
    * @param args One or more values to log.
    *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
    *   Multiple values are concatenated with a space between
@@ -173,7 +174,7 @@ export interface ILogger {
   /**
    * Write something to the logs at the Error level
    * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: this is automatic if you log error that extend form CustomerVisibleError
+   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
    * @param args One or more values to log.
    *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
    *   Multiple values are concatenated with a space between

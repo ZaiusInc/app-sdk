@@ -207,7 +207,8 @@ describe('Logger', () => {
         app_version: '1.1.0',
         account: 'tracker_id:abc123',
         install_id: 123,
-        entry_point: 'function:foo'
+        entry_point: 'function:foo',
+        task_id: '12345-678-90'
       });
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       logger.info('This is a test');
@@ -221,7 +222,8 @@ describe('Logger', () => {
           app_version: '1.1.0',
           account: 'tracker_id:abc123',
           install_id: 123,
-          entry_point: 'function:foo'
+          entry_point: 'function:foo',
+          task_id: '12345-678-90'
         }
       }));
     });
