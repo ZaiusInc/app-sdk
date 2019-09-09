@@ -1,5 +1,6 @@
 import * as Ajv from 'ajv';
 import 'jest';
+import * as fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as mockFs from 'mock-fs';
 import {ValueHash} from '../store';
@@ -162,8 +163,13 @@ class ProperBar extends Job {
 describe('Runtime', () => {
   beforeAll(() => {
     mockFs({
-      '/tmp/foo/': {
-        'app.yml': JSON.stringify(appManifest)
+      '/tmp/foo': {
+        'app.yml': JSON.stringify(appManifest),
+        'schema': {
+          'events.yml': JSON.stringify(schemaObjects['events.yml']),
+          'my_app_coupons.yml': JSON.stringify(schemaObjects['my_app_coupons.yml']),
+          'something_else.yml.txt': 'something else'
+        }
       }
     });
   });
@@ -283,21 +289,43 @@ describe('Runtime', () => {
     });
   });
 
+  describe('getSchemaObjects', () => {
+    it('loads all yml files in the schema directory', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const origReadFileSync = fs.readFileSync;
+      const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
+      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+
+      const result = await runtime.getSchemaObjects();
+      expect(readFileSyncFn.mock.calls).toEqual([
+        ['/tmp/foo/schema/events.yml', 'utf8'],
+        ['/tmp/foo/schema/my_app_coupons.yml', 'utf8'],
+      ]);
+      expect(result).toEqual(schemaObjects);
+
+      readFileSyncFn.mockRestore();
+      yamlLoadFn.mockRestore();
+    });
+  });
+
   describe('validate', () => {
     let getFunctionClass: SpyInstance | undefined;
     let getLifecycleClass: SpyInstance | undefined;
     let getJobClass: SpyInstance | undefined;
+    let getSchemaObjects: SpyInstance | undefined;
 
     beforeEach(() => {
       getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass').mockResolvedValue(ProperFoo);
       getLifecycleClass = jest.spyOn(Runtime.prototype, 'getLifecycleClass').mockResolvedValue(ProperLifecycle);
       getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockResolvedValue(ProperBar);
+      getSchemaObjects = jest.spyOn(Runtime.prototype, 'getSchemaObjects').mockResolvedValue({});
     });
 
     afterEach(() => {
       getFunctionClass!.mockRestore();
       getLifecycleClass!.mockRestore();
       getJobClass!.mockRestore();
+      getSchemaObjects!.mockRestore();
     });
 
     it('captures json schema errors in the manifest', async () => {
@@ -484,16 +512,14 @@ describe('Runtime', () => {
 
     it('succeeds with proper schema', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue(schemaObjects);
+      getSchemaObjects!.mockResolvedValue(schemaObjects);
 
       expect(await runtime.validate()).toEqual([]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('detects invalid names', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         'events.yml': {
           ...schemaObjects['events.yml'],
           fields: [{...schemaObjects['events.yml'].fields[0], name: 'couponID'}],
@@ -522,13 +548,11 @@ describe('Runtime', () => {
         'Invalid schema/my_app_Coupons.yml: fields[0].name must start with a letter, contain only lowercase ' +
           'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('requires detects invalid display name and description on custom items', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         'events.yml': {
           ...schemaObjects['events.yml'],
           fields: [{...schemaObjects['events.yml'].fields[0], display_name: '  ', description: '\t'}],
@@ -553,13 +577,11 @@ describe('Runtime', () => {
         'Invalid schema/my_app_coupons.yml: fields[0].display_name must be specified',
         'Invalid schema/my_app_coupons.yml: fields[0].description must be specified'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('does not allow display name or alias on non-custom objects', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         ...schemaObjects,
         'events.yml': {
           ...schemaObjects['events.yml'],
@@ -572,13 +594,11 @@ describe('Runtime', () => {
         'Invalid schema/events.yml: display_name cannot be specified for non-custom object',
         'Invalid schema/events.yml: alias cannot be specified for non-custom object'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('requires a join field', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         ...schemaObjects,
         'events.yml': {
           ...schemaObjects['events.yml'],
@@ -589,13 +609,11 @@ describe('Runtime', () => {
       expect(await runtime.validate()).toEqual([
         'Invalid schema/events.yml: relations[0].join_fields must contain at least one join field'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('requires a primary key on custom objects', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         ...schemaObjects,
         'my_app_coupons.yml': {
           ...schemaObjects['my_app_coupons.yml'],
@@ -606,13 +624,11 @@ describe('Runtime', () => {
       expect(await runtime.validate()).toEqual([
         'Invalid schema/my_app_coupons.yml: fields must contain at least one primary key for custom object'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('does not allow a primary key on non-custom objects', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         ...schemaObjects,
         'events.yml': {
           ...schemaObjects['events.yml'],
@@ -623,13 +639,11 @@ describe('Runtime', () => {
       expect(await runtime.validate()).toEqual([
         'Invalid schema/events.yml: fields[0].primary cannot be set for non-custom object'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('enforces custom object rules for non-prefixed objects when base object names are available', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         'coupons.yml': {
           ...schemaObjects['my_app_coupons.yml'],
           name: 'coupons',
@@ -641,13 +655,11 @@ describe('Runtime', () => {
         'Invalid schema/coupons.yml: name must be prefixed with my_app_ for custom object',
         'Invalid schema/coupons.yml: display_name must be prefixed with My App'
       ]);
-
-      getSchemaObjects.mockRestore();
     });
 
     it('captures json schema errors in schema objects', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockResolvedValue({
+      getSchemaObjects!.mockResolvedValue({
         'events.yml': {
           ...schemaObjects['events.yml'],
           name: undefined,
@@ -660,8 +672,6 @@ describe('Runtime', () => {
         'Invalid schema/events.yml: fields[0].type must be equal to one of the allowed values',
         "Invalid schema/events.yml: must have required property 'name'"
       ]);
-
-      getSchemaObjects.mockRestore();
     });
   });
 });

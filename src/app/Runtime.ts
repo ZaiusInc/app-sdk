@@ -12,6 +12,7 @@ import * as manifestSchema from './types/AppManifest.schema.json';
 import {SCHEMA_NAME_FORMAT, SchemaObject} from './types/SchemaObject';
 import * as schemaObjectSchema from './types/SchemaObject.schema.json';
 import deepFreeze = require('deep-freeze');
+import glob = require('glob');
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -68,7 +69,6 @@ export class Runtime {
     const schemaObjects = {} as any;
     const schemaDir = join(this.dirName, 'schema');
     if (existsSync(schemaDir)) {
-      const glob = require('glob');
       const files = glob.sync('*.yml', {cwd: schemaDir});
       if (files.length > 0) {
         const jsYaml = await import('js-yaml');
