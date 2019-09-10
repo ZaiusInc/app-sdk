@@ -204,32 +204,32 @@ export class Logger implements ILogger {
   }
 
   public debug(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0])) {
-      this.log(LogLevel.Debug, args[0], ...args.slice(1));
+    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+      this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
     } else {
       this.log(LogLevel.Debug, this.defaultVisibility, ...args);
     }
   }
 
   public info(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0])) {
-      this.log(LogLevel.Info, args[0], ...args.slice(1));
+    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+      this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
     } else {
       this.log(LogLevel.Info, this.defaultVisibility, ...args);
     }
   }
 
   public warn(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0])) {
-      this.log(LogLevel.Warn, args[0], ...args.slice(1));
+    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+      this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
     } else {
       this.log(LogLevel.Warn, this.defaultVisibility, ...args);
     }
   }
 
   public error(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0])) {
-      this.log(LogLevel.Error, args[0], ...args.slice(1));
+    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+      this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
     } else {
       this.log(LogLevel.Error, this.defaultVisibility, ...args);
     }
