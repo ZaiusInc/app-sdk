@@ -57,7 +57,7 @@ interface LogMessage {
 export interface LogContext {
   app_id: string;
   app_version: string;
-  account?: string; // e.g., tracker_id:vdl
+  tracker_id?: string;
   install_id?: number;
   entry_point?: string; // e.g., function:fn_name
   request_id?: string;

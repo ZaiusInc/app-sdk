@@ -33,7 +33,7 @@ describe('Logger', () => {
       setLogContext({
         app_id: 'sample',
         app_version: '1.0.0',
-        account: 'tracker_id:vdl',
+        tracker_id: 'vdl',
         install_id: 1234,
         entry_point: 'job:foo',
         job_id: '123-456'
@@ -43,7 +43,7 @@ describe('Logger', () => {
         context: {
           app_id: 'sample',
           app_version: '1.0.0',
-          account: 'tracker_id:vdl',
+          tracker_id: 'vdl',
           install_id: 1234,
           entry_point: 'job:foo',
           job_id: '123-456'
@@ -207,7 +207,7 @@ describe('Logger', () => {
       setLogContext({
         app_id: 'sample1',
         app_version: '1.1.0',
-        account: 'tracker_id:abc123',
+        tracker_id: 'abc123',
         install_id: 123,
         entry_point: 'function:foo',
         request_id: '12345-678-90'
@@ -222,7 +222,7 @@ describe('Logger', () => {
         context: {
           app_id: 'sample1',
           app_version: '1.1.0',
-          account: 'tracker_id:abc123',
+          tracker_id: 'abc123',
           install_id: 123,
           entry_point: 'function:foo',
           request_id: '12345-678-90'
