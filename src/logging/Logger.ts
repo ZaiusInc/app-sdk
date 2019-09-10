@@ -60,7 +60,8 @@ export interface LogContext {
   account?: string; // e.g., tracker_id:vdl
   install_id?: number;
   entry_point?: string; // e.g., function:fn_name
-  task_id?: string;
+  request_id?: string;
+  job_id?: string;
 }
 
 const visibilityValues = new Set([

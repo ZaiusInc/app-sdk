@@ -35,7 +35,8 @@ describe('Logger', () => {
         app_version: '1.0.0',
         account: 'tracker_id:vdl',
         install_id: 1234,
-        entry_point: 'job:foo'
+        entry_point: 'job:foo',
+        job_id: '123-456'
       });
       logger.debug('debug');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
@@ -44,7 +45,8 @@ describe('Logger', () => {
           app_version: '1.0.0',
           account: 'tracker_id:vdl',
           install_id: 1234,
-          entry_point: 'job:foo'
+          entry_point: 'job:foo',
+          job_id: '123-456'
         }
       }));
     });
@@ -208,7 +210,7 @@ describe('Logger', () => {
         account: 'tracker_id:abc123',
         install_id: 123,
         entry_point: 'function:foo',
-        task_id: '12345-678-90'
+        request_id: '12345-678-90'
       });
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       logger.info('This is a test');
@@ -223,7 +225,7 @@ describe('Logger', () => {
           account: 'tracker_id:abc123',
           install_id: 123,
           entry_point: 'function:foo',
-          task_id: '12345-678-90'
+          request_id: '12345-678-90'
         }
       }));
     });
