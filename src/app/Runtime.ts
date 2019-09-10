@@ -3,6 +3,7 @@ import * as EmailValidator from 'email-validator';
 import {existsSync, readFileSync} from 'fs';
 import {join} from 'path';
 import * as urlRegex from 'url-regex';
+import {logger} from '../logging/Logger';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Request} from './lib';
@@ -192,7 +193,7 @@ export class Runtime {
     try {
       lcClass = await this.getLifecycleClass();
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
     if (!lcClass) {
       errors.push('Lifecycle implementation not found');
@@ -213,7 +214,7 @@ export class Runtime {
         try {
           jobClass = await this.getJobClass(name);
         } catch (e) {
-          console.error(e);
+          logger.error(e);
         }
         if (!jobClass) {
           errors.push(`Entry point not found for job: ${name}`);

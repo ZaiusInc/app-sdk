@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "ajv": "^6.10.0",
-    "axios": "^0.18.0",
     "deep-freeze": "^0.0.1",
     "email-validator": "^2.0.4",
     "glob": "^7.1.4",
@@ -34,7 +33,6 @@
     "url-regex": "^5.0.0"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/deep-freeze": "^0.1.1",
     "@types/jest": "^24.0.11",
     "@types/js-yaml": "^3.12.1",
