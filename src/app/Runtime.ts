@@ -18,12 +18,21 @@ interface SerializedRuntime {
 }
 
 export class Runtime {
+  /**
+   * Initializes from a directory. Used during startup.
+   * @param dirName the base directory of the app
+   * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
+   */
   public static async initialize(dirName: string, skipJsonValidation: boolean = false) {
     const runtime = new Runtime();
     await runtime.initialize(dirName, skipJsonValidation);
     return runtime;
   }
 
+  /**
+   * Initializes from a pre-validated JSON definition. Used during task execution.
+   * @param serializedRuntime JSON-serialized runtime definition
+   */
   public static fromJson(serializedRuntime: string) {
     const data = JSON.parse(serializedRuntime) as SerializedRuntime;
     const runtime = new Runtime();
