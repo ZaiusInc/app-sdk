@@ -27,4 +27,8 @@ export interface SchemaJoinField {
   child: string;
 }
 
+export interface SchemaObjects {
+  [file: string]: SchemaObject;
+}
+
 export const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;

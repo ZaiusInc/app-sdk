@@ -1,10 +1,6 @@
 import {isEqual} from 'lodash';
 import * as util from 'util';
 
-// silence logs during tests
-jest.spyOn(process.stdout, 'write').mockImplementation();
-jest.spyOn(process.stderr, 'write').mockImplementation();
-
 expect.extend({
   jsonContaining(json: string, expected: any) {
     try {
