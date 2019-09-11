@@ -48,4 +48,5 @@ export interface AppManifest {
 }
 
 export const APP_ID_FORMAT = /^[a-z][a-z_0-9]{2,31}$/;
+export const VERSION_FORMAT = /^\d+\.\d+\.\d+(-(((dev|beta)(\.\d+)?)|private))?$/;
 export const VENDOR_FORMAT = /^[a-z0-9]+(_[a-z0-9]+)*$/;

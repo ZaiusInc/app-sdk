@@ -1,22 +1,19 @@
 import * as Ajv from 'ajv';
+import * as deepFreeze from 'deep-freeze';
+import * as fs from 'fs';
 import 'jest';
 import * as jsYaml from 'js-yaml';
 import * as mockFs from 'mock-fs';
-import {ValueHash} from '../store';
-import {Function} from './Function';
-import {Job, JobStatus} from './Job';
-import {Request, Response} from './lib';
-import {Lifecycle} from './Lifecycle';
 import {Runtime} from './Runtime';
-import {AppManifest, LifecycleResult} from './types';
-import deepFreeze = require('deep-freeze');
+import {AppManifest} from './types';
+import {SchemaObject} from './types/SchemaObject';
 
 jest.mock('js-yaml');
 
 const appManifest = deepFreeze({
   meta: {
-    app_id: 'appid',
-    display_name: 'Display Name',
+    app_id: 'my_app',
+    display_name: 'My App',
     version: '1.0.0',
     vendor: 'zaius',
     support_url: 'https://zaius.com',
@@ -40,91 +37,53 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
-class NonExtendedFoo {
-  // Nothing
-}
-
-abstract class PartialFoo extends Function {
-  protected constructor(request: Request) {
-    super(request);
+const schemaObjects = deepFreeze({
+  'schema/events.yml': {
+    name: 'events',
+    fields: [{
+      name: 'my_app_coupon_id',
+      type: 'string',
+      display_name: 'My App Coupon ID',
+      description: 'The coupon associated with this event'
+    }],
+    relations: [{
+      name: 'my_app_coupon',
+      display_name: 'My App Coupon',
+      child_object: 'my_app_coupons',
+      join_fields: [{
+        parent: 'my_app_coupon_id',
+        child: 'coupon_id'
+      }]
+    }]
+  },
+  'schema/my_app_coupons.yml': {
+    name: 'my_app_coupons',
+    display_name: 'My App Coupons',
+    fields: [{
+      name: 'coupon_id',
+      type: 'string',
+      display_name: 'Coupon ID',
+      description: 'The Coupon ID',
+      primary: true
+    }, {
+      name: 'percent_off',
+      type: 'number',
+      display_name: 'Percent Off',
+      description: 'Percentage discount'
+    }]
   }
-}
-
-class ProperFoo extends Function {
-  public constructor(request: Request) {
-    super(request);
-  }
-
-  public async perform(): Promise<Response> {
-    return new Response();
-  }
-}
-
-class NonExtendedLifecycle {
-  // Nothing
-}
-
-abstract class PartialLifecycle extends Lifecycle {
-  protected constructor() {
-    super();
-  }
-}
-
-class ProperLifecycle extends Lifecycle {
-  public constructor() {
-    super();
-  }
-
-  public async onInstall(): Promise<LifecycleResult> {
-    return {success: true};
-  }
-
-  public async onSetupForm(_page: string, _action: string, _formData: object): Promise<Response> {
-    return new Response();
-  }
-
-  public async onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return {success: true};
-  }
-
-  public async onFinalizeUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return {success: true};
-  }
-
-  public async onUninstall(): Promise<LifecycleResult> {
-    return {success: true};
-  }
-}
-
-class NonExtendedBar {
-  public async prepare(_status?: JobStatus): Promise<JobStatus> {
-    return {complete: false, state: {}};
-  }
-  public async perform(status: JobStatus): Promise<JobStatus> {
-    return status;
-  }
-}
-
-// @ts-ignore
-class PartialBar extends Job {
-}
-
-class ProperBar extends Job {
-  public async prepare(params: ValueHash, _status?: JobStatus): Promise<JobStatus> {
-    return {complete: false, state: params};
-  }
-  public async perform(status: JobStatus): Promise<JobStatus> {
-    return status;
-  }
-}
-/* tslint:enable */
+} as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
 describe('Runtime', () => {
   beforeAll(() => {
     mockFs({
-      '/tmp/foo/': {
-        'app.yml': JSON.stringify(appManifest)
+      '/tmp/foo': {
+        'app.yml': JSON.stringify(appManifest),
+        'schema': {
+          'events.yml': JSON.stringify(schemaObjects['schema/events.yml']),
+          'my_app_coupons.yml': JSON.stringify(schemaObjects['schema/my_app_coupons.yml']),
+          'something_else.yml.txt': 'something else'
+        }
       }
     });
   });
@@ -146,17 +105,23 @@ describe('Runtime', () => {
         appManifest,
         dirName: '/tmp/foo'
       });
+
+      yamlLoadFn.mockRestore();
+      validateFn.mockRestore();
     });
 
     it('throws an error when the manifest is invalid', async () => {
-      jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
-      jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(false);
+      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(false);
 
       try {
         await Runtime.initialize('/tmp/foo');
       } catch (e) {
         expect(e.message).toMatch(/Invalid app.yml manifest/);
       }
+
+      yamlLoadFn.mockRestore();
+      validateFn.mockRestore();
     });
   });
 
@@ -185,6 +150,8 @@ describe('Runtime', () => {
 
       expect(importFn).toHaveBeenCalledWith('/tmp/foo/functions/Foo');
       expect(foo).toEqual('Foo');
+
+      importFn.mockRestore();
     });
 
     it("throws an error the function isn't in the manifest", async () => {
@@ -207,6 +174,8 @@ describe('Runtime', () => {
 
       expect(importFn).toHaveBeenCalledWith('/tmp/foo/jobs/Bar');
       expect(bar).toEqual('Bar');
+
+      importFn.mockRestore();
     });
 
     it("throws an error the job isn't in the manifest", async () => {
@@ -229,169 +198,27 @@ describe('Runtime', () => {
 
       expect(importFn).toHaveBeenCalledWith('/tmp/foo/lifecycle/Lifecycle');
       expect(lifecycle).toEqual('Lifecycle');
+
+      importFn.mockRestore();
     });
   });
 
-  describe('validate', () => {
-    beforeEach(() => {
-      jest.spyOn(Runtime.prototype, 'getFunctionClass').mockResolvedValue(ProperFoo);
-      jest.spyOn(Runtime.prototype, 'getLifecycleClass').mockResolvedValue(ProperLifecycle);
-      jest.spyOn(Runtime.prototype, 'getJobClass').mockResolvedValue(ProperBar);
-    });
+  describe('getSchemaObjects', () => {
+    it('loads all yml files in the schema directory', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const origReadFileSync = fs.readFileSync;
+      const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
+      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
 
-    afterAll(() => {
-      jest.restoreAllMocks();
-    });
-
-    it('detects invalid app id', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, app_id: 'MyApp'}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual([
-        'App ID must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
-        'and be between 3 and 32 characters long: /^[a-z][a-z_0-9]{2,31}$/'
+      const result = await runtime.getSchemaObjects();
+      expect(readFileSyncFn.mock.calls).toEqual([
+        ['/tmp/foo/schema/events.yml', 'utf8'],
+        ['/tmp/foo/schema/my_app_coupons.yml', 'utf8'],
       ]);
-    });
+      expect(result).toEqual(schemaObjects);
 
-    it('detects invalid vendor', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, vendor: 'MyCompany'}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual(['Vendor must be lower snake case: /^[a-z0-9]+(_[a-z0-9]+)*$/']);
-    });
-
-    it('detects invalid support url', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, support_url: 'foo.bar'}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual(['Support url must be a valid web address']);
-    });
-
-    it('detects invalid contact email', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, contact_email: 'foo@bar'}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual(['Contact email must be a valid email address']);
-    });
-
-    it('detects blank summary', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, summary: '  '}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual(['Summary must not be blank']);
-    });
-
-    it('detects missing categories', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, categories: []}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual([
-        'Apps must specify 1 or 2 categories under meta.categories in the app.yml'
-      ]);
-    });
-
-    it('detects too many categories', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, categories: [
-        'eCommerce', 'Point of Sale', 'Lead Capture'
-      ]}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual([
-        'Apps must specify 1 or 2 categories under meta.categories in the app.yml'
-      ]);
-    });
-
-    it('detects duplicate categories', async () => {
-      const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['eCommerce', 'eCommerce']}};
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-
-      expect(await runtime.validate()).toEqual(['Two identical categories found under meta.categories in the app.yml']);
-    });
-
-    it('detects missing function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getFunctionClass').mockRejectedValue(new Error('not found'));
-
-      expect(await runtime.validate()).toEqual(['Entry point not found for function: foo']);
-    });
-
-    it('detects non-extended function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(NonExtendedFoo as any);
-
-      expect(await runtime.validate()).toEqual(['Function entry point does not extend App.Function: Foo']);
-    });
-
-    it('detects partial function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(PartialFoo as any);
-
-      expect(await runtime.validate()).toEqual(['Function entry point is missing the perform method: Foo']);
-    });
-
-    it('detects missing lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getLifecycleClass').mockRejectedValue(new Error('not found'));
-
-      expect(await runtime.validate()).toEqual(['Lifecycle implementation not found']);
-    });
-
-    it('detects non-extended lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(NonExtendedLifecycle as any);
-
-      expect(await runtime.validate()).toEqual(['Lifecycle implementation does not extend App.Lifecycle']);
-    });
-
-    it('detects partial lifecycle implementation', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(PartialLifecycle as any);
-
-      expect(await runtime.validate()).toEqual([
-        'Lifecycle implementation is missing the onInstall method',
-        'Lifecycle implementation is missing the onSetupForm method',
-        'Lifecycle implementation is missing the onUpgrade method',
-        'Lifecycle implementation is missing the onFinalizeUpgrade method',
-        'Lifecycle implementation is missing the onUninstall method'
-      ]);
-    });
-
-    it('detects missing job entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getJobClass').mockRejectedValue(new Error('not found'));
-
-      expect(await runtime.validate()).toEqual(['Entry point not found for job: bar']);
-    });
-
-    it('detects non-extended job entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime, 'getJobClass').mockReturnValue(NonExtendedBar as any);
-
-      expect(await runtime.validate()).toEqual(['Job entry point does not extend App.Job: Bar']);
-    });
-
-    it('detects partial function entry point', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      jest.spyOn(runtime as any, 'getJobClass').mockReturnValue(PartialBar);
-
-      expect(await runtime.validate()).toEqual([
-        'Job entry point is missing the prepare method: Bar',
-        'Job entry point is missing the perform method: Bar'
-      ]);
-    });
-
-    it('succeeds with a proper definition', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-      const getFunctionClass = jest.spyOn(runtime, 'getFunctionClass').mockResolvedValue(ProperFoo);
-      const getLifecycleClass = jest.spyOn(runtime, 'getLifecycleClass').mockResolvedValue(ProperLifecycle);
-      const getJobClass = jest.spyOn(runtime, 'getJobClass').mockResolvedValue(ProperBar);
-
-      const errors = await runtime.validate();
-
-      expect(getFunctionClass).toHaveBeenCalledWith('foo');
-      expect(getLifecycleClass).toHaveBeenCalled();
-      expect(getJobClass).toHaveBeenCalledWith('bar');
-      expect(errors).toEqual([]);
+      readFileSyncFn.mockRestore();
+      yamlLoadFn.mockRestore();
     });
   });
 });

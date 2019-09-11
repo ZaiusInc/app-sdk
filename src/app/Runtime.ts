@@ -1,16 +1,16 @@
 import {Ajv} from 'ajv';
-import * as EmailValidator from 'email-validator';
 import {readFileSync} from 'fs';
+import * as jsYaml from 'js-yaml';
 import {join} from 'path';
-import * as urlRegex from 'url-regex';
-import {logger} from '../logging/Logger';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Request} from './lib';
-import {Lifecycle, LIFECYCLE_REQUIRED_METHODS} from './Lifecycle';
-import {AppManifest, APP_ID_FORMAT, VENDOR_FORMAT} from './types';
+import {Lifecycle} from './Lifecycle';
+import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
+import {SchemaObjects} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
+import glob = require('glob');
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -18,12 +18,21 @@ interface SerializedRuntime {
 }
 
 export class Runtime {
-  public static async initialize(dirName: string) {
+  /**
+   * Initializes from a directory. Used during startup.
+   * @param dirName the base directory of the app
+   * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
+   */
+  public static async initialize(dirName: string, skipJsonValidation: boolean = false) {
     const runtime = new Runtime();
-    await runtime.initialize(dirName);
+    await runtime.initialize(dirName, skipJsonValidation);
     return runtime;
   }
 
+  /**
+   * Initializes from a pre-validated JSON definition. Used during task execution.
+   * @param serializedRuntime JSON-serialized runtime definition
+   */
   public static fromJson(serializedRuntime: string) {
     const data = JSON.parse(serializedRuntime) as SerializedRuntime;
     const runtime = new Runtime();
@@ -63,6 +72,17 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
+  public getSchemaObjects(): SchemaObjects {
+    const schemaObjects: SchemaObjects = {};
+    const files = glob.sync('schema/*.yml', {cwd: this.dirName});
+    if (files.length > 0) {
+      for (const file of files) {
+        schemaObjects[file] = jsYaml.safeLoad(readFileSync(join(this.dirName, file), 'utf8'));
+      }
+    }
+    return schemaObjects;
+  }
+
   public toJson() {
     return JSON.stringify({
       appManifest: this.manifest,
@@ -70,146 +90,25 @@ export class Runtime {
     } as SerializedRuntime);
   }
 
-  /**
-   * Validates that all of the required pieces of the app are accounted for.
-   *
-   * @return array of error messages, if there were any, otherwise an empty array
-   */
-  public async validate(): Promise<string[]> {
-    const errors: string[] = [];
-
-    const {app_id, vendor, support_url, contact_email, summary, categories} = this.manifest.meta;
-
-    // App ID, vendor, support url, and contact email must be in the correct format
-    if (!app_id.match(APP_ID_FORMAT)) {
-      errors.push(
-        'App ID must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
-        `and be between 3 and 32 characters long: ${APP_ID_FORMAT}`
-      );
-    }
-    if (!vendor.match(VENDOR_FORMAT)) {
-      errors.push(`Vendor must be lower snake case: ${VENDOR_FORMAT}`);
-    }
-    if (!support_url.match(urlRegex({exact: true})) || !support_url.startsWith('http')) {
-      errors.push('Support url must be a valid web address');
-    }
-    if (!EmailValidator.validate(contact_email)) {
-      errors.push('Contact email must be a valid email address');
-    }
-
-    // Summary must not be blank
-    if (!(summary && summary.trim())) {
-      errors.push('Summary must not be blank');
-    }
-
-    // Make sure there are exactly 1 to 2 categories listed
-    if (categories.length > 2 || categories.length < 1) {
-      errors.push('Apps must specify 1 or 2 categories under meta.categories in the app.yml');
-    }
-    if (categories.length === 2 && categories[0] === categories[1]) {
-      errors.push('Two identical categories found under meta.categories in the app.yml');
-    }
-
-    // Make sure all the functions listed in the manifest actually exist and are implemented
-    if (this.manifest.functions) {
-      for (const name of Object.keys(this.manifest.functions)) {
-        let fnClass = null;
-        try {
-          fnClass = await this.getFunctionClass(name);
-        } catch (e) {
-          // Failed to load
-        }
-        if (!fnClass) {
-          errors.push(`Entry point not found for function: ${name}`);
-        } else if (!(fnClass.prototype instanceof Function)) {
-          errors.push(
-            `Function entry point does not extend App.Function: ${this.manifest.functions![name].entry_point}`
-          );
-        } else if (typeof (fnClass.prototype.perform) !== 'function') {
-          errors.push(
-            `Function entry point is missing the perform method: ${this.manifest.functions![name].entry_point}`
-          );
-        }
-      }
-    }
-
-    // Make sure the lifecycle exists and is implemented
-    let lcClass = null;
-    try {
-      lcClass = await this.getLifecycleClass();
-    } catch (e) {
-      logger.error(e);
-    }
-    if (!lcClass) {
-      errors.push('Lifecycle implementation not found');
-    } else if (!(lcClass.prototype instanceof Lifecycle)) {
-      errors.push('Lifecycle implementation does not extend App.Lifecycle');
-    } else {
-      for (const method of LIFECYCLE_REQUIRED_METHODS) {
-        if (typeof (lcClass.prototype as any)[method] !== 'function') {
-          errors.push(`Lifecycle implementation is missing the ${method} method`);
-        }
-      }
-    }
-
-    // Make sure all the jobs listed in the manifest actually exist and are implemented
-    if (this.manifest.jobs) {
-      for (const name of Object.keys(this.manifest.jobs)) {
-        let jobClass = null;
-        try {
-          jobClass = await this.getJobClass(name);
-        } catch (e) {
-          logger.error(e);
-        }
-        if (!jobClass) {
-          errors.push(`Entry point not found for job: ${name}`);
-        } else if (!(jobClass.prototype instanceof Job)) {
-          errors.push(
-            `Job entry point does not extend App.Job: ${this.manifest.jobs![name].entry_point}`
-          );
-        } else {
-          if (typeof (jobClass.prototype.prepare) !== 'function') {
-            errors.push(
-              `Job entry point is missing the prepare method: ${this.manifest.jobs![name].entry_point}`
-            );
-          }
-          if (typeof (jobClass.prototype.perform) !== 'function') {
-            errors.push(
-              `Job entry point is missing the perform method: ${this.manifest.jobs![name].entry_point}`
-            );
-          }
-        }
-      }
-    }
-
-    return errors;
-  }
-
   // necessary for test purposes
   private async import(path: string) {
     return await import(path);
   }
 
-  private async initialize(dirName: string) {
+  private async initialize(dirName: string, skipJsonValidation: boolean) {
     this.dirName = dirName;
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
-    const ajv: Ajv = new (require('ajv') as any)();
     const manifest = (await import('js-yaml')).safeLoad(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
     ) as unknown;
 
-    if (!this.validateManifest(ajv, manifest)) {
-      throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
+    if (!skipJsonValidation) {
+      const ajv: Ajv = new (require('ajv') as any)();
+      if (!ajv.validate(manifestSchema, manifest)) {
+        throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
+      }
     }
 
     this.appManifest = deepFreeze(manifest) as AppManifest;
-  }
-
-  private validateManifest(ajv: Ajv, manifest: unknown): manifest is AppManifest {
-    const result = ajv.validate(manifestSchema, manifest) as boolean;
-    if (!result) {
-      logger.error('Schema Validation Errors: ', ajv.errors);
-    }
-    return result;
   }
 }
