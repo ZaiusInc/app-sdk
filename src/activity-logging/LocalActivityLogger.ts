@@ -1,4 +1,4 @@
-import {ActivityApi} from './ActivityApi';
+import {ActivityLogger} from './ActivityLogger';
 
 // tslint:disable-next-line:only-arrow-functions
 const noop = function() { /**/ };
@@ -6,7 +6,7 @@ const noop = function() { /**/ };
 /**
  * A simple noop stub of the activity api
  */
-export class LocalActivityApi implements ActivityApi {
+export class LocalActivityLogger implements ActivityLogger {
   public info(_activity: string, _details: string) {
     noop();
   }

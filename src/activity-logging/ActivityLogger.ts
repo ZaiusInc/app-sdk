@@ -1,4 +1,4 @@
-export interface ActivityApi {
+export interface ActivityLogger {
   /**
    * Write an information message to the activity log.
    * @param activity The activity
