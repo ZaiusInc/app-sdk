@@ -3,3 +3,4 @@ export * from './functions';
 export * from './jobs';
 export * from './logging';
 export * from './store';
+export * from './activity-logging';
