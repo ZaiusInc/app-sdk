@@ -279,7 +279,7 @@ export class Logger implements ILogger {
       stacktrace,
       audience: visibility === LogVisibility.Auto ? LogVisibility.Developer : visibility,
       context
-    } as LogMessage));
+    } as LogMessage) + '\n');
   }
 }
 
