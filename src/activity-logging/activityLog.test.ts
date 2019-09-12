@@ -1,5 +1,5 @@
 import 'jest';
-import {ActivityLogger, initialize, activityLog} from '../activity-logging';
+import {ActivityLogger, setActivityLogger, activityLog} from '../activity-logging';
 
 describe('activityLog', () => {
   describe('initialize', () => {
@@ -11,18 +11,18 @@ describe('activityLog', () => {
         error: jest.fn()
       };
 
-      initialize(mockLogger);
+      setActivityLogger(mockLogger);
 
-      activityLog.info('activity', 'detail');
+      activityLog.info('title', 'activity', 'summary', 'detail');
       expect(mockLogger.info).toHaveBeenCalled();
 
-      activityLog.success('activity', 'detail');
+      activityLog.success('title', 'activity', 'summary', 'detail');
       expect(mockLogger.success).toHaveBeenCalled();
 
-      activityLog.warn('activity', 'detail');
+      activityLog.warn('title', 'activity', 'summary', 'detail');
       expect(mockLogger.warn).toHaveBeenCalled();
 
-      activityLog.error('activity', 'detail');
+      activityLog.error('title', 'activity', 'summary', 'detail');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

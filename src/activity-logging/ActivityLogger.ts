@@ -4,26 +4,32 @@ export interface ActivityLogger {
    * @param activity The activity
    * @param details The activity details
    */
-  info(activity: string, details: string): void;
+  info(title: string, activity: string, summary: string, details: string): void;
 
   /**
    * Write a sucess message to the activity log.
+   * @param title The title
    * @param activity The activity
+   * @param summary The activity summary
    * @param details The activity details
    */
-  success(activity: string, details: string): void;
+  success(title: string, activity: string, summary: string, details: string): void;
 
   /**
    * Write a warning message to the activity log.
+   * @param title The title
    * @param activity The activity
+   * @param summary The activity summary
    * @param details The activity details
    */
-  warn(activity: string, details: string): void;
+  warn(title: string, activity: string, summary: string, details: string): void;
 
   /**
    * Write an error message to the activity log.
+   * @param title The title
    * @param activity The activity
+   * @param summary The activity summary
    * @param details The activity details
    */
-  error(activity: string, details: string): void;
+  error(title: string, activity: string, summary: string, details: string): void;
 }

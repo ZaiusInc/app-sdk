@@ -6,7 +6,7 @@ let activityLogger: ActivityLogger = new LocalActivityLogger();
 /**
  * @hidden
  */
-export const initialize = (logger: ActivityLogger) => {
+export const setActivityLogger = (logger: ActivityLogger) => {
   activityLogger = logger;
 };
 
@@ -14,19 +14,19 @@ export const initialize = (logger: ActivityLogger) => {
  * Namespace for accessing activity apis
  */
 export const activityLog: ActivityLogger = {
-  info(activity: string, details: string) {
-    activityLogger.info(activity, details);
+  info(title: string, activity: string, summary: string, details: string) {
+    activityLogger.info(title, activity, summary, details);
   },
 
-  success(activity: string, details: string) {
-    activityLogger.success(activity, details);
+  success(title: string, activity: string, summary: string, details: string) {
+    activityLogger.success(title, activity, summary, details);
   },
 
-  warn(activity: string, details: string) {
-    activityLogger.warn(activity, details);
+  warn(title: string, activity: string, summary: string, details: string) {
+    activityLogger.warn(title, activity, summary, details);
   },
 
-  error(activity: string, details: string) {
-    activityLogger.error(activity, details);
+  error(title: string, activity: string, summary: string, details: string) {
+    activityLogger.error(title, activity, summary, details);
   }
 };
