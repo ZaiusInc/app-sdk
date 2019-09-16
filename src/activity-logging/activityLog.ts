@@ -14,19 +14,19 @@ export const setActivityLogger = (logger: ActivityLogger) => {
  * Namespace for accessing activity apis
  */
 export const activityLog: ActivityLogger = {
-  info(activity: string, title: string, summary: string, details?: string) {
+  info(activity: string, title: string, summary: string, details: string) {
     activityLogger.info(activity, title, summary, details);
   },
 
-  success(activity: string, title: string, summary: string, details?: string) {
+  success(activity: string, title: string, summary: string, details: string) {
     activityLogger.success(activity, title, summary, details);
   },
 
-  warn(activity: string, title: string, summary: string, details?: string) {
+  warn(activity: string, title: string, summary: string, details: string) {
     activityLogger.warn(activity, title, summary, details);
   },
 
-  error(activity: string, title: string, summary: string, details?: string) {
+  error(activity: string, title: string, summary: string, details: string) {
     activityLogger.error(activity, title, summary, details);
   }
 };
