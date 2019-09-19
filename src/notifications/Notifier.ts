@@ -1,6 +1,6 @@
-export interface ActivityLogger {
+export interface Notifier {
   /**
-   * Write an information message to the activity log.
+   * Create an informational notification.
    * @param activity The activity
    * @param title The title
    * @param summary The activity summary
@@ -9,7 +9,7 @@ export interface ActivityLogger {
   info(activity: string, title: string, summary: string, details?: string): void;
 
   /**
-   * Write a sucess message to the activity log.
+   * Create a success notification.
    * @param activity The activity
    * @param title The title
    * @param summary The activity summary
@@ -18,7 +18,7 @@ export interface ActivityLogger {
   success(activity: string, title: string, summary: string, details?: string): void;
 
   /**
-   * Write a warning message to the activity log.
+   * Create a warning notification.
    * @param activity The activity
    * @param title The title
    * @param summary The activity summary
@@ -27,7 +27,7 @@ export interface ActivityLogger {
   warn(activity: string, title: string, summary: string, details?: string): void;
 
   /**
-   * Write an error message to the activity log.
+   * Create an error notification.
    * @param activity The activity
    * @param title The title
    * @param summary The activity summary
