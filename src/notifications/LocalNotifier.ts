@@ -7,19 +7,19 @@ const noop = function() { /**/ };
  * A simple noop stub of the notifier api
  */
 export class LocalNotifier implements Notifier {
-  public info(_title: string, _activity: string, _summary: string, _details: string) {
+  public info(_activity: string, _title: string, _summary: string, _details?: string) {
     noop();
   }
 
-  public success(_title: string, _activity: string, _summary: string, _details: string) {
+  public success(_activity: string, _title: string, _summary: string, _details?: string) {
     noop();
   }
 
-  public warn(_title: string, _activity: string, _summary: string, _details: string) {
+  public warn(_activity: string, _title: string, _summary: string, _details?: string) {
     noop();
   }
 
-  public error(_title: string, _activity: string, _summary: string, _details: string) {
+  public error(_activity: string, _title: string, _summary: string, _details?: string) {
     noop();
   }
 }
