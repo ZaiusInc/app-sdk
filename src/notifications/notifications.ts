@@ -11,7 +11,7 @@ export const setNotifier = (logger: Notifier) => {
 };
 
 /**
- * Namespace for accessing activity apis
+ * Namespace for accessing notifications
  */
 export const notifications: LocalNotifier = {
   info(activity: string, title: string, summary: string, details?: string) {

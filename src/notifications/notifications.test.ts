@@ -3,7 +3,7 @@ import {Notifier, setNotifier, notifications} from '../notifications';
 
 describe('activityLog', () => {
   describe('initialize', () => {
-    it('replaces the local logger with the provided logger', () => {
+    it('replaces the local notifier with the provided notifier', () => {
       const mockNotifier: Notifier = {
         info: jest.fn(),
         success: jest.fn(),
