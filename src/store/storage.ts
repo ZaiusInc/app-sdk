@@ -1,9 +1,11 @@
 import {BaseKVStore} from './BaseKVStore';
+import {KVStore} from './KVStore';
+import {LocalKVStore} from './LocalKVStore';
 import {LocalStore} from './LocalStore';
 
 let settingsStore: BaseKVStore = new LocalStore();
 let secretsStore: BaseKVStore = new LocalStore();
-let kvStore: BaseKVStore = new LocalStore();
+let kvStore: KVStore = new LocalKVStore();
 
 /**
  * @hidden
@@ -11,7 +13,7 @@ let kvStore: BaseKVStore = new LocalStore();
 export interface InitialStores {
   settings: BaseKVStore;
   secrets: BaseKVStore;
-  kvStore: BaseKVStore;
+  kvStore: KVStore;
 }
 
 /**
