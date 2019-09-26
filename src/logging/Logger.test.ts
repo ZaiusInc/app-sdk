@@ -1,5 +1,4 @@
 import 'jest';
-import {CustomerVisibleError} from './CustomerVisibleError';
 import {Logger, logger, LogLevel, LogVisibility, setLogContext} from './Logger';
 
 describe('Logger', () => {
@@ -17,10 +16,10 @@ describe('Logger', () => {
   });
 
   describe('constructor', () => {
-    it('defaults to auto visibility', () => {
+    it('defaults to developer visibility', () => {
       const logFn = jest.spyOn(logger as any, 'log');
       logger.debug('debug');
-      expect(logFn).toHaveBeenCalledWith(LogLevel.Debug, LogVisibility.Auto, 'debug');
+      expect(logFn).toHaveBeenCalledWith(LogLevel.Debug, LogVisibility.Developer, 'debug');
       logFn.mockRestore();
     });
 
@@ -72,8 +71,8 @@ describe('Logger', () => {
     });
 
     it('respects visibility', () => {
-      logger.debug(LogVisibility.Customer, 'check check');
-      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'customer'}));
+      logger.debug(LogVisibility.Zaius, 'check check');
+      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
   });
 
@@ -98,8 +97,8 @@ describe('Logger', () => {
     });
 
     it('respects visibility', () => {
-      logger.info(LogVisibility.Customer, 'check check');
-      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'customer'}));
+      logger.info(LogVisibility.Zaius, 'check check');
+      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
 });
 
@@ -125,8 +124,8 @@ describe('Logger', () => {
     });
 
     it('respects visibility', () => {
-      logger.warn(LogVisibility.Customer, 'check check');
-      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'customer'}));
+      logger.warn(LogVisibility.Zaius, 'check check');
+      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
   });
 
@@ -155,8 +154,8 @@ describe('Logger', () => {
     });
 
     it('respects visibility', () => {
-      logger.error(LogVisibility.Customer, 'check check');
-      expect(process.stderr.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'customer'}));
+      logger.error(LogVisibility.Zaius, 'check check');
+      expect(process.stderr.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
   });
 
@@ -189,17 +188,6 @@ describe('Logger', () => {
       logger.error('!!!', new Error('something went wrong'), 5, 'times');
       expect(process.stderr.write).toHaveBeenCalledWith(
         expect.jsonContaining({message: '!!! Error: something went wrong 5 times'})
-      );
-    });
-
-    it('hides stacktraces from customer visible logs', () => {
-      logger.error(new Error('something went wrong'), new CustomerVisibleError('with the app'));
-      expect(process.stderr.write).toHaveBeenCalledWith(
-        expect.jsonContaining({message: 'Error: something went wrong with the app'})
-      );
-      logger.error(new CustomerVisibleError('Problem!'), new Error('something went wrong'));
-      expect(process.stderr.write).toHaveBeenCalledWith(
-        expect.jsonContaining({message: 'Problem! Error: something went wrong'})
       );
     });
 
