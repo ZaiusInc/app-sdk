@@ -1,5 +1,5 @@
 import 'jest';
-import {BaseKVStore, initializeStores, storage} from '../store';
+import {BaseKVStore, initializeStores, LocalKVStore, storage} from '../store';
 import {LocalStore} from './LocalStore';
 
 // @ts-ignore
@@ -10,7 +10,7 @@ describe('storage', () => {
   it('provides local stores if not configured', () => {
     expect(storage.secrets).toBeInstanceOf(LocalStore);
     expect(storage.settings).toBeInstanceOf(LocalStore);
-    expect(storage.kvStore).toBeInstanceOf(LocalStore);
+    expect(storage.kvStore).toBeInstanceOf(LocalKVStore);
   });
 
   describe('initializeStores', () => {
