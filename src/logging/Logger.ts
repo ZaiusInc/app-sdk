@@ -1,5 +1,4 @@
 import * as util from 'util';
-import {CustomerVisibleError} from './CustomerVisibleError';
 
 /**
  * Supported log levels, in order of least important to most.
@@ -20,21 +19,13 @@ export enum LogLevel {
  */
 export enum LogVisibility {
   /**
-   * Auto: sets to Customer if you log an error that extends CustomerVisibleError, otherwise Developer
-   */
-  Auto = 'auto',
-  /**
    * Zaius: for SDK internal use only
    */
   Zaius = 'zaius',
   /**
-   * Developer: Make the log visible to app developers, but not customers using the apps
+   * Developer: Make the log visible to app developers
    */
-  Developer = 'developer',
-  /**
-   * Customer: Make the log visible to the customer who installed the app
-   */
-  Customer = 'customer'
+  Developer = 'developer'
 }
 
 /**
@@ -46,7 +37,7 @@ interface LogMessage {
   level: string;
   message: string;
   stacktrace: string;
-  audience: LogVisibility.Zaius | LogVisibility.Developer | LogVisibility.Customer;
+  audience: LogVisibility.Zaius | LogVisibility.Developer;
   context: LogContext;
 }
 
@@ -65,10 +56,8 @@ export interface LogContext {
 }
 
 const visibilityValues = new Set([
-  LogVisibility.Auto,
   LogVisibility.Zaius,
-  LogVisibility.Developer,
-  LogVisibility.Customer,
+  LogVisibility.Developer
 ]);
 
 const LOG_LEVELS = {
@@ -113,17 +102,16 @@ export interface ILogger {
   /**
    * Write something to the logs at the Debug level
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   debug(...args: any[]): void;
 
   /**
    * Write something to the logs at the Debug level
-   * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
+   * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   debug(visibility: LogVisibility, ...args: any[]): void;
@@ -138,10 +126,9 @@ export interface ILogger {
 
   /**
    * Write something to the logs at the Info level
-   * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
+   * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   info(visibility: LogVisibility, ...args: any[]): void;
@@ -149,17 +136,16 @@ export interface ILogger {
   /**
    * Write something to the logs at the Warning level
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   warn(...args: any[]): void;
 
   /**
    * Write something to the logs at the Warning level
-   * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
+   * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   warn(visibility: LogVisibility, ...args: any[]): void;
@@ -167,17 +153,16 @@ export interface ILogger {
   /**
    * Write something to the logs at the Error level
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   error(...args: any[]): void;
 
   /**
    * Write something to the logs at the Error level
-   * @param visibility Specify LogVisibility.Customer if the log message should be surfaced to the customer.
-   *   Note: you do not need to specify visibility if you log an error that extends CustomerVisibleError
+   * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   *   Objects are formatted using `util.inspect`, other values are converted to a string.
    *   Multiple values are concatenated with a space between
    */
   error(visibility: LogVisibility, ...args: any[]): void;
@@ -188,7 +173,7 @@ export interface ILogger {
  * Internal Logger implementation. Use the instance provided by the App SDK exports instead.
  */
 export class Logger implements ILogger {
-  constructor(level: LogLevel, private defaultVisibility = LogVisibility.Auto) {
+  constructor(level: LogLevel, private defaultVisibility = LogVisibility.Developer) {
     if (level > LogLevel.Debug) {
       this.debug = noop;
     }
@@ -238,32 +223,13 @@ export class Logger implements ILogger {
   private log(level: LogLevel, visibility: LogVisibility, ...args: any[]) {
     const time = new Date().toISOString();
 
-    // detect visibility if needed before producing log entry
-    if (visibility === LogVisibility.Auto) {
-      for (const arg of args) {
-        if (arg instanceof CustomerVisibleError) {
-          visibility = LogVisibility.Customer;
-          break;
-        }
-      }
-    }
-
     let stacktrace: string | undefined;
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (typeof arg === 'object') {
         if (arg instanceof Error) {
-          if (arg instanceof CustomerVisibleError) {
-            if (!stacktrace) {
-              stacktrace = arg.stack;
-            }
-            args[i] = arg.message;
-            continue;
-          } else if (!stacktrace) {
+          if (!stacktrace) {
             stacktrace = arg.stack;
-            args[i] = `${arg.name}: ${arg.message}`;
-            continue;
-          } else if (visibility === LogVisibility.Customer) {
             args[i] = `${arg.name}: ${arg.message}`;
             continue;
           }
@@ -277,7 +243,7 @@ export class Logger implements ILogger {
       level: LOG_LEVELS[level],
       message: args.join(' '),
       stacktrace,
-      audience: visibility === LogVisibility.Auto ? LogVisibility.Developer : visibility,
+      audience: visibility,
       context
     } as LogMessage) + '\n');
   }
