@@ -97,7 +97,9 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   exists(key: string): Promise<boolean>;
 
   /**
-   * Atomically increment the value of a numeric field.
+   * Atomically increment the value of a numeric field. If the object or field did not previously exist, the resulting
+   * field will be set to the given amount. If the field does already exist but is not a number, this will result in
+   * an error.
    * @async
    * @param key of the stored object
    * @param field to increment
@@ -107,7 +109,9 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   increment(key: string, field: string, amount?: number): Promise<number>;
 
   /**
-   * Atomically increment the values of multiple numeric fields.
+   * Atomically increment the values of multiple numeric fields. If the object or fields did not previously exist, the
+   * resulting fields will be set to their respective given amount. If any of the fields does already exist but is not a
+   * number, this will result in an error.
    * @async
    * @param key of the stored object
    * @param fieldAmounts hash of fields to amounts by which to increment (can be negative)

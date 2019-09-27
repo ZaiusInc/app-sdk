@@ -23,7 +23,6 @@ module.exports = {
     '!src/functions/LocalFunctionApi.ts',
     '!src/jobs/JobApi.ts',
     '!src/jobs/LocalJobApi.ts',
-    '!src/notifications/Notifier.ts',
     '!src/notifications/LocalNotifier.ts',
     '!src/store/LocalStore.ts',
     '!src/store/LocalKVStore.ts',
