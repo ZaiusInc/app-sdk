@@ -55,7 +55,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
   patch(key: string, value: T): Promise<T>;
 
   /**
-   * Update a stored object using a callback to make changes
+   * Update a stored object using a callback to make changes.
    * @async
    * @param key of the stored object
    * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
@@ -73,4 +73,12 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @returns true if successful. Otherwise throws an error.
    */
   delete(key: string, fields?: string[]): Promise<R>;
+
+  /**
+   * Check if an object exists at a given key.
+   * @async
+   * @param key of the stored object
+   * @returns true if the object exists
+   */
+  exists(key: string): Promise<boolean>;
 }

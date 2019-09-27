@@ -68,7 +68,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   patch(key: string, value: KVHash): Promise<KVHash>;
 
   /**
-   * Update a stored object using a callback to make changes
+   * Update a stored object using a callback to make changes.
    * @async
    * @param key of the stored object
    * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
@@ -87,4 +87,31 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @returns the deleted value if successful, or an empty object if it did not exist.
    */
   delete(key: string, fields?: string[]): Promise<KVHash>;
+
+  /**
+   * Check if an object exists at a given key.
+   * @async
+   * @param key of the stored object
+   * @returns true if the object exists
+   */
+  exists(key: string): Promise<boolean>;
+
+  /**
+   * Atomically increment the value of a numeric field.
+   * @async
+   * @param key of the stored object
+   * @param field to increment
+   * @param amount by which to increment (can be negative, defaults to 1)
+   * @returns the value of the field after incrementing
+   */
+  increment(key: string, field: string, amount?: number): Promise<number>;
+
+  /**
+   * Atomically increment the values of multiple numeric fields.
+   * @async
+   * @param key of the stored object
+   * @param fieldAmounts hash of fields to amounts by which to increment (can be negative)
+   * @returns hash of fields to values after incrementing
+   */
+  incrementMulti(key: string, fieldAmounts: {[field: string]: number}): Promise<{[field: string]: number}>;
 }

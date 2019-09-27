@@ -21,4 +21,16 @@ export class LocalKVStore implements KVStore {
   public delete(_key: string, _fields?: string[]): Promise<KVHash> {
     throw new Error('Method not implemented.');
   }
+
+  public exists(_key: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public increment(_key: string, _field: string, _amount?: number): Promise<number> {
+    throw new Error('Method not implemented.');
+  }
+
+  public incrementMulti(_key: string, _fieldAmounts: {[field: string]: number}): Promise<{[field: string]: number}> {
+    throw new Error('Method not implemented.');
+  }
 }

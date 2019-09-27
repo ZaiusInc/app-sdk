@@ -21,4 +21,8 @@ export class LocalStore implements BaseKVStore {
   public delete(_key: string, _fields?: string[]): Promise<true> {
     throw new Error('Method not implemented.');
   }
+
+  public exists(_key: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
 }
