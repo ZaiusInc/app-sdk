@@ -5,8 +5,8 @@ import {BaseKVStore, PatchUpdater, ValueHash} from './BaseKVStore';
  *
  * @TODO implement the stub for local development purposes
  */
-export class LocalStore implements BaseKVStore {
-  public get(_key: string, _fields?: string[]): Promise<ValueHash> {
+export class LocalStore implements BaseKVStore<ValueHash, true> {
+  public get<T extends ValueHash>(_key: string, _fields?: string[]): Promise<T> {
     throw new Error('Method not implemented.');
   }
 
@@ -14,7 +14,7 @@ export class LocalStore implements BaseKVStore {
     throw new Error('Method not implemented.');
   }
 
-  public patch(_key: string, _value?: ValueHash | PatchUpdater): Promise<ValueHash> {
+  public patch<T extends ValueHash>(_key: string, _value?: ValueHash | PatchUpdater): Promise<T> {
     throw new Error('Method not implemented.');
   }
 

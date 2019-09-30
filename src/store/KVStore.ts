@@ -21,9 +21,9 @@ export interface KVHash {
  * The return value will be used to update the record. Update the options object directly to make a change to the TTL.
  * WARNING: A patch updater may be called multiple times until the update is successful.
  */
-type KVPatchUpdaterWithOptions = (previous: KVHash, options: KVRowOptions) => KVHash;
+type KVPatchUpdaterWithOptions<T extends KVHash> = (previous: T, options: KVRowOptions) => T;
 
-export type KVPatchUpdater = PatchUpdater<KVHash> | KVPatchUpdaterWithOptions;
+export type KVPatchUpdater<T extends KVHash> = PatchUpdater<T> | KVPatchUpdaterWithOptions<T>;
 
 /**
  * Options for writing a row to key-value storage.
@@ -45,7 +45,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @returns hash of the complete object or only the specified fields, if supplied.
    * An empty object is returned if the object, or all specified fields, does not exist.
    */
-  get(key: string, fields?: string[]): Promise<KVHash>;
+  get<T extends KVHash>(key: string, fields?: string[]): Promise<T>;
 
   /**
    * Write an object to the store at a given key. Overwrites the entire object.
@@ -55,7 +55,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @param options optionally set a TTL for this row
    * @returns the previous value found at the key if successful. Otherwise throws an error.
    */
-  put(key: string, value: KVHash, options?: KVRowOptions): Promise<KVHash>;
+  put<T extends KVHash>(key: string, value: T, options?: KVRowOptions): Promise<T>;
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
@@ -65,7 +65,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  patch(key: string, value: KVHash): Promise<KVHash>;
+  patch<T extends KVHash>(key: string, value: T): Promise<T>;
 
   /**
    * Update a stored object using a callback to make changes.
@@ -76,7 +76,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * An empty object is returned if the object previously did not exist.
    */
   // tslint:disable-next-line:unified-signatures
-  patch(key: string, updater: KVPatchUpdater): Promise<KVHash>;
+  patch<T extends KVHash>(key: string, updater: KVPatchUpdater<T>): Promise<T>;
 
   /**
    * Delete an object or a single field from the store at a given key.
@@ -86,7 +86,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @param fields to delete or undefined to delete all fields
    * @returns the deleted value if successful, or an empty object if it did not exist.
    */
-  delete(key: string, fields?: string[]): Promise<KVHash>;
+  delete<T extends KVHash>(key: string, fields?: string[]): Promise<T>;
 
   /**
    * Check if an object exists at a given key.

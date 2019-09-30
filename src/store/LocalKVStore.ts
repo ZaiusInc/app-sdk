@@ -6,19 +6,21 @@ import {KVHash, KVPatchUpdater, KVRowOptions, KVStore} from './KVStore';
  * @TODO implement the stub for local development purposes
  */
 export class LocalKVStore implements KVStore {
-  public get(_key: string, _fields?: string[]): Promise<KVHash> {
+  public get<T extends KVHash = KVHash>(_key: string, _fields?: string[]): Promise<T> {
     throw new Error('Method not implemented.');
   }
 
-  public put(_key: string, _value?: KVHash, _options?: KVRowOptions): Promise<KVHash> {
+  public put<T extends KVHash = KVHash>(_key: string, _value?: KVHash, _options?: KVRowOptions): Promise<T> {
     throw new Error('Method not implemented.');
   }
 
-  public patch(_key: string, _value?: KVHash | KVPatchUpdater, _options?: KVRowOptions): Promise<KVHash> {
+  public patch<T extends KVHash = KVHash>(
+    _key: string, _value?: T | KVPatchUpdater<T>, _options?: KVRowOptions
+  ): Promise<T> {
     throw new Error('Method not implemented.');
   }
 
-  public delete(_key: string, _fields?: string[]): Promise<KVHash> {
+  public delete<T extends KVHash = KVHash>(_key: string, _fields?: string[]): Promise<T> {
     throw new Error('Method not implemented.');
   }
 

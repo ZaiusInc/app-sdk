@@ -33,7 +33,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @returns hash of the complete object or only the specified fields, if supplied.
    * An empty object is returned if the object, or all specified fields, does not exist.
    */
-  get(key: string, fields?: string[]): Promise<T>;
+  get<V extends T>(key: string, fields?: string[]): Promise<V>;
 
   /**
    * Write an object to the store at a given key. Overwrites the entire object.
@@ -42,7 +42,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @param value complete hash to write
    * @returns true if successful. Otherwise throws an error.
    */
-  put(key: string, value: T): Promise<R>;
+  put<V extends T>(key: string, value: V): Promise<R extends T ? V : R>;
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
@@ -52,7 +52,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  patch(key: string, value: T): Promise<T>;
+  patch<V extends T>(key: string, value: V): Promise<V>;
 
   /**
    * Update a stored object using a callback to make changes.
@@ -62,7 +62,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  patch(key: string, updater: PatchUpdater<T>): Promise<T>;
+  patch<V extends T>(key: string, updater: PatchUpdater<V>): Promise<V>;
 
   /**
    * Delete an object or a single field from the store at a given key.
@@ -72,7 +72,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @param fields to delete or undefined to delete all fields
    * @returns true if successful. Otherwise throws an error.
    */
-  delete(key: string, fields?: string[]): Promise<R>;
+  delete<V extends T>(key: string, fields?: string[]): Promise<R extends T ? V : R>;
 
   /**
    * Check if an object exists at a given key.
