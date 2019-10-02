@@ -1,4 +1,5 @@
-import {KVHash, KVPatchUpdater, KVRowOptions, KVStore} from './KVStore';
+import {Value} from './BaseKVStore';
+import {KVHash, KVPatchUpdater, KVRowOptions, KVStore, MultiValue} from './KVStore';
 
 /**
  * A stub of the key value store
@@ -33,6 +34,38 @@ export class LocalKVStore implements KVStore {
   }
 
   public incrementMulti(_key: string, _fieldAmounts: {[field: string]: number}): Promise<{[field: string]: number}> {
+    throw new Error('Method not implemented.');
+  }
+
+  public shift<T extends Value>(_key: string, _field: string): Promise<T | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  public shiftMulti<T extends Value>(_key: string, _fieldCounts: MultiValue<number>): Promise<MultiValue<T[]>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public unshift<T extends Value>(_key: string, _field: string, _value: T): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  public unshiftMulti<T extends Value>(_key: string, _fieldValues: MultiValue<T[]>): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  public peek<T extends Value>(_key: string, _field: string): Promise<T | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  public peekMulti<T extends Value>(_key: string, _fieldCounts: MultiValue<number>): Promise<MultiValue<T[]>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public append<T extends Value>(_key: string, _field: string, _value: T): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  public appendMulti<T extends Value>(_key: string, _fieldValues: MultiValue<T[]>): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }
