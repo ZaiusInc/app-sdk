@@ -53,6 +53,7 @@ class AssetValidator {
       });
     } catch (e) {
       logger.error(e);
+      this.errors.push('Failed to validate markdown files');
     }
   }
 

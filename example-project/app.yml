@@ -6,6 +6,7 @@ meta:
   support_url: 'https://zaius.com'
   contact_email: 'support@zaius.com',
   categories: ['eCommerce']
+  summary: 'Example App summary'
 
 runtime: node12
 
