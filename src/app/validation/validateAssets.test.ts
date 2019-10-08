@@ -117,9 +117,9 @@ describe('validateAssets', () => {
     missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `# Alpha
       This [one does not](#does-not-exist).
     `;
-    // mockFs(missingHeaderLinks);
+    mockFs(missingHeaderLinks);
 
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'example-project'}));
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
     const errors = await validateAssets(runtime);
     expect(errors.length).toEqual(1);
     expect(errors[0]).toEqual('Link to unknown heading: `does-not-exist` @ assets/directory/overview.md:4:6-4:31.');
