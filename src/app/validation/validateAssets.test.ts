@@ -45,6 +45,13 @@ function appDir(): any {
   };
 }
 
+async function expectError(error: string) {
+  const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
+  const errors = await validateAssets(runtime);
+  expect(errors.length).toEqual(1);
+  expect(errors[0]).toEqual(error);
+}
+
 describe('validateAssets', () => {
   afterEach(() => {
     mockFs.restore();
@@ -60,82 +67,48 @@ describe('validateAssets', () => {
     const missingAssets = appDir();
     delete missingAssets['path/to/app/dir']['assets']['directory']['overview.md'];
     mockFs(missingAssets);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Required file assets/directory/overview.md is missing.');
+    await expectError('Required file assets/directory/overview.md is missing.');
   });
 
   it('fails when assets/docs/index.md does not exist', async () => {
     const missingAssets = appDir();
     delete missingAssets['path/to/app/dir']['assets']['docs']['index.md'];
     mockFs(missingAssets);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Required file assets/docs/index.md is missing.');
+    await expectError('Required file assets/docs/index.md is missing.');
   });
 
   it('fails when forms/settings.yml does not exist', async () => {
     const missingAssets = appDir();
     delete missingAssets['path/to/app/dir']['forms']['settings.yml'];
     mockFs(missingAssets);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Required file forms/settings.yml is missing.');
+    await expectError('Required file forms/settings.yml is missing.');
   });
 
   it('fails when assets/icon.png or assets/icon.svg does not exist', async () => {
     const missingAssets = appDir();
     delete missingAssets['path/to/app/dir']['assets']['icon.png'];
     mockFs(missingAssets);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Required file assets/icon.png or assets/icon.svg is missing.');
+    await expectError('Required file assets/icon.png or assets/icon.svg is missing.');
   });
 
   it('fails when assets/logo.png or assets/logo.svg does not exist', async () => {
     const missingAssets = appDir();
     delete missingAssets['path/to/app/dir']['assets']['logo.png'];
     mockFs(missingAssets);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Required file assets/logo.png or assets/logo.svg is missing.');
+    await expectError('Required file assets/logo.png or assets/logo.svg is missing.');
   });
 
-  // TODO: mock-fs + remark are not playing nice and promises not resolving before process exists
-  it.skip('fails when markdown files contain links to unknown headers', async () => {
+  it('fails when markdown files contain links to unknown headers', async () => {
     const missingHeaderLinks = appDir();
-    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `# Alpha
-      This [one does not](#does-not-exist).
-    `;
+    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[dne](#dne).`;
     mockFs(missingHeaderLinks);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Link to unknown heading: `does-not-exist` @ assets/directory/overview.md:4:6-4:31.');
+    await expectError('Link to unknown heading: `dne` in assets/directory/overview.md:1:1-1:12.');
   });
 
-  // TODO: mock-fs + remark are not playing nice and promises not resolving before process exists
-  it.skip('fails when markdown files contain links to unknown files', async () => {
+  it('fails when markdown files contain links to unknown files', async () => {
     const missingFileLinks = appDir();
-    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `# Alpha
-      [missing files are reported](missing-example.js)
-    `;
+    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[missing](missing.js)`;
     mockFs(missingFileLinks);
-
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
-    const errors = await validateAssets(runtime);
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Link to unknown file: `missing-example.js` in assets/directory/overview.md:10:5-10:53.');
+    await expectError('Link to unknown file: `missing.js` in assets/directory/overview.md:1:1-1:22.');
   });
 });

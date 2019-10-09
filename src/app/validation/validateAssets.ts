@@ -42,7 +42,7 @@ class AssetValidator {
     try {
       const vfiles: VFile[] = await Promise.all(
         glob.sync(`${this.baseDir}/assets/**/*.md`).map((file) => {
-          return remark().use(links).process(vfile.readSync(file));
+          return remark().use(links, {repository: false}).process(vfile.readSync(file));
         })
       );
 
