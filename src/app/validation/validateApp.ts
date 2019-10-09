@@ -8,6 +8,7 @@ import {validateJobs} from './validateJobs';
 import {validateLifecycle} from './validateLifecycle';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
+import {validateAssets} from './validateAssets';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -24,7 +25,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
     errors = errors.concat(validateMeta(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
-      .concat(await validateLifecycle(runtime));
+      .concat(await validateLifecycle(runtime))
+      .concat(await validateAssets(runtime));
   }
 
   const schemaObjects = runtime.getSchemaObjects();

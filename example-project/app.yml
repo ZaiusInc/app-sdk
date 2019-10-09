@@ -1,22 +1,14 @@
 meta:
-  app_id:
-  display_name:
-  version:
-  vendor: Shopify
-  support_url:
-  summary:
-  contact_email:
+  app_id: example_app
+  display_name: 'Example App'
+  version: '1.0.0'
+  vendor: zaius
+  support_url: 'https://zaius.com'
+  contact_email: 'support@zaius.com',
+  categories: ['eCommerce']
+  summary: 'Example App summary'
 
 runtime: node12
-
-#Rely on convention for lifecycle (lifecycle/Lifecycle.ts)
-defaults:
-    permissions:
-      -READ_WRITE_KV
-      -READ_DOCUMENTS
-      -<READ|WRITE>_<SVC>
-    environment:
-      ENV_VAR1: @my_secret@ #inherit defaults
 
 functions:
   foo:

@@ -47,6 +47,10 @@ export class Runtime {
     return this.appManifest;
   }
 
+  public get baseDir(): string {
+    return this.dirName;
+  }
+
   // tslint:disable-next-line:ban-types
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;

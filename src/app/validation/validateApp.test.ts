@@ -11,12 +11,14 @@ import {validateJobs} from './validateJobs';
 import {validateLifecycle} from './validateLifecycle';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
+import {validateAssets} from './validateAssets';
 
 jest.mock('./validateMeta');
 jest.mock('./validateFunctions');
 jest.mock('./validateJobs');
 jest.mock('./validateLifecycle');
 jest.mock('./validateSchemaObject');
+jest.mock('./validateAssets');
 
 const appManifest = deepFreeze({
   meta: {
@@ -108,6 +110,7 @@ describe('validateApp', () => {
     (validateJobs as jest.Mock).mockResolvedValue([]);
     (validateLifecycle as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
+    (validateAssets as jest.Mock).mockReturnValue([]);
   });
 
   it('succeeds with a proper definition', async () => {
@@ -160,12 +163,14 @@ describe('validateApp', () => {
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
+    (validateAssets as jest.Mock).mockResolvedValue(['asset error 1', 'asset error 2']);
 
     expect(await validateApp(runtime, ['events', 'customers'])).toEqual([
       'meta error 1', 'meta error 2',
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
       'lifecycle error 1', 'lifecycle error 2',
+      'asset error 1', 'asset error 2',
       'schema error 1', 'schema error 2',
       'schema error 3', 'schema error 4'
     ]);
@@ -178,5 +183,6 @@ describe('validateApp', () => {
       [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']],
       [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']]
     ]);
+    expect(validateAssets).toBeCalledWith(runtime);
   });
 });
