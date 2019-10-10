@@ -8,6 +8,7 @@ import * as vfile from 'to-vfile';
 // @ts-ignore
 import * as links from 'remark-validate-links';
 import glob = require('glob');
+import * as path from 'path';
 
 const REQUIRED_ASSETS = [
   'assets/directory/overview.md',
@@ -18,7 +19,7 @@ const REQUIRED_ASSETS = [
 ];
 
 export async function validateAssets(runtime: Runtime): Promise<string[]> {
-  return new AssetValidator(runtime.baseDir).validate();
+  return new AssetValidator(path.resolve(runtime.baseDir, '../')).validate();
 }
 
 class AssetValidator {
