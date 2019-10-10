@@ -35,8 +35,8 @@ function appDir(): any {
         'docs':  {
           'index.md': '## Index'
         },
-        'icon.png': '0110',
-        'logo.png': '0101'
+        'icon.svg': '0110',
+        'logo.svg': '0101'
       },
       'forms': {
         'settings.yml': 'foo: bar'
@@ -84,18 +84,18 @@ describe('validateAssets', () => {
     await expectError('Required file forms/settings.yml is missing.');
   });
 
-  it('fails when assets/icon.png or assets/icon.svg does not exist', async () => {
+  it('fails when assets/icon.svg does not exist', async () => {
     const missingAssets = appDir();
-    delete missingAssets['path/to/app/dir']['assets']['icon.png'];
+    delete missingAssets['path/to/app/dir']['assets']['icon.svg'];
     mockFs(missingAssets);
-    await expectError('Required file assets/icon.png or assets/icon.svg is missing.');
+    await expectError('Required file assets/icon.svg is missing.');
   });
 
-  it('fails when assets/logo.png or assets/logo.svg does not exist', async () => {
+  it('fails when assets/logo.svg does not exist', async () => {
     const missingAssets = appDir();
-    delete missingAssets['path/to/app/dir']['assets']['logo.png'];
+    delete missingAssets['path/to/app/dir']['assets']['logo.svg'];
     mockFs(missingAssets);
-    await expectError('Required file assets/logo.png or assets/logo.svg is missing.');
+    await expectError('Required file assets/logo.svg is missing.');
   });
 
   it('fails when markdown files contain links to unknown headers', async () => {
