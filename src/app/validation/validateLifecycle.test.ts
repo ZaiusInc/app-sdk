@@ -53,7 +53,7 @@ class ProperLifecycle extends Lifecycle {
     return {success: true};
   }
 
-  public async onSetupForm(_page: string, _action: string, _formData: object): Promise<Response> {
+  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<Response> {
     return new Response();
   }
 
@@ -111,7 +111,7 @@ describe('validateLifecycle', () => {
 
     expect(await validateLifecycle(runtime)).toEqual([
       'Lifecycle implementation is missing the onInstall method',
-      'Lifecycle implementation is missing the onSetupForm method',
+      'Lifecycle implementation is missing the onSettingsForm method',
       'Lifecycle implementation is missing the onUpgrade method',
       'Lifecycle implementation is missing the onFinalizeUpgrade method',
       'Lifecycle implementation is missing the onUninstall method'
