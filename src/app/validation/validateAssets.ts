@@ -9,6 +9,14 @@ import * as vfile from 'to-vfile';
 import * as links from 'remark-validate-links';
 import glob = require('glob');
 
+const REQUIRED_ASSETS = [
+  'assets/directory/overview.md',
+  'assets/docs/index.md',
+  'assets/icon.svg',
+  'assets/logo.svg',
+  'forms/settings.yml'
+];
+
 export async function validateAssets(runtime: Runtime): Promise<string[]> {
   return new AssetValidator(runtime.baseDir).validate();
 }
@@ -25,15 +33,9 @@ class AssetValidator {
   }
 
   private validateAllAssetsExist() {
-    ['assets/directory/overview.md', 'forms/settings.yml', 'assets/docs/index.md'].forEach((asset) => {
-      if (!this.exists(asset)) {
+    REQUIRED_ASSETS.forEach((asset) => {
+      if (!fs.existsSync(`${this.baseDir}/${asset}`)) {
         this.errors.push(`Required file ${asset} is missing.`);
-      }
-    });
-
-    ['assets/icon', 'assets/logo'].forEach((asset) => {
-      if (!(this.exists(`${asset}.png`) || this.exists(`${asset}.svg`))) {
-        this.errors.push(`Required file ${asset}.png or ${asset}.svg is missing.`);
       }
     });
   }
@@ -55,9 +57,5 @@ class AssetValidator {
       logger.error(e);
       this.errors.push('Failed to validate markdown files');
     }
-  }
-
-  private exists(path: string) {
-    return fs.existsSync(`${this.baseDir}/${path}`);
   }
 }
