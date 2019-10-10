@@ -13,7 +13,7 @@ const appManifest = deepFreeze({
     support_url: 'https://zaius.com',
     summary: 'This is an interesting app',
     contact_email: 'support@zaius.com',
-    categories: ['eCommerce']
+    categories: ['Commerce Platform']
   },
   runtime: 'node12',
   functions: {
@@ -102,16 +102,20 @@ describe('validateMeta', () => {
   });
 
   it('detects too many categories', () => {
-    const manifest = {...appManifest, meta: {...appManifest.meta, categories: [
-          'eCommerce', 'Point of Sale', 'Lead Capture'
-        ]}};
+    const manifest = {
+      ...appManifest, meta: {
+        ...appManifest.meta, categories: [
+          'Commerce Platform', 'Point of Sale', 'Lead Capture'
+        ]
+      }
+    };
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(validateMeta(runtime)).toEqual(['Invalid app.yml: meta.categories must contain 1 or 2 categories']);
   });
 
   it('detects duplicate categories', () => {
-    const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['eCommerce', 'eCommerce']}};
+    const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['Commerce Platform', 'Commerce Platform']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(validateMeta(runtime)).toEqual(['Invalid app.yml: meta.categories contains two identical categories']);

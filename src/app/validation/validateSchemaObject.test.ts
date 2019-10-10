@@ -14,7 +14,7 @@ const appManifest = deepFreeze({
     support_url: 'https://zaius.com',
     summary: 'This is an interesting app',
     contact_email: 'support@zaius.com',
-    categories: ['eCommerce']
+    categories: ['Commerce Platform']
   },
   runtime: 'node12',
   functions: {
@@ -97,18 +97,18 @@ describe('validateSchemaObject', () => {
 
     expect(await validateSchemaObject(runtime, badSchemaObjects['events.yml'], 'events.yml')).toEqual([
       'Invalid events.yml: fields[0].name must start with a letter, contain only lowercase alpha-numeric ' +
-        'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
+      'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
       'Invalid events.yml: fields[0].name must be prefixed with my_app_',
       'Invalid events.yml: relations[0].name must start with a letter, contain only lowercase alpha-numeric ' +
-        'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
+      'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
       'Invalid events.yml: relations[0].name must be prefixed with my_app_'
     ]);
     expect(await validateSchemaObject(runtime, badSchemaObjects['my_app_Coupons.yml'], 'my_app_Coupons.yml')).toEqual([
       'Invalid my_app_Coupons.yml: name must start with a letter, contain only lowercase alpha-numeric and ' +
-        'underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
+      'underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
       'Invalid my_app_Coupons.yml: alias must be prefixed with my_app_',
       'Invalid my_app_Coupons.yml: fields[0].name must start with a letter, contain only lowercase ' +
-        'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)'
+      'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)'
     ]);
   });
 
