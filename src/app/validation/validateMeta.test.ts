@@ -115,7 +115,7 @@ describe('validateMeta', () => {
   });
 
   it('detects duplicate categories', () => {
-    const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['Commerce Platform', 'Commerce Platform']}};
+    const manifest = {...appManifest, meta: {...appManifest.meta, categories: ['CRM', 'CRM']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(validateMeta(runtime)).toEqual(['Invalid app.yml: meta.categories contains two identical categories']);

@@ -13,4 +13,10 @@ export abstract class Lifecycle {
   public abstract async onUninstall(): Promise<LifecycleResult>;
 }
 
-export const LIFECYCLE_REQUIRED_METHODS = ['onInstall', 'onSettingsForm', 'onUpgrade', 'onFinalizeUpgrade', 'onUninstall'];
+export const LIFECYCLE_REQUIRED_METHODS = [
+  'onInstall',
+  'onSettingsForm',
+  'onUpgrade',
+  'onFinalizeUpgrade',
+  'onUninstall'
+];
