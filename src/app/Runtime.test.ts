@@ -19,7 +19,7 @@ const appManifest = deepFreeze({
     support_url: 'https://zaius.com',
     summary: 'This is an interesting app',
     contact_email: 'support@zaius.com',
-    categories: ['eCommerce']
+    categories: ['Commerce Platform']
   },
   runtime: 'node12',
   functions: {
