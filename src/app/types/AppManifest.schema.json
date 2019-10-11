@@ -67,7 +67,8 @@
                     "type": "string"
                 },
                 "parameters": {
-                    "$ref": "#/definitions/ValueHash"
+                    "$ref": "#/definitions/ValueHash",
+                    "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option."
                 }
             },
             "required": [
@@ -110,6 +111,7 @@
                     }
                 ]
             },
+            "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option.",
             "type": "object"
         }
     },
@@ -157,22 +159,25 @@
                             "Advertising",
                             "Analytics & Reporting",
                             "Attribution & Linking",
+                            "CDP / DMP",
                             "CRM",
                             "Channel",
+                            "Commerce Platform",
                             "Content Management",
-                            "Customer Success",
+                            "Customer Experience",
                             "Data Quality & Enrichment",
-                            "Database / Connector",
                             "Lead Capture",
                             "Loyalty & Rewards",
-                            "Marketing Automation",
+                            "Marketing",
+                            "Merchandising & Products",
+                            "Offers",
                             "Personalization & Content",
                             "Point of Sale",
                             "Productivity",
                             "Reviews & Ratings",
+                            "Site & Content Experience",
                             "Surveys & Feedback",
-                            "Testing & Utilities",
-                            "eCommerce"
+                            "Testing & Utilities"
                         ],
                         "type": "string"
                     },

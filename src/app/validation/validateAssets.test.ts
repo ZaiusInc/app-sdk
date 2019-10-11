@@ -1,5 +1,5 @@
 import {Runtime} from '../Runtime';
-import {validateAssets } from './validateAssets';
+import {validateAssets} from './validateAssets';
 import * as deepFreeze from 'deep-freeze';
 import {AppManifest} from '../types';
 import * as mockFs from 'mock-fs';
@@ -13,7 +13,7 @@ const appManifest = deepFreeze({
     support_url: 'https://zaius.com',
     summary: 'This is an interesting app',
     contact_email: 'support@zaius.com',
-    categories: ['eCommerce']
+    categories: ['Commerce Platform']
   },
   runtime: 'node12',
   functions: {
@@ -33,7 +33,7 @@ function appDir(): any {
         'directory': {
           'overview.md': '## Overview'
         },
-        'docs':  {
+        'docs': {
           'index.md': '## Index'
         },
         'icon.svg': '0110',

@@ -15,11 +15,11 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
-export type AppCategory = 'eCommerce' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing Automation'
-  | 'Channel' | 'Loyalty & Rewards' | 'Customer Success' | 'Analytics & Reporting' | 'Surveys & Feedback'
+export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
+  | 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
   | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
-  | 'Accounting & Finance' | 'Database / Connector' | 'Attribution & Linking' | 'Testing & Utilities'
-  | 'Personalization & Content';
+  | 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
+  | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience';
 
 export interface AppManifest {
   meta: {
