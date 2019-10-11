@@ -28,6 +28,7 @@ const appManifest = deepFreeze({
 function appDir(): any {
   return {
     'path/to/app/dir': {
+      'dist': { },
       'assets': {
         'directory': {
           'overview.md': '## Overview'
@@ -41,12 +42,12 @@ function appDir(): any {
       'forms': {
         'settings.yml': 'foo: bar'
       }
-    }
+    },
   };
 }
 
 async function expectError(error: string) {
-  const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
+  const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir/dist'}));
   const errors = await validateAssets(runtime);
   expect(errors.length).toEqual(1);
   expect(errors[0]).toEqual(error);
@@ -57,8 +58,8 @@ describe('validateAssets', () => {
     mockFs.restore();
   });
 
-  it('succeeds when all required assets are available', async () => {
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir'}));
+  it('succeeds when all required assets are available',  async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir/dist'}));
     mockFs(appDir());
     expect(await validateAssets(runtime)).toEqual([]);
   });
