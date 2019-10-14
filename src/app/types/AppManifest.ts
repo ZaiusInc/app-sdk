@@ -45,6 +45,17 @@ export interface AppManifest {
   jobs?: {
     [name: string]: AppJob;
   };
+  channel?: {
+    type: string;
+    targeting: 'derived' | CampaignTargeting[];
+  };
+}
+
+export interface CampaignTargeting {
+  identifier: string;
+  event_data?: {
+    [field: string]: string | number | boolean;
+  };
 }
 
 export const APP_ID_FORMAT = /^[a-z][a-z_0-9]{2,31}$/;
