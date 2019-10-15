@@ -1,5 +1,4 @@
-import {Request} from './lib/Request';
-import {Response} from './lib/Response';
+import {Request, Response} from './lib';
 
 export abstract class RequestHandler {
   protected request: Request;

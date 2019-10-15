@@ -141,6 +141,21 @@
         "channel": {
             "additionalProperties": false,
             "properties": {
+                "grouping": {
+                    "type": "string"
+                },
+                "options": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "prepare": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
+                        "prepare"
+                    ],
+                    "type": "object"
+                },
                 "targeting": {
                     "anyOf": [
                         {
@@ -151,19 +166,17 @@
                         },
                         {
                             "enum": [
-                                "derived"
+                                "dynamic"
                             ],
                             "type": "string"
                         }
                     ]
-                },
-                "type": {
-                    "type": "string"
                 }
             },
             "required": [
-                "targeting",
-                "type"
+                "grouping",
+                "options",
+                "targeting"
             ],
             "type": "object"
         },

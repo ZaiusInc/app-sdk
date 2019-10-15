@@ -1,4 +1,5 @@
 import {ValueHash} from '../../store';
+import {CampaignTargeting} from '../Channel';
 import {HttpMethod} from './HttpMethod';
 
 // regenerate JSON schema with `yarn run update-schema`
@@ -46,15 +47,11 @@ export interface AppManifest {
     [name: string]: AppJob;
   };
   channel?: {
-    type: string;
-    targeting: 'derived' | CampaignTargeting[];
-  };
-}
-
-export interface CampaignTargeting {
-  identifier: string;
-  event_data?: {
-    [field: string]: string | number | boolean;
+    grouping: string;
+    targeting: 'dynamic' | CampaignTargeting[];
+    options: {
+      prepare: boolean;
+    }
   };
 }
 
