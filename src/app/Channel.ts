@@ -20,12 +20,12 @@ export abstract class Channel {
   /**
    * Dynamically determines campaign targeting requirements. If targeting is always known ahead of time, this should
    * be specified statically via `channel.targeting` in `app.yml`. If targeting is based on selections made in the
-   * channel setup form, this method must be implemented and the value in `app.yml` must be set to `dynamic`.
+   * content settings form, this method must be implemented and the value in `app.yml` must be set to `dynamic`.
    * @async
-   * @param setup contents of the channel setup form
+   * @param contentSettings data from the content settings form
    * @returns array of targeting requirements
    */
-  public async target?(setup: Schema.FormData): Promise<CampaignTargeting[]>;
+  public async target?(contentSettings: Schema.FormData): Promise<CampaignTargeting[]>;
 
   /**
    * Publishes the given content. This is the place to perform any necessary transformations between the given template
@@ -119,11 +119,11 @@ export interface CampaignTargeting {
  */
 export interface CampaignContent {
   /**
-   * Static data from the channel setup form. This is the same data sent to {@link Channel.target}.
+   * Static data from the content settings form. This is the same data sent to {@link Channel.target}.
    */
-  setup: Schema.FormData;
+  settings: Schema.FormData;
   /**
-   * Potentially dynamic data from the channel template form. Any string fields that contained Zaius Liquid have been
+   * Potentially dynamic data from the content template form. Any string fields that contained Zaius Liquid have been
    * translated into a simple substitution template where substitution sources are of the form `%%name%%`.
    */
   template: Schema.FormData;
@@ -189,7 +189,7 @@ export interface PublishResult {
   success: boolean;
   /**
    * If the call failed, a set of user-facing error messages. When relevant (eg, validation errors), keys should be
-   * fully-qualified field references of the form `form.section.field`, eg, `setup.sender.from_address`.
+   * fully-qualified field references of the form `form.section.field`, eg, `settings.sender.from_address`.
    */
   errors?: {
     [qualifiedField: string]: string[]
