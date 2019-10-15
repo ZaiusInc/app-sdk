@@ -49,8 +49,8 @@ export interface AppManifest {
   channel?: {
     grouping: string;
     targeting: 'dynamic' | CampaignTargeting[];
-    options: {
-      prepare: boolean;
+    options?: {
+      prepare?: boolean;
     }
   };
 }
