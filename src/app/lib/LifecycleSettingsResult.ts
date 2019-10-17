@@ -4,63 +4,66 @@ export type Intent = 'info' | 'success' | 'warning' | 'danger';
  * @hidden
  */
 export interface LifecycleSettingsResponse {
-  success: boolean;
   errors?: {[ref: string]: string[]};
   toasts?: Array<{intent: Intent, message: string}>;
+  redirect?: string;
 }
 
 /**
  * Used to compose a response to the onSettingsForm lifecycle request
  */
 export class LifecycleSettingsResult {
-  private errors: {[ref: string]: string[]} = {};
+  private errors: {[field: string]: string[]} = {};
   private toasts: Array<{intent: Intent, message: string}> = [];
-
-  constructor(private page: string) {
-  }
+  private redirectLocation?: string;
 
   /**
    * Display a toast to user, such as, "Successfully authenticated with <Integration>" or
    * "Authentication failed, please check your credentials and try again."
    * @param intent One of the supported intents that will affect how the toast is displayed.
-   * @param message The string message to display in the toast
+   * @param message to display in the toast
    */
   public addToast(intent: Intent, message: string) {
     this.toasts.push({intent, message});
+    return this;
   }
 
   /**
    * Add an error to display to the user for a particular form field
-   * @param field The field key to display the error under
-   * @param error The error message to display to the user
+   * @param field key to display the error under, as defined in the form schema
+   * @param error message to display to the user
    */
   public addError(field: string, error: string) {
-    const ref = `${this.page}.${field}`;
-    if (!this.errors[ref]) {
-      this.errors[ref] = [error];
+    if (!this.errors[field]) {
+      this.errors[field] = [error];
     } else {
-      this.errors[ref].push(error);
+      this.errors[field].push(error);
     }
+    return this;
   }
 
   /**
-   * Used internally to get a proper status code for the result
+   * Redirect the user to another page, such as for an OAuth flow
+   * @param url The destination URL for the redirect (location header)
    */
-  public get statusCode() {
-    return Object.keys(this.errors).length === 0 ? 200 : 400;
+  public redirect(url: string) {
+    this.redirectLocation = url;
+    return this;
   }
 
   /**
    * @hidden
-   * Used internally to get the response body
+   * Used internally to get the complete response
    */
-  public get response(): LifecycleSettingsResponse {
-    if (Object.keys(this.errors).length === 0) {
-      return {success: true};
+  public getResponse(page: string): LifecycleSettingsResponse {
+    const errors: {[ref: string]: string[]} = {};
+    for (const field of Object.keys(this.errors)) {
+      errors[`${page}.${field}`] = this.errors[field];
     }
+
     return {
-      success: false,
-      errors: this.errors,
+      redirect: this.redirectLocation,
+      errors,
       toasts: this.toasts
     };
   }

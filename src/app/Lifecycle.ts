@@ -1,6 +1,6 @@
 import {PrimitiveFormValue} from '@zaius/app-forms-schema';
+import {LifecycleSettingsResult} from './lib/LifecycleSettingsResult';
 import {LifecycleResult} from './types';
-import {LifecycleSettingsResult} from './types/LifecycleSettingsResult';
 
 /**
  * The format form data will be provided in when the user submits a form or performs a button action.
@@ -29,11 +29,10 @@ export abstract class Lifecycle {
    * @param page the name of the page/section submitted
    * @param action the action of the button that triggered the call, or 'save' by default
    * @param formData the data for the section as a hash of key/value pairs
-   * @param result the response to return. Add any errors or toasts to the result before returning it.
    * @returns {LifecycleSettingsResult} with any errors that should be displayed to the user
    */
   public abstract async onSettingsForm(
-    page: string, action: string, formData: SubmittedFormData, result: LifecycleSettingsResult
+    page: string, action: string, formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
   /**
