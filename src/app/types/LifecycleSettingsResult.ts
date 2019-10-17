@@ -44,7 +44,6 @@ export class LifecycleSettingsResult {
   }
 
   /**
-   * @hidden
    * Used internally to get a proper status code for the result
    */
   public statusCode() {
