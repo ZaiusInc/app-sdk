@@ -1,6 +1,6 @@
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
-import {Response} from '../lib';
+import {LifecycleSettingsResult} from '../lib/LifecycleSettingsResult';
 import {Lifecycle} from '../Lifecycle';
 import {Runtime} from '../Runtime';
 import {AppManifest, LifecycleResult} from '../types';
@@ -53,8 +53,8 @@ class ProperLifecycle extends Lifecycle {
     return {success: true};
   }
 
-  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<Response> {
-    return new Response();
+  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return new LifecycleSettingsResult();
   }
 
   public async onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
