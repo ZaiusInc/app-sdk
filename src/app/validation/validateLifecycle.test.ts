@@ -53,8 +53,10 @@ class ProperLifecycle extends Lifecycle {
     return {success: true};
   }
 
-  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
-    return new LifecycleSettingsResult();
+  public async onSettingsForm(
+    _page: string, _action: string, _formData: object, result: LifecycleSettingsResult
+  ): Promise<LifecycleSettingsResult> {
+    return result;
   }
 
   public async onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
