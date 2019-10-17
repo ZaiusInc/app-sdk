@@ -46,7 +46,7 @@ export class LifecycleSettingsResult {
   /**
    * Used internally to get a proper status code for the result
    */
-  public statusCode() {
+  public get statusCode() {
     return Object.keys(this.errors).length === 0 ? 200 : 400;
   }
 
@@ -54,7 +54,7 @@ export class LifecycleSettingsResult {
    * @hidden
    * Used internally to get the response body
    */
-  public response(): LifecycleSettingsResponse {
+  public get response(): LifecycleSettingsResponse {
     if (Object.keys(this.errors).length === 0) {
       return {success: true};
     }
