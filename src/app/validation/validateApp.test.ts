@@ -140,7 +140,7 @@ describe('validateApp', () => {
       'schema/events.yml': {
         ...schemaObjects['schema/events.yml'],
         name: undefined,
-        fields: [{...schemaObjects['schema/events.yml'].fields[0], type: 'text', description: undefined}]
+        fields: [{...schemaObjects['schema/events.yml'].fields![0], type: 'text', description: undefined}]
       }
     } as any);
 

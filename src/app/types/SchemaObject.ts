@@ -3,8 +3,9 @@ export interface SchemaObject {
   name: string;
   display_name?: string;
   alias?: string;
-  fields: SchemaField[];
+  fields?: SchemaField[];
   relations?: SchemaRelation[];
+  identifiers?: SchemaIdentifier[];
 }
 
 export interface SchemaField {
@@ -25,6 +26,13 @@ export interface SchemaRelation {
 export interface SchemaJoinField {
   parent: string;
   child: string;
+}
+
+export interface SchemaIdentifier {
+  name: string;
+  display_name: string;
+  merge_confidence: 'high' | 'low';
+  messaging?: boolean;
 }
 
 export interface SchemaObjects {
