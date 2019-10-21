@@ -1,5 +1,6 @@
+import * as path from 'path';
 import {Runtime} from '../Runtime';
-import {SCHEMA_NAME_FORMAT, SchemaField, SchemaObject, SchemaRelation} from '../types/SchemaObject';
+import {SCHEMA_NAME_FORMAT, SchemaField, SchemaIdentifier, SchemaObject, SchemaRelation} from '../types/SchemaObject';
 
 export function validateSchemaObject(
   runtime: Runtime,
@@ -13,7 +14,7 @@ export function validateSchemaObject(
 class SchemaObjectValidator {
   private readonly errors: string[] = [];
   private readonly appIdPrefix: string;
-  private readonly appDisplayName: string;
+  private readonly appNamePrefix: string;
   private isCustomObject: boolean;
 
   public constructor(
@@ -23,13 +24,17 @@ class SchemaObjectValidator {
     private baseObjectNames?: string[]
   ) {
     this.appIdPrefix = `${runtime.manifest.meta.app_id}_`;
-    this.appDisplayName = runtime.manifest.meta.display_name;
+    this.appNamePrefix = `${runtime.manifest.meta.display_name} `;
     this.isCustomObject = schemaObject.name.startsWith(this.appIdPrefix);
   }
 
   public validate(): string[] {
+    if (path.basename(this.file, '.yml') !== this.schemaObject.name) {
+      this.errors.push(`Invalid ${this.file}: name must match file base name`);
+    }
+
     if (!this.isCustomObject && this.baseObjectNames && !this.baseObjectNames.includes(this.schemaObject.name)) {
-      this.errors.push(`Invalid ${this.file}: name must be prefixed with ${this.appIdPrefix} for custom object`);
+      this.errors.push(`Invalid ${this.file}: name must be prefixed with "${this.appIdPrefix}" for custom object`);
       this.isCustomObject = true;
     }
 
@@ -38,11 +43,11 @@ class SchemaObjectValidator {
     if (this.isCustomObject) {
       if (!this.schemaObject.display_name || this.schemaObject.display_name.trim().length === 0) {
         this.errors.push(`Invalid ${this.file}: display_name must be specified for custom object`);
-      } else if (!this.schemaObject.display_name.startsWith(this.appDisplayName)) {
-        this.errors.push(`Invalid ${this.file}: display_name must be prefixed with ${this.appDisplayName}`);
+      } else if (!this.schemaObject.display_name.startsWith(this.appNamePrefix)) {
+        this.errors.push(`Invalid ${this.file}: display_name must be prefixed with "${this.appNamePrefix}"`);
       }
       if (this.schemaObject.alias && !this.schemaObject.alias.startsWith(this.appIdPrefix)) {
-        this.errors.push(`Invalid ${this.file}: alias must be prefixed with ${this.appIdPrefix}`);
+        this.errors.push(`Invalid ${this.file}: alias must be prefixed with "${this.appIdPrefix}"`);
       }
     } else {
       if (this.schemaObject.display_name) {
@@ -54,12 +59,14 @@ class SchemaObjectValidator {
     }
 
     let hasPrimaryKey = false;
-    this.schemaObject.fields.forEach((field, index) => {
-      this.validateField(field, index);
-      if (field.primary) {
-        hasPrimaryKey = true;
-      }
-    });
+    if (this.schemaObject.fields) {
+      this.schemaObject.fields.forEach((field, index) => {
+        this.validateField(field, index);
+        if (field.primary) {
+          hasPrimaryKey = true;
+        }
+      });
+    }
     if (this.isCustomObject && !hasPrimaryKey) {
       this.errors.push(`Invalid ${this.file}: fields must contain at least one primary key for custom object`);
     }
@@ -67,6 +74,15 @@ class SchemaObjectValidator {
     if (this.schemaObject.relations) {
       this.schemaObject.relations.forEach((relation, index) => {
         this.validateRelation(relation, index);
+      });
+    }
+
+    if (this.schemaObject.identifiers) {
+      if (this.schemaObject.name !== 'customers') {
+        this.errors.push(`Invalid ${this.file}: identifiers are only allowed on customers`);
+      }
+      this.schemaObject.identifiers.forEach((identifier, index) => {
+        this.validateIdentifier(identifier, index);
       });
     }
 
@@ -92,11 +108,11 @@ class SchemaObjectValidator {
     }
     if (!this.isCustomObject) {
       if (!field.name.startsWith(this.appIdPrefix)) {
-        this.errors.push(`Invalid ${this.file}: fields[${index}].name must be prefixed with ${this.appIdPrefix}`);
+        this.errors.push(`Invalid ${this.file}: fields[${index}].name must be prefixed with "${this.appIdPrefix}"`);
       }
-      if (!field.display_name.startsWith(this.appDisplayName)) {
+      if (!field.display_name.startsWith(this.appNamePrefix)) {
         this.errors.push(
-          `Invalid ${this.file}: fields[${index}].display_name must be prefixed with ${this.appDisplayName}`
+          `Invalid ${this.file}: fields[${index}].display_name must be prefixed with "${this.appNamePrefix}"`
         );
       }
     }
@@ -119,13 +135,44 @@ class SchemaObjectValidator {
     }
     if (relation.join_fields.some((joinField) => joinField.parent.startsWith(this.appIdPrefix))) {
       if (!relation.name.startsWith(this.appIdPrefix)) {
-        this.errors.push(`Invalid ${this.file}: relations[${index}].name must be prefixed with ${this.appIdPrefix}`);
+        this.errors.push(`Invalid ${this.file}: relations[${index}].name must be prefixed with "${this.appIdPrefix}"`);
       }
-      if (!relation.display_name.startsWith(this.appDisplayName)) {
+      if (!relation.display_name.startsWith(this.appNamePrefix)) {
         this.errors.push(
-          `Invalid ${this.file}: relations[${index}].display_name must be prefixed with ${this.appDisplayName}`
+          `Invalid ${this.file}: relations[${index}].display_name must be prefixed with "${this.appNamePrefix}"`
         );
       }
     }
   }
+
+  private validateIdentifier(identifier: SchemaIdentifier, index: number) {
+    this.enforceNameFormat(identifier.name, `identifiers[${index}].name`);
+    if (!identifier.name.startsWith(this.appIdPrefix)) {
+      this.errors.push(`Invalid ${this.file}: identifiers[${index}].name must be prefixed with "${this.appIdPrefix}"`);
+    }
+    if (!identifier.display_name.startsWith(this.appNamePrefix)) {
+      this.errors.push(
+        `Invalid ${this.file}: identifiers[${index}].display_name must be prefixed with "${this.appNamePrefix}"`
+      );
+    }
+    const suffix = Object.keys(IDENTIFIER_SUFFIXES).find((s) => identifier.name.endsWith(s));
+    if (!suffix) {
+      this.errors.push(`Invalid ${this.file}: identifiers[${index}].name must end with a valid suffix`);
+    } else if (!identifier.display_name.endsWith(IDENTIFIER_SUFFIXES[suffix])) {
+      this.errors.push(
+        `Invalid ${this.file}: identifiers[${index}].display_name must end with "${IDENTIFIER_SUFFIXES[suffix]}" to ` +
+        `match name suffix "${suffix}"`
+      );
+    }
+  }
 }
+
+const IDENTIFIER_SUFFIXES: {[key: string]: string} = {
+  _id: ' ID',
+  _hash: ' Hash',
+  _number: ' Number',
+  _token: ' Token',
+  _alias: ' Alias',
+  _address: ' Address',
+  _key: ' Key'
+};

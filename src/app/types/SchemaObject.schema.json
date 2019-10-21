@@ -35,6 +35,33 @@
             ],
             "type": "object"
         },
+        "SchemaIdentifier": {
+            "additionalProperties": false,
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "merge_confidence": {
+                    "enum": [
+                        "high",
+                        "low"
+                    ],
+                    "type": "string"
+                },
+                "messaging": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "display_name",
+                "merge_confidence",
+                "name"
+            ],
+            "type": "object"
+        },
         "SchemaJoinField": {
             "additionalProperties": false,
             "properties": {
@@ -92,6 +119,12 @@
             },
             "type": "array"
         },
+        "identifiers": {
+            "items": {
+                "$ref": "#/definitions/SchemaIdentifier"
+            },
+            "type": "array"
+        },
         "name": {
             "type": "string"
         },
@@ -103,7 +136,6 @@
         }
     },
     "required": [
-        "fields",
         "name"
     ],
     "type": "object"

@@ -82,7 +82,7 @@ describe('validateSchemaObject', () => {
     const badSchemaObjects: SchemaObjects = {
       'events.yml': {
         ...schemaObjects['events.yml'],
-        fields: [{...schemaObjects['events.yml'].fields[0], name: 'couponID'}],
+        fields: [{...schemaObjects['events.yml'].fields![0], name: 'couponID'}],
         relations: [{...schemaObjects['events.yml'].relations![0], name: 'couponID'}]
       },
       'my_app_Coupons.yml': {
@@ -90,41 +90,53 @@ describe('validateSchemaObject', () => {
         name: 'my_app_Coupons',
         alias: 'Foo',
         fields: [
-          {...schemaObjects['my_app_coupons.yml'].fields[0], name: 'couponID'}
+          {...schemaObjects['my_app_coupons.yml'].fields![0], name: 'couponID'}
         ]
+      },
+      'customers.yml': {
+        name: 'customers',
+        identifiers: [{
+          name: 'customer_key',
+          display_name: 'Customer Key',
+          merge_confidence: 'low'
+        }]
       }
     };
 
     expect(await validateSchemaObject(runtime, badSchemaObjects['events.yml'], 'events.yml')).toEqual([
       'Invalid events.yml: fields[0].name must start with a letter, contain only lowercase alpha-numeric ' +
       'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
-      'Invalid events.yml: fields[0].name must be prefixed with my_app_',
+      'Invalid events.yml: fields[0].name must be prefixed with "my_app_"',
       'Invalid events.yml: relations[0].name must start with a letter, contain only lowercase alpha-numeric ' +
       'and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
-      'Invalid events.yml: relations[0].name must be prefixed with my_app_'
+      'Invalid events.yml: relations[0].name must be prefixed with "my_app_"'
     ]);
     expect(await validateSchemaObject(runtime, badSchemaObjects['my_app_Coupons.yml'], 'my_app_Coupons.yml')).toEqual([
       'Invalid my_app_Coupons.yml: name must start with a letter, contain only lowercase alpha-numeric and ' +
       'underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)',
-      'Invalid my_app_Coupons.yml: alias must be prefixed with my_app_',
+      'Invalid my_app_Coupons.yml: alias must be prefixed with "my_app_"',
       'Invalid my_app_Coupons.yml: fields[0].name must start with a letter, contain only lowercase ' +
       'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)'
     ]);
+    expect(await validateSchemaObject(runtime, badSchemaObjects['customers.yml'], 'customers.yml')).toEqual([
+      'Invalid customers.yml: identifiers[0].name must be prefixed with "my_app_"',
+      'Invalid customers.yml: identifiers[0].display_name must be prefixed with "My App "'
+    ]);
   });
 
-  it('requires detects invalid display name and description on custom items', async () => {
+  it('detects invalid display name and description on custom items', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const badSchemaObjects: SchemaObjects = {
       'events.yml': {
         ...schemaObjects['events.yml'],
-        fields: [{...schemaObjects['events.yml'].fields[0], display_name: '  ', description: '\t'}],
+        fields: [{...schemaObjects['events.yml'].fields![0], display_name: '  ', description: '\t'}],
         relations: [{...schemaObjects['events.yml'].relations![0], display_name: ''}]
       },
       'my_app_coupons.yml': {
         ...schemaObjects['my_app_coupons.yml'],
         display_name: '',
         fields: [
-          {...schemaObjects['my_app_coupons.yml'].fields[0], display_name: '\t', description: ''}
+          {...schemaObjects['my_app_coupons.yml'].fields![0], display_name: '\t', description: ''}
         ]
       }
     };
@@ -132,9 +144,9 @@ describe('validateSchemaObject', () => {
     expect(await validateSchemaObject(runtime, badSchemaObjects['events.yml'], 'events.yml')).toEqual([
       'Invalid events.yml: fields[0].display_name must be specified',
       'Invalid events.yml: fields[0].description must be specified',
-      'Invalid events.yml: fields[0].display_name must be prefixed with My App',
+      'Invalid events.yml: fields[0].display_name must be prefixed with "My App "',
       'Invalid events.yml: relations[0].display_name must be specified',
-      'Invalid events.yml: relations[0].display_name must be prefixed with My App'
+      'Invalid events.yml: relations[0].display_name must be prefixed with "My App "'
     ]);
     expect(await validateSchemaObject(runtime, badSchemaObjects['my_app_coupons.yml'], 'my_app_coupons.yml')).toEqual([
       'Invalid my_app_coupons.yml: display_name must be specified for custom object',
@@ -173,7 +185,7 @@ describe('validateSchemaObject', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const badSchemaObject: SchemaObject = {
       ...schemaObjects['my_app_coupons.yml'],
-      fields: [{...schemaObjects['my_app_coupons.yml'].fields[0], primary: false}]
+      fields: [{...schemaObjects['my_app_coupons.yml'].fields![0], primary: false}]
     };
 
     expect(await validateSchemaObject(runtime, badSchemaObject, 'my_app_coupons.yml')).toEqual([
@@ -185,7 +197,7 @@ describe('validateSchemaObject', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const badSchemaObject: SchemaObject = {
       ...schemaObjects['events.yml'],
-      fields: [{...schemaObjects['events.yml'].fields[0], primary: true}]
+      fields: [{...schemaObjects['events.yml'].fields![0], primary: true}]
     };
 
     expect(await validateSchemaObject(runtime, badSchemaObject, 'events.yml')).toEqual([
@@ -202,8 +214,73 @@ describe('validateSchemaObject', () => {
     };
 
     expect(await validateSchemaObject(runtime, badSchemaObject, 'coupons.yml', ['events'])).toEqual([
-      'Invalid coupons.yml: name must be prefixed with my_app_ for custom object',
-      'Invalid coupons.yml: display_name must be prefixed with My App'
+      'Invalid coupons.yml: name must be prefixed with "my_app_" for custom object',
+      'Invalid coupons.yml: display_name must be prefixed with "My App "'
+    ]);
+  });
+
+  it('requires name to match file base name', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    expect(await validateSchemaObject(runtime, schemaObjects['events.yml'], 'something.yml')).toEqual([
+      'Invalid something.yml: name must match file base name'
+    ]);
+  });
+
+  it('does not allow identifiers outside of customers', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    const badSchemaObject: SchemaObject = {
+      ...schemaObjects['events.yml'],
+      identifiers: [{
+        name: 'my_app_thing_id',
+        display_name: 'My App Thing ID',
+        merge_confidence: 'low'
+      }]
+    };
+    expect(await validateSchemaObject(runtime, badSchemaObject, 'events.yml')).toEqual([
+      'Invalid events.yml: identifiers are only allowed on customers'
+    ]);
+  });
+
+  it('does allow identifiers on customers', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    const goodSchemaObject: SchemaObject = {
+      name: 'customers',
+      identifiers: [{
+        name: 'my_app_thing_id',
+        display_name: 'My App Thing ID',
+        merge_confidence: 'low'
+      }]
+    };
+    expect(await validateSchemaObject(runtime, goodSchemaObject, 'customers.yml')).toEqual([]);
+  });
+
+  it('detects invalid identifier suffix', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    const badSchemaObject: SchemaObject = {
+      name: 'customers',
+      identifiers: [{
+        name: 'my_app_thing',
+        display_name: 'My App Thing',
+        merge_confidence: 'low'
+      }]
+    };
+    expect(await validateSchemaObject(runtime, badSchemaObject, 'customers.yml')).toEqual([
+      'Invalid customers.yml: identifiers[0].name must end with a valid suffix'
+    ]);
+  });
+
+  it('detects identifier suffix mismatch between name and display name', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    const badSchemaObject: SchemaObject = {
+      name: 'customers',
+      identifiers: [{
+        name: 'my_app_thing_id',
+        display_name: 'My App Thing Hash',
+        merge_confidence: 'low'
+      }]
+    };
+    expect(await validateSchemaObject(runtime, badSchemaObject, 'customers.yml')).toEqual([
+      'Invalid customers.yml: identifiers[0].display_name must end with " ID" to match name suffix "_id"'
     ]);
   });
 });
