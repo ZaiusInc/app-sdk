@@ -7,7 +7,7 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest"
   },
   testRegex: "\\.test\\.tsx?$",
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/example*'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/example*', '/.yalc/'],
   moduleFileExtensions: [
     ...defaults.moduleFileExtensions,
     "ts"

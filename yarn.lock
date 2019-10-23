@@ -433,10 +433,12 @@
   version "12.0.12"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
 
-"@zaius/app-forms-schema@^0.1.6":
-  version "0.1.6"
-  resolved "http://npm-registry.prod.zaius/@zaius%2fapp-forms-schema/-/app-forms-schema-0.1.6.tgz#73680f6c889a2a0630d652fa2283ec83026545f9"
-  integrity sha512-vHBM47JcqeDh5ogUQonUmZR6U5mP1SGimgrAT19YbbtBvOzI5eD0lIQEDmJvQudyP8nFZUF8UkWP8N+vwBJGcA==
+"@zaius/app-forms-schema@^0.1.7":
+  version "0.1.7"
+  resolved "http://npm-registry.prod.zaius/@zaius%2fapp-forms-schema/-/app-forms-schema-0.1.7.tgz#074f83e210a43539d6a2fb299f781f592cd1c462"
+  integrity sha512-wpTGY3wnN8iVTtYwZaL8ECkPqMP8s26jihJrRGmgnJPFOsuoob8ehlEmejXY1B8HpmKwS5e5WWPgwFtTRlzIzg==
+  dependencies:
+    ajv "^6.10.0"
 
 "@zaiusinc/tslint-presets@^1.0.1":
   version "1.0.1"
