@@ -23,7 +23,18 @@ const appManifest = deepFreeze({
       description: 'gets foo'
     }
   }
-} as AppManifest);
+} as AppManifest) as AppManifest;
+
+const formContent = `
+sections:
+  - key: stuff
+    label: Stuff
+    elements:
+      - key: junk
+        label: Junk
+        help: Some junk
+        type: text
+`;
 
 function appDir(): any {
   return {
@@ -40,17 +51,44 @@ function appDir(): any {
         'logo.svg': '0101'
       },
       'forms': {
-        'settings.yml': 'foo: bar'
+        'settings.yml': formContent
       }
     },
   };
 }
 
-async function expectError(error: string) {
-  const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir/dist'}));
-  const errors = await validateAssets(runtime);
-  expect(errors.length).toEqual(1);
-  expect(errors[0]).toEqual(error);
+const channelAppManifest = deepFreeze({
+  ...appManifest,
+  meta: {
+    ...appManifest.meta,
+    categories: ['Channel']
+  },
+  channel: {
+    grouping: 'messenger',
+    targeting: 'dynamic'
+  }
+} as AppManifest) as AppManifest;
+
+function channelAppDir(): any {
+  const base = appDir();
+  return {
+    'path/to/app/dir': {
+      ...base['path/to/app/dir'],
+      forms: {
+        ...base['path/to/app/dir'].forms,
+        'content-settings.yml': formContent,
+        'content-template.yml': formContent
+      }
+    }
+  };
+}
+
+async function expectError(error: string | string[], manifest?: AppManifest) {
+  const runtime = Runtime.fromJson(JSON.stringify({
+    appManifest: manifest || appManifest,
+    dirName: 'path/to/app/dir/dist'
+  }));
+  expect(await validateAssets(runtime)).toEqual(error instanceof Array ? error : [error]);
 }
 
 describe('validateAssets', () => {
@@ -111,5 +149,53 @@ describe('validateAssets', () => {
     missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[missing](missing.js)`;
     mockFs(missingFileLinks);
     await expectError('Link to unknown file: `missing.js` in assets/directory/overview.md:1:1-1:22.');
+  });
+
+  it('detects schema errors in forms/settings.yml', async () => {
+    const badForm = appDir();
+    badForm['path/to/app/dir']['forms']['settings.yml'] = 'something: wrong';
+    mockFs(badForm);
+    await expectError([
+      'Invalid forms/settings.yml: must NOT have additional properties',
+      "Invalid forms/settings.yml: must have required property 'sections'"
+    ]);
+  });
+
+  describe('channel app', () => {
+    it('succeeds when all required assets are available',  async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({
+        appManifest: channelAppManifest,
+        dirName: 'path/to/app/dir/dist'
+      }));
+      mockFs(channelAppDir());
+      expect(await validateAssets(runtime)).toEqual([]);
+    });
+
+    it('fails when content forms do not exist', async () => {
+      const missingAssets = channelAppDir();
+      delete missingAssets['path/to/app/dir']['forms']['content-settings.yml'];
+      delete missingAssets['path/to/app/dir']['forms']['content-template.yml'];
+      mockFs(missingAssets);
+      await expectError([
+        'Required file forms/content-settings.yml is missing.',
+        'Required file forms/content-template.yml is missing.'
+      ], channelAppManifest);
+    });
+
+    it('detects schema errors in content forms', async () => {
+      const badForms = channelAppDir();
+      badForms['path/to/app/dir']['forms']['content-settings.yml'] = 'something: wrong';
+      badForms['path/to/app/dir']['forms']['content-template.yml'] = 'sections:\n  - elements:\n    - type: text';
+      mockFs(badForms);
+      await expectError([
+        'Invalid forms/content-settings.yml: must NOT have additional properties',
+        "Invalid forms/content-settings.yml: must have required property 'sections'",
+        "Invalid forms/content-template.yml: sections[0] must have required property 'key'",
+        "Invalid forms/content-template.yml: sections[0] must have required property 'label'",
+        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'help'",
+        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'key'",
+        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'label'"
+      ], channelAppManifest);
+    });
   });
 });
