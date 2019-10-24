@@ -7,6 +7,9 @@ import {Schema} from '@zaius/app-forms-schema';
  * 3. `publish` the content template (in the future, this will instead happen when the campaign is modified)
  * 4. `prepare` for the run (if the method is implemented)
  * 5. `deliver` the content to batches of recipients with substitutions
+ *
+ * Outside of the campaign run flow, a channel must also be able to `preview` a given piece of content for a batch
+ * of recipients.
  */
 export abstract class Channel {
   /**
@@ -91,12 +94,22 @@ export abstract class Channel {
     batch: CampaignDelivery[],
     previousResult?: DeliverResult
   ): Promise<DeliverResult>;
+
+  /**
+   * Renders a batch of messages into HTML previews. Each preview must be a full HTML page containing a user-friendly
+   * representation of the message as it would be delivered.
+   * @async
+   * @param content the content with translated templates
+   * @param batch of recipients and substitutions
+   * @returns result of the operation
+   */
+  public abstract async preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<PreviewResult>;
 }
 
 /**
  * @hidden
  */
-export const CHANNEL_REQUIRED_METHODS = ['ready', 'publish', 'deliver'];
+export const CHANNEL_REQUIRED_METHODS = ['ready', 'publish', 'deliver', 'preview'];
 
 /**
  * Defines the targeting requirements for a channel.
@@ -251,4 +264,26 @@ export interface DeliverResult {
    * If the failure is retriable, the number of seconds to wait before retrying.
    */
   retryAfterSeconds?: number;
+}
+
+/**
+ * Result of {@link Channel.preview}.
+ */
+export interface PreviewResult {
+  /**
+   * Whether the call succeeded.
+   */
+  success: boolean;
+  /**
+   * If the call succeeded, an array of HTML previews. There must be exactly one preview per recipient, and they must
+   * be returned in the same order as given.
+   */
+  previews?: string[];
+  /**
+   * If the call failed, a set of user-facing error messages. When relevant (eg, validation errors), keys should be
+   * fully-qualified field references of the form `form.section.field`, eg, `settings.sender.from_address`.
+   */
+  errors?: {
+    [qualifiedField: string]: string[]
+  };
 }
