@@ -26,13 +26,13 @@ export abstract class Lifecycle {
   /**
    * Handle a submission of a form page/section. You are responsible for performing any validation or
    * changes to the form data and then writing it to the settings store for the page.
-   * @param page the name of the page/section submitted
+   * @param section the name of the section submitted
    * @param action the action of the button that triggered the call, or 'save' by default
    * @param formData the data for the section as a hash of key/value pairs
    * @returns {LifecycleSettingsResult} with any errors that should be displayed to the user
    */
   public abstract async onSettingsForm(
-    page: string, action: string, formData: SubmittedFormData
+    section: string, action: string, formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
   /**

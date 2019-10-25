@@ -2,20 +2,6 @@ import 'jest';
 import {LifecycleSettingsResult} from './LifecycleSettingsResult';
 
 describe('LifecycleSettingsResult', () => {
-  describe('addToast', () => {
-    it('adds a toast with the specified intent', () => {
-      const result = new LifecycleSettingsResult().addToast('info', 'Here is some info');
-      result.addToast('warning', 'This is a warning');
-      expect(result['toasts']).toEqual([{
-        intent: 'info',
-        message: 'Here is some info'
-      }, {
-        intent: 'warning',
-        message: 'This is a warning'
-      }]);
-    });
-  });
-
   describe('addError', () => {
     it('adds errors for specific fields', () => {
       const result = new LifecycleSettingsResult().addError('username', 'Cannot be blank');
@@ -45,14 +31,14 @@ describe('LifecycleSettingsResult', () => {
       });
     });
 
-    it('includes errors prefixed with the page and toasts in the response', () => {
+    it('includes errors prefixed with the section and toasts in the response', () => {
       const result = new LifecycleSettingsResult()
         .addError('password', 'Cannot be one of the three most commonly used passwords')
-        .addToast('danger', 'Authrization failed');
+        .addToast('danger', 'Authorization failed');
       expect(result.getResponse('foo')).toEqual({
         redirect: undefined,
         errors: {'foo.password': ['Cannot be one of the three most commonly used passwords']},
-        toasts: [{intent: 'danger', message: 'Authrization failed'}]
+        toasts: [{intent: 'danger', message: 'Authorization failed'}]
       });
     });
   });

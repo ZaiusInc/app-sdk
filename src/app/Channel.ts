@@ -1,4 +1,5 @@
 import {Schema} from '@zaius/app-forms-schema';
+import {ChannelPreviewResult, ChannelPublishResult, ChannelTargetResult} from './lib';
 
 /**
  * Defines the interface of a channel. The typical channel flow in a campaign run is as follows:
@@ -21,20 +22,19 @@ export abstract class Channel {
   public abstract async ready(): Promise<boolean>;
 
   /**
-   * Dynamically determines campaign targeting requirements. If targeting is always known ahead of time, this should
-   * be specified statically via `channel.targeting` in `app.yml`. If targeting is based on selections made in the
-   * content settings form, this method must be implemented and the value in `app.yml` must be set to `dynamic`.
+   * Dynamically determines campaign targeting requirements. It should also perform any necessary validations on the
+   * input data. If targeting is always known ahead of time, this should be specified statically via `channel.targeting`
+   * in `app.yml`. If targeting is based on selections made in the content settings form, this method must be
+   * implemented and the value in `app.yml` must be set to `dynamic`.
    * @async
    * @param contentSettings data from the content settings form
-   * @returns array of targeting requirements
+   * @returns result of the operation
    */
-  public async target?(contentSettings: Schema.FormData): Promise<CampaignTargeting[]>;
+  public async target?(contentSettings: Schema.FormData): Promise<ChannelTargetResult>;
 
   /**
    * Publishes the given content. This is the place to perform any necessary transformations between the given template
-   * format and the external system's format. It should also perform any necessary validations on the input data. If it
-   * is found to be invalid, the pertinent error messages should be provided in the result, keyed by
-   * `form.section.field`.
+   * format and the external system's format. It should also perform any necessary validations on the input data.
    * <p>
    * If the content must be stored in an external system, this is also the time to do that. If the content must instead
    * be known in `prepare` or `deliver`, it should be placed in the document store for future use.
@@ -50,8 +50,8 @@ export abstract class Channel {
    * @returns result of the operation
    */
   public abstract async publish(
-    contentKey: string, content: CampaignContent, options: PublishOptions
-  ): Promise<PublishResult>;
+    contentKey: string, content: CampaignContent, options: ChannelPublishOptions
+  ): Promise<ChannelPublishResult>;
 
   /**
    * Prepares for a campaign run. This can be used to set up an external entity for use in `deliver` (or perform any
@@ -67,8 +67,8 @@ export abstract class Channel {
    * @returns result of the operation
    */
   public abstract async prepare?(
-    contentKey: string, tracking: CampaignTracking, options: PrepareOptions
-  ): Promise<PrepareResult>;
+    contentKey: string, tracking: CampaignTracking, options: ChannelPrepareOptions
+  ): Promise<ChannelPrepareResult>;
 
   /**
    * Delivers a batch of messages. This method may be called many times for the same content key, tracking parameters,
@@ -90,10 +90,10 @@ export abstract class Channel {
   public abstract async deliver(
     contentKey: string,
     tracking: CampaignTracking,
-    options: DeliverOptions,
+    options: ChannelDeliverOptions,
     batch: CampaignDelivery[],
-    previousResult?: DeliverResult
-  ): Promise<DeliverResult>;
+    previousResult?: ChannelDeliverResult
+  ): Promise<ChannelDeliverResult>;
 
   /**
    * Renders a batch of messages into HTML previews. Each preview must be a full HTML page containing a user-friendly
@@ -103,7 +103,7 @@ export abstract class Channel {
    * @param batch of recipients and substitutions
    * @returns result of the operation
    */
-  public abstract async preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<PreviewResult>;
+  public abstract async preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<ChannelPreviewResult>;
 }
 
 /**
@@ -185,7 +185,7 @@ export interface CampaignDelivery {
 /**
  * Options for {@link Channel.publish}.
  */
-export interface PublishOptions {
+export interface ChannelPublishOptions {
   /**
    * Whether this is for a test send.
    */
@@ -193,26 +193,9 @@ export interface PublishOptions {
 }
 
 /**
- * Result of {@link Channel.publish}.
- */
-export interface PublishResult {
-  /**
-   * Whether the call succeeded.
-   */
-  success: boolean;
-  /**
-   * If the call failed, a set of user-facing error messages. When relevant (eg, validation errors), keys should be
-   * fully-qualified field references of the form `form.section.field`, eg, `settings.sender.from_address`.
-   */
-  errors?: {
-    [qualifiedField: string]: string[]
-  };
-}
-
-/**
  * Options for {@link Channel.prepare}.
  */
-export interface PrepareOptions {
+export interface ChannelPrepareOptions {
   /**
    * Whether this is for a test send.
    */
@@ -222,7 +205,7 @@ export interface PrepareOptions {
 /**
  * Result of {@link Channel.prepare}.
  */
-export interface PrepareResult {
+export interface ChannelPrepareResult {
   /**
    * Whether the call succeeded.
    */
@@ -236,7 +219,7 @@ export interface PrepareResult {
 /**
  * Options for {@link Channel.deliver}.
  */
-export interface DeliverOptions {
+export interface ChannelDeliverOptions {
   /**
    * Whether this is for a test send.
    */
@@ -246,7 +229,7 @@ export interface DeliverOptions {
 /**
  * Result of {@link Channel.deliver}.
  */
-export interface DeliverResult {
+export interface ChannelDeliverResult {
   /**
    * Whether the call succeeded.
    */
@@ -264,26 +247,4 @@ export interface DeliverResult {
    * If the failure is retriable, the number of seconds to wait before retrying.
    */
   retryAfterSeconds?: number;
-}
-
-/**
- * Result of {@link Channel.preview}.
- */
-export interface PreviewResult {
-  /**
-   * Whether the call succeeded.
-   */
-  success: boolean;
-  /**
-   * If the call succeeded, an array of HTML previews. There must be exactly one preview per recipient, and they must
-   * be returned in the same order as given.
-   */
-  previews?: string[];
-  /**
-   * If the call failed, a set of user-facing error messages. When relevant (eg, validation errors), keys should be
-   * fully-qualified field references of the form `form.section.field`, eg, `settings.sender.from_address`.
-   */
-  errors?: {
-    [qualifiedField: string]: string[]
-  };
 }
