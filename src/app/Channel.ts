@@ -66,7 +66,7 @@ export abstract class Channel {
    * @param options additional options
    * @returns result of the operation
    */
-  public abstract async prepare?(
+  public async prepare?(
     contentKey: string, tracking: CampaignTracking, options: ChannelPrepareOptions
   ): Promise<ChannelPrepareResult>;
 
