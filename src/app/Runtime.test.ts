@@ -203,6 +203,20 @@ describe('Runtime', () => {
     });
   });
 
+  describe('getChannelClass', () => {
+    it('loads the channel module', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Channel: 'Channel'});
+
+      const channel = await runtime.getChannelClass();
+
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/channel/Channel');
+      expect(channel).toEqual('Channel');
+
+      importFn.mockRestore();
+    });
+  });
+
   describe('getSchemaObjects', () => {
     it('loads all yml files in the schema directory', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
