@@ -2,6 +2,7 @@ import {Ajv} from 'ajv';
 import {readFileSync} from 'fs';
 import * as jsYaml from 'js-yaml';
 import {join} from 'path';
+import {Channel} from './Channel';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Request} from './lib';
@@ -64,6 +65,10 @@ export class Runtime {
 
   public async getLifecycleClass<T extends Lifecycle>(): Promise<new () => T> {
     return (await this.import(join(this.dirName, 'lifecycle', 'Lifecycle')))['Lifecycle'];
+  }
+
+  public async getChannelClass<T extends Channel>(): Promise<new () => T> {
+    return (await this.import(join(this.dirName, 'channel', 'Channel')))['Channel'];
   }
 
   public async getJobClass<T extends Job>(name: string): Promise<new (invocation: JobInvocation) => T> {
