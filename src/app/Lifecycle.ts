@@ -1,5 +1,5 @@
 import {PrimitiveFormValue} from '@zaius/app-forms-schema';
-import {LifecycleSettingsResult} from './lib/LifecycleSettingsResult';
+import {LifecycleSettingsResult, Request} from './lib';
 import {LifecycleResult} from './types';
 
 /**
@@ -24,8 +24,8 @@ export abstract class Lifecycle {
   public abstract async onInstall(): Promise<LifecycleResult>;
 
   /**
-   * Handle a submission of a form page/section. You are responsible for performing any validation or
-   * changes to the form data and then writing it to the settings store for the page.
+   * Handle a submission of a form section. You are responsible for performing any validation or
+   * changes to the form data and then writing it to the settings store for the section.
    * @param section the name of the section submitted
    * @param action the action of the button that triggered the call, or 'save' by default
    * @param formData the data for the section as a hash of key/value pairs
@@ -60,6 +60,29 @@ export abstract class Lifecycle {
    * @returns {LifecycleResult} specifiy if the uninstall was successful. If false, it may be retried.
    */
   public abstract async onUninstall(): Promise<LifecycleResult>;
+
+  /**
+   * Handles outbound oAuth requests. This is triggered by an `oauth_button` on the settings form. The section of the
+   * form and its data are given here, and this method should perform any necessary validation, persist changes to the
+   * settings store, etc. If everything is in order, the result must provide a redirect to the external oAuth endpoint.
+   * Otherwise, the result should provide appropriate error messages and/or toasts.
+   * @param section the name of the section in which the `oauth_button` was clicked
+   * @param formData the data for the section as a hash of key/value pairs
+   * @returns {LifecycleSettingsResult} with a redirect to the external oauth endpoint
+   */
+  public abstract async onAuthorizationRequest(
+    section: string, formData: SubmittedFormData
+  ): Promise<LifecycleSettingsResult>;
+
+  /**
+   * Handles inbound oAuth grants. This is triggered after a user grants access via an external oAuth endpoint. If
+   * everything is in order, the result should provide a success message via toast and potentially redirect to the next
+   * relevant section of the settings form. If something went wrong, the result must provide appropriate error messages
+   * and/or toasts and redirect to the relevant settings form section.
+   * @param request the details of the inbound http request
+   * @returns {LifecycleSettingsResult} with appropriate messaging and/or settings redirect
+   */
+  public abstract async onAuthorizationGrant(request: Request): Promise<LifecycleSettingsResult>;
 }
 
 /**
@@ -70,5 +93,7 @@ export const LIFECYCLE_REQUIRED_METHODS = [
   'onSettingsForm',
   'onUpgrade',
   'onFinalizeUpgrade',
-  'onUninstall'
+  'onUninstall',
+  'onAuthorizationRequest',
+  'onAuthorizationGrant'
 ];

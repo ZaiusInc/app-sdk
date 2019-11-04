@@ -1,6 +1,6 @@
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
-import {LifecycleSettingsResult} from '../lib/LifecycleSettingsResult';
+import {LifecycleSettingsResult, Request} from '../lib';
 import {Lifecycle} from '../Lifecycle';
 import {Runtime} from '../Runtime';
 import {AppManifest, LifecycleResult} from '../types';
@@ -68,6 +68,14 @@ class ProperLifecycle extends Lifecycle {
   public async onUninstall(): Promise<LifecycleResult> {
     return {success: true};
   }
+
+  public async onAuthorizationRequest(_page: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return new LifecycleSettingsResult();
+  }
+
+  public async onAuthorizationGrant(_request: Request): Promise<LifecycleSettingsResult> {
+    return new LifecycleSettingsResult();
+  }
 }
 /* tslint:enable */
 
@@ -114,7 +122,9 @@ describe('validateLifecycle', () => {
       'Lifecycle implementation is missing the onSettingsForm method',
       'Lifecycle implementation is missing the onUpgrade method',
       'Lifecycle implementation is missing the onFinalizeUpgrade method',
-      'Lifecycle implementation is missing the onUninstall method'
+      'Lifecycle implementation is missing the onUninstall method',
+      'Lifecycle implementation is missing the onAuthorizationRequest method',
+      'Lifecycle implementation is missing the onAuthorizationGrant method'
     ]);
 
     getLifecycleClass.mockRestore();
