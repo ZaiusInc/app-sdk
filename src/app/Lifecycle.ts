@@ -57,14 +57,14 @@ export abstract class Lifecycle {
   /**
    * Perform any actions on the integrations platform to complete an uninstall, such as removing
    * webhooks pointing at this installation.
-   * @returns {LifecycleResult} specifiy if the uninstall was successful. If false, it may be retried.
+   * @returns {LifecycleResult} specify if the uninstall was successful. If false, it may be retried.
    */
   public abstract async onUninstall(): Promise<LifecycleResult>;
 
   /**
-   * Handles outbound oAuth requests. This is triggered by an `oauth_button` on the settings form. The section of the
+   * Handles outbound OAuth requests. This is triggered by an `oauth_button` on the settings form. The section of the
    * form and its data are given here, and this method should perform any necessary validation, persist changes to the
-   * settings store, etc. If everything is in order, the result must provide a redirect to the external oAuth endpoint.
+   * settings store, etc. If everything is in order, the result must provide a redirect to the external OAuth endpoint.
    * Otherwise, the result should provide appropriate error messages and/or toasts.
    * @param section the name of the section in which the `oauth_button` was clicked
    * @param formData the data for the section as a hash of key/value pairs
@@ -75,7 +75,7 @@ export abstract class Lifecycle {
   ): Promise<LifecycleSettingsResult>;
 
   /**
-   * Handles inbound oAuth grants. This is triggered after a user grants access via an external oAuth endpoint. If
+   * Handles inbound OAuth grants. This is triggered after a user grants access via an external OAuth endpoint. If
    * everything is in order, the result should provide a success message via toast and potentially redirect to the next
    * relevant section of the settings form. If something went wrong, the result must provide appropriate error messages
    * and/or toasts and redirect to the relevant settings form section.
