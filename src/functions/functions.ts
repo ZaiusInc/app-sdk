@@ -18,7 +18,7 @@ export const functions: FunctionApi = {
     return functionApi.getEndpoints();
   },
 
-  getAuthorizationGrantUrl(): Promise<string> {
+  getAuthorizationGrantUrl(): string {
     return functionApi.getAuthorizationGrantUrl();
   }
 };
