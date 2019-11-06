@@ -34,6 +34,7 @@ describe('LifecycleSettingsResult', () => {
     it('produces a response without any errors/etc', () => {
       expect(new LifecycleSettingsResult().getResponse('foo')).toEqual({
         redirect: undefined,
+        redirectMode: undefined,
         errors: {},
         toasts: []
       });
@@ -54,6 +55,7 @@ describe('LifecycleSettingsResult', () => {
         .addToast('danger', 'Authorization failed');
       expect(result.getResponse('foo')).toEqual({
         redirect: undefined,
+        redirectMode: undefined,
         errors: {'foo.password': ['Cannot be one of the three most commonly used passwords']},
         toasts: [{intent: 'danger', message: 'Authorization failed'}]
       });

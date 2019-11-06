@@ -1,5 +1,6 @@
 import {PrimitiveFormValue} from '@zaius/app-forms-schema';
 import {LifecycleSettingsResult, Request} from './lib';
+import {AuthorizationGrantResult} from './lib/AuthorizationGrantResult';
 import {LifecycleResult} from './types';
 
 /**
@@ -76,13 +77,13 @@ export abstract class Lifecycle {
 
   /**
    * Handles inbound OAuth grants. This is triggered after a user grants access via an external OAuth endpoint. If
-   * everything is in order, the result should provide a success message via toast and potentially redirect to the next
-   * relevant section of the settings form. If something went wrong, the result must provide appropriate error messages
-   * and/or toasts and redirect to the relevant settings form section.
+   * everything is in order, the result should provide a success message via toast and redirect to the next relevant
+   * section of the settings form. If something went wrong, the result must provide appropriate error messages
+   * and/or toasts and redirect to the originating settings form section.
    * @param request the details of the inbound http request
-   * @returns {LifecycleSettingsResult} with appropriate messaging and/or settings redirect
+   * @returns {AuthorizationGrantResult} with appropriate settings redirect and messaging
    */
-  public abstract async onAuthorizationGrant(request: Request): Promise<LifecycleSettingsResult>;
+  public abstract async onAuthorizationGrant(request: Request): Promise<AuthorizationGrantResult>;
 }
 
 /**

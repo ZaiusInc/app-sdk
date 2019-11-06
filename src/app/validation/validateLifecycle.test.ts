@@ -1,6 +1,7 @@
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {LifecycleSettingsResult, Request} from '../lib';
+import {AuthorizationGrantResult} from '../lib/AuthorizationGrantResult';
 import {Lifecycle} from '../Lifecycle';
 import {Runtime} from '../Runtime';
 import {AppManifest, LifecycleResult} from '../types';
@@ -73,8 +74,8 @@ class ProperLifecycle extends Lifecycle {
     return new LifecycleSettingsResult();
   }
 
-  public async onAuthorizationGrant(_request: Request): Promise<LifecycleSettingsResult> {
-    return new LifecycleSettingsResult();
+  public async onAuthorizationGrant(_request: Request): Promise<AuthorizationGrantResult> {
+    return new AuthorizationGrantResult('oauth');
   }
 }
 /* tslint:enable */
