@@ -14,6 +14,22 @@ describe('LifecycleSettingsResult', () => {
     });
   });
 
+  describe('redirect', () => {
+    it('configures a url-mode redirect', () => {
+      const result = new LifecycleSettingsResult().redirect('https://zaius.com');
+      expect(result['redirectValue']).toEqual('https://zaius.com');
+      expect(result['redirectMode']).toEqual('url');
+    });
+  });
+
+  describe('redirectToSettings', () => {
+    it('configures a settings-mode redirect', () => {
+      const result = new LifecycleSettingsResult().redirectToSettings('foo');
+      expect(result['redirectValue']).toEqual('foo');
+      expect(result['redirectMode']).toEqual('settings');
+    });
+  });
+
   describe('getResponse', () => {
     it('produces a response without any errors/etc', () => {
       expect(new LifecycleSettingsResult().getResponse('foo')).toEqual({
@@ -26,6 +42,7 @@ describe('LifecycleSettingsResult', () => {
     it('produces a response with a redirect', () => {
       expect(new LifecycleSettingsResult().redirect('https://zaius.com').getResponse('foo')).toEqual({
         redirect: 'https://zaius.com',
+        redirectMode: 'url',
         errors: {},
         toasts: []
       });

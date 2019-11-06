@@ -7,13 +7,15 @@ export interface LifecycleSettingsResponse {
   errors?: {[ref: string]: string[]};
   toasts?: Array<{intent: Intent, message: string}>;
   redirect?: string;
+  redirectMode?: 'url' | 'settings';
 }
 
 /**
  * Used to compose a response to the onSettingsForm lifecycle request
  */
 export class LifecycleSettingsResult extends FormResult {
-  private redirectLocation?: string;
+  private redirectValue?: string;
+  private redirectMode?: 'url' | 'settings';
 
   /**
    * Add an error to display to the user for a particular form field (implicitly scoped to the submitted section)
@@ -25,11 +27,24 @@ export class LifecycleSettingsResult extends FormResult {
   }
 
   /**
-   * Redirect the user to another page, such as for an OAuth flow
-   * @param url The destination URL for the redirect (location header)
+   * Redirect the user to another page, such as for an OAuth flow. Calling this method will override any value
+   * previously set by {@see redirectToSettings}.
+   * @param url the destination URL for the redirect (location header)
    */
   public redirect(url: string): this {
-    this.redirectLocation = url;
+    this.redirectValue = url;
+    this.redirectMode = 'url';
+    return this;
+  }
+
+  /**
+   * Redirect the user to a particular section of the settings form. Calling this method will override any value
+   * previously set by {@see redirect}.
+   * @param section to open
+   */
+  public redirectToSettings(section: string): this {
+    this.redirectValue = section;
+    this.redirectMode = 'settings';
     return this;
   }
 
@@ -44,9 +59,10 @@ export class LifecycleSettingsResult extends FormResult {
     }
 
     return {
-      redirect: this.redirectLocation,
       errors,
-      toasts: this.toasts
+      toasts: this.toasts,
+      redirect: this.redirectValue,
+      redirectMode: this.redirectMode
     };
   }
 }

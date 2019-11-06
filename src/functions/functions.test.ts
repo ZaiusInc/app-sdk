@@ -3,7 +3,8 @@ import {functions, initializeFunctionApi} from './functions';
 
 describe('functions', () => {
   const mockFunctionApi = {
-    getEndpoints: jest.fn()
+    getEndpoints: jest.fn(),
+    getAuthorizationGrantUrl: jest.fn()
   };
 
   afterEach(() => {
@@ -14,5 +15,11 @@ describe('functions', () => {
     initializeFunctionApi(mockFunctionApi);
     functions.getEndpoints();
     expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
+  });
+
+  it('uses the configured implementation for getAuthorizationGrantUrl', () => {
+    initializeFunctionApi(mockFunctionApi);
+    functions.getAuthorizationGrantUrl();
+    expect(mockFunctionApi.getAuthorizationGrantUrl).toHaveBeenCalled();
   });
 });

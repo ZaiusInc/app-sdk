@@ -16,5 +16,9 @@ export const initializeFunctionApi = (api: FunctionApi) => {
 export const functions: FunctionApi = {
   getEndpoints(): Promise<{[name: string]: string}> {
     return functionApi.getEndpoints();
+  },
+
+  getAuthorizationGrantUrl(): Promise<string> {
+    return functionApi.getAuthorizationGrantUrl();
   }
 };
