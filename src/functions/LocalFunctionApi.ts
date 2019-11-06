@@ -10,7 +10,7 @@ export class LocalFunctionApi implements FunctionApi {
     throw new Error('Method not implemented.');
   }
 
-  public getAuthorizationGrantUrl(): Promise<string> {
+  public getAuthorizationGrantUrl(): string {
     throw new Error('Method not implemented.');
   }
 }

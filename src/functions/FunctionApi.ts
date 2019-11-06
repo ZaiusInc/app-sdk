@@ -22,10 +22,10 @@ export interface FunctionApi {
   getEndpoints(): Promise<FunctionEndpoints>;
 
   /**
-   * Retrieves the base url for an authorization grant. This can be used as the returning redirect url for an oAuth
+   * Retrieves the base url for an authorization grant. This can be used as the returning redirect url for an OAuth
    * request to an external service. The url does not contain a trailing slash.
    *
    * @return authorization grant url
    */
-  getAuthorizationGrantUrl(): Promise<string>;
+  getAuthorizationGrantUrl(): string;
 }
