@@ -1,6 +1,7 @@
 export * from './Headers';
 export * from './FormResult';
 export * from './LifecycleSettingsResult';
+export * from './AuthorizationGrantResult';
 export * from './ChannelTargetResult';
 export * from './ChannelPublishResult';
 export * from './ChannelPreviewResult';
