@@ -258,8 +258,8 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Atomically removes the given arrays of values from the given NumberSet fields. Calling this method on a
-   * non-existent object will not cause it to be created. If any field exists but is not a list, this will result in an
-   * error.
+   * non-existent object will not cause it to be created. If any field exists but is not a NumberSet, this will result
+   * in an error.
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to remove
    * @returns hash of fields to NumberSet containing only the values that were removed (any values that did not exist in
@@ -279,7 +279,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Checks if the given arrays of values exist in the given NumberSet fields. Calling this method on a non-existent
-   * object will not cause it to be created. If any field exists but is not a list, this will result in an error.
+   * object will not cause it to be created. If any field exists but is not a NumberSet, this will result in an error.
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to check
    * @returns hash of fields to NumberSet containing only the values that exist in the target NumberSet
@@ -323,8 +323,8 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Atomically removes the given arrays of values from the given StringSet fields. Calling this method on a
-   * non-existent object will not cause it to be created. If any field exists but is not a list, this will result in an
-   * error.
+   * non-existent object will not cause it to be created. If any field exists but is not a StringSet, this will result
+   * in an error.
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to remove
    * @returns hash of fields to StringSet containing only the values that were removed (any values that did not exist in
@@ -344,7 +344,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Checks if the given arrays of values exist in the given StringSet fields. Calling this method on a non-existent
-   * object will not cause it to be created. If any field exists but is not a list, this will result in an error.
+   * object will not cause it to be created. If any field exists but is not a StringSet, this will result in an error.
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to check
    * @returns hash of fields to StringSet containing only the values that exist in the target StringSet
