@@ -2,6 +2,7 @@ import {ValueHash} from '..';
 import {JobApi, JobDetail, JobRunStatus} from './JobApi';
 
 /**
+ * @hidden
  * A stub of the job api
  *
  * @TODO implement the stub for local development purposes

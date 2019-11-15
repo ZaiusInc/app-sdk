@@ -1,6 +1,7 @@
 import {BaseKVStore, PatchUpdater, ValueHash} from './BaseKVStore';
 
 /**
+ * @hidden
  * A stub of the key value store
  *
  * @TODO implement the stub for local development purposes

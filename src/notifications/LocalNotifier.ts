@@ -4,6 +4,7 @@ import {Notifier} from './Notifier';
 const noop = function() { /**/ };
 
 /**
+ * @hidden
  * A simple noop stub of the notifier api
  */
 export class LocalNotifier implements Notifier {

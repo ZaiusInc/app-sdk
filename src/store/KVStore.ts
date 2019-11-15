@@ -44,6 +44,10 @@ export interface KVRowOptions {
 }
 
 export interface KVStore extends BaseKVStore<KVHash, KVHash> {
+  // ===================================================================================================================
+  // Basic Operations
+  // ===================================================================================================================
+
   /**
    * Retrieve an object from the store given a key.
    * @async
@@ -103,6 +107,10 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    */
   exists(key: string): Promise<boolean>;
 
+  // ===================================================================================================================
+  // Numeric Operations
+  // ===================================================================================================================
+
   /**
    * Atomically increment the value of a numeric field. If the object or field did not previously exist, the resulting
    * field will be set to the given amount. If the field does already exist but is not a number, this will result in
@@ -125,6 +133,10 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @returns hash of fields to values after incrementing
    */
   incrementMulti(key: string, fieldAmounts: MultiValue<number>): Promise<MultiValue<number>>;
+
+  // ===================================================================================================================
+  // List Operations
+  // ===================================================================================================================
 
   /**
    * Atomically retrieve and remove the *first* element from a list. If the object or field does not exist or is empty,
@@ -208,4 +220,134 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @param fieldValues hash of fields to array of values to append
    */
   appendMulti<T extends Value>(key: string, fieldValues: MultiValue<T[]>): Promise<void>;
+
+  // ===================================================================================================================
+  // NumberSet Operations
+  // ===================================================================================================================
+
+  /**
+   * Atomically adds a value to a NumberSet. If the object or field does not exist, it will be created with a NumberSet
+   * containing the given element. If the field exists but is not a NumberSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the NumberSet
+   * @param value to add
+   * @returns `true` if the value was newly added, `false` if it was already a member of the set
+   */
+  addNumber(key: string, field: string, value: number): Promise<boolean>;
+
+  /**
+   * Atomically adds the given arrays of values to the given NumberSet fields. If the object or fields do not exist,
+   * they will be created from the given arrays. If any field exists but is not a NumberSet, this will result in an
+   * error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to add
+   * @returns hash of fields to NumberSet containing only the values that were newly added (any values that already
+   *          existed in the target NumberSet will not exist in the return value)
+   */
+  addNumberMulti(key: string, fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>>;
+
+  /**
+   * Atomically removes a value from a NumberSet. Calling this method on a non-existent object will not cause it to
+   * be created. If the field exists but is not a NumberSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the NumberSet
+   * @param value to remove
+   * @returns `true` if the value was removed, `false` if it was not a member of the set
+   */
+  removeNumber(key: string, field: string, value: number): Promise<boolean>;
+
+  /**
+   * Atomically removes the given arrays of values from the given NumberSet fields. Calling this method on a
+   * non-existent object will not cause it to be created. If any field exists but is not a NumberSet, this will result
+   * in an error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to remove
+   * @returns hash of fields to NumberSet containing only the values that were removed (any values that did not exist in
+   *          the target NumberSet will not exist in the return value)
+   */
+  removeNumberMulti(key: string, fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>>;
+
+  /**
+   * Checks if a value exists in a NumberSet. Calling this method on a non-existent object will not cause it to be
+   * created. If the field exists but is not a NumberSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the NumberSet
+   * @param value to check
+   * @returns `true` if the value is a member of the set, `false` if it is not
+   */
+  hasNumber(key: string, field: string, value: number): Promise<boolean>;
+
+  /**
+   * Checks if the given arrays of values exist in the given NumberSet fields. Calling this method on a non-existent
+   * object will not cause it to be created. If any field exists but is not a NumberSet, this will result in an error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to check
+   * @returns hash of fields to NumberSet containing only the values that exist in the target NumberSet
+   */
+  hasNumberMulti(key: string, fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>>;
+
+  // ===================================================================================================================
+  // StringSet Operations
+  // ===================================================================================================================
+
+  /**
+   * Atomically adds a value to a StringSet. If the object or field does not exist, it will be created with a StringSet
+   * containing the given element. If the field exists but is not a StringSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the StringSet
+   * @param value to add
+   * @returns `true` if the value was newly added, `false` if it was already a member of the set
+   */
+  addString(key: string, field: string, value: string): Promise<boolean>;
+
+  /**
+   * Atomically adds the given arrays of values to the given StringSet fields. If the object or fields do not exist,
+   * they will be created from the given arrays. If any field exists but is not a StringSet, this will result in an
+   * error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to add
+   * @returns hash of fields to StringSet containing only the values that were newly added (any values that already
+   *          existed in the target StringSet will not exist in the return value)
+   */
+  addStringMulti(key: string, fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>>;
+
+  /**
+   * Atomically removes a value from a StringSet. Calling this method on a non-existent object will not cause it to
+   * be created. If the field exists but is not a StringSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the StringSet
+   * @param value to remove
+   * @returns `true` if the value was removed, `false` if it was not a member of the set
+   */
+  removeString(key: string, field: string, value: string): Promise<boolean>;
+
+  /**
+   * Atomically removes the given arrays of values from the given StringSet fields. Calling this method on a
+   * non-existent object will not cause it to be created. If any field exists but is not a StringSet, this will result
+   * in an error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to remove
+   * @returns hash of fields to StringSet containing only the values that were removed (any values that did not exist in
+   *          the target StringSet will not exist in the return value)
+   */
+  removeStringMulti(key: string, fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>>;
+
+  /**
+   * Checks if a value exists in a StringSet. Calling this method on a non-existent object will not cause it to be
+   * created. If the field exists but is not a StringSet, this will result in an error.
+   * @param key of the stored object
+   * @param field that holds the StringSet
+   * @param value to check
+   * @returns `true` if the value is a member of the set, `false` if it is not
+   */
+  hasString(key: string, field: string, value: string): Promise<boolean>;
+
+  /**
+   * Checks if the given arrays of values exist in the given StringSet fields. Calling this method on a non-existent
+   * object will not cause it to be created. If any field exists but is not a StringSet, this will result in an error.
+   * @param key of the stored object
+   * @param fieldValues hash of fields to array of values to check
+   * @returns hash of fields to StringSet containing only the values that exist in the target StringSet
+   */
+  hasStringMulti(key: string, fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>>;
 }

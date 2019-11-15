@@ -1,7 +1,10 @@
 import {Value} from './BaseKVStore';
 import {KVHash, KVPatchUpdater, KVRowOptions, KVStore, MultiValue} from './KVStore';
+import {NumberSet} from './NumberSet';
+import {StringSet} from './StringSet';
 
 /**
+ * @hidden
  * A stub of the key value store
  *
  * @TODO implement the stub for local development purposes
@@ -66,6 +69,54 @@ export class LocalKVStore implements KVStore {
   }
 
   public appendMulti<T extends Value>(_key: string, _fieldValues: MultiValue<T[]>): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  public addNumber(_key: string, _field: string, _value: number): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public addNumberMulti(_key: string, _fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public removeNumber(_key: string, _field: string, _value: number): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public removeNumberMulti(_key: string, _fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public hasNumber(_key: string, _field: string, _value: number): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public hasNumberMulti(_key: string, _fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public addString(_key: string, _field: string, _value: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public addStringMulti(_key: string, _fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public removeString(_key: string, _field: string, _value: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public removeStringMulti(_key: string, _fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>> {
+    throw new Error('Method not implemented.');
+  }
+
+  public hasString(_key: string, _field: string, _value: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public hasStringMulti(_key: string, _fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>> {
     throw new Error('Method not implemented.');
   }
 }

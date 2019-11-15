@@ -1,6 +1,7 @@
 import {FunctionApi, FunctionEndpoints} from './FunctionApi';
 
 /**
+ * @hidden
  * A stub of the function api
  *
  * @TODO implement the stub for local development purposes
