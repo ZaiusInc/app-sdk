@@ -179,23 +179,11 @@
             ],
             "type": "object"
         },
-        "defaults": {
-            "additionalProperties": false,
-            "properties": {
-                "environment": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "type": "object"
-                },
-                "permissions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
+        "environment": {
+            "items": {
+                "type": "string"
             },
-            "type": "object"
+            "type": "array"
         },
         "functions": {
             "additionalProperties": {

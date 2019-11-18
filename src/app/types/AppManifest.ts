@@ -34,12 +34,7 @@ export interface AppManifest {
     categories: AppCategory[];
   };
   runtime: 'node12';
-  defaults?: {
-    permissions?: string[];
-    environment?: {
-      [key: string]: string;
-    };
-  };
+  environment?: string[];
   functions?: {
     [name: string]: AppFunction;
   };
