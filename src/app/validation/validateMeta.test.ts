@@ -32,9 +32,9 @@ const appManifest = deepFreeze({
 } as AppManifest);
 
 describe('validateMeta', () => {
-  it('succeeds with a proper definition', async () => {
+  it('succeeds with a proper definition', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    expect(await validateMeta(runtime)).toEqual([]);
+    expect(validateMeta(runtime)).toEqual([]);
   });
 
   it('detects invalid app id', () => {

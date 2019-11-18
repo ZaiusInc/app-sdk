@@ -6,6 +6,7 @@ import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import {SchemaObject} from '../types/SchemaObject';
 import {validateApp} from './validateApp';
+import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
 import {validateLifecycle} from './validateLifecycle';
@@ -14,6 +15,7 @@ import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 
 jest.mock('./validateMeta');
+jest.mock('./validateEnvironment');
 jest.mock('./validateFunctions');
 jest.mock('./validateJobs');
 jest.mock('./validateLifecycle');
@@ -32,6 +34,7 @@ const appManifest = deepFreeze({
     categories: ['Commerce Platform']
   },
   runtime: 'node12',
+  environment: ['APP_ENV_FOO'],
   functions: {
     foo: {
       method: 'GET',
@@ -106,6 +109,7 @@ describe('validateApp', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (validateMeta as jest.Mock).mockReturnValue([]);
+    (validateEnvironment as jest.Mock).mockReturnValue([]);
     (validateFunctions as jest.Mock).mockResolvedValue([]);
     (validateJobs as jest.Mock).mockResolvedValue([]);
     (validateLifecycle as jest.Mock).mockResolvedValue([]);
@@ -157,6 +161,7 @@ describe('validateApp', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
     (validateMeta as jest.Mock).mockReturnValue(['meta error 1', 'meta error 2']);
+    (validateEnvironment as jest.Mock).mockReturnValue(['environment error 1', 'environment error 2']);
     (validateFunctions as jest.Mock).mockResolvedValue(['functions error 1', 'functions error 2']);
     (validateJobs as jest.Mock).mockResolvedValue(['jobs error 1', 'jobs error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
@@ -167,6 +172,7 @@ describe('validateApp', () => {
 
     expect(await validateApp(runtime, ['events', 'customers'])).toEqual([
       'meta error 1', 'meta error 2',
+      'environment error 1', 'environment error 2',
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
       'lifecycle error 1', 'lifecycle error 2',

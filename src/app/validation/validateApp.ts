@@ -3,6 +3,7 @@ import * as Ajv from 'ajv';
 import {Runtime} from '../Runtime';
 import * as manifestSchema from '../types/AppManifest.schema.json';
 import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
+import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
 import {validateLifecycle} from './validateLifecycle';
@@ -23,6 +24,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
     ajv.errors!.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {
     errors = errors.concat(validateMeta(runtime))
+      .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
       .concat(await validateLifecycle(runtime))
