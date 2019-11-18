@@ -74,4 +74,18 @@ describe('validateEnvironment', () => {
       'Invalid app.yml: environment.APP_ENV_BUZZ is listed more than once',
     ]);
   });
+
+  it('is fine with an undefined list', () => {
+    const manifest = {...appManifest, environment: undefined};
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+    expect(validateEnvironment(runtime)).toEqual([]);
+  });
+
+  it('is fine with an empty list', () => {
+    const manifest = {...appManifest, environment: []};
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+    expect(validateEnvironment(runtime)).toEqual([]);
+  });
 });
