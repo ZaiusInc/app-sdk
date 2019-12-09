@@ -23,6 +23,7 @@ export interface AppLiquidExtension {
     [name: string]: {
       type: 'string' | 'number' | 'boolean' | 'any';
       required: boolean;
+      description: string;
     };
   };
 }

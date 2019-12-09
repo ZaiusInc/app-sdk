@@ -90,6 +90,9 @@
                     "additionalProperties": {
                         "additionalProperties": false,
                         "properties": {
+                            "description": {
+                                "type": "string"
+                            },
                             "required": {
                                 "type": "boolean"
                             },
@@ -104,6 +107,7 @@
                             }
                         },
                         "required": [
+                            "description",
                             "required",
                             "type"
                         ],
