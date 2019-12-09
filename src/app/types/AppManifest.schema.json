@@ -77,6 +77,47 @@
             ],
             "type": "object"
         },
+        "AppLiquidExtension": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "input": {
+                    "additionalProperties": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "required": {
+                                "type": "boolean"
+                            },
+                            "type": {
+                                "enum": [
+                                    "any",
+                                    "boolean",
+                                    "number",
+                                    "string"
+                                ],
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "required",
+                            "type"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "description",
+                "entry_point"
+            ],
+            "type": "object"
+        },
         "CampaignTargeting": {
             "additionalProperties": false,
             "description": "Defines the targeting requirements for a channel.",
@@ -194,6 +235,12 @@
         "jobs": {
             "additionalProperties": {
                 "$ref": "#/definitions/AppJob"
+            },
+            "type": "object"
+        },
+        "liquid_extensions": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppLiquidExtension"
             },
             "type": "object"
         },

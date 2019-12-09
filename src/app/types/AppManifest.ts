@@ -16,6 +16,17 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
+export interface AppLiquidExtension {
+  entry_point: string;
+  description: string;
+  input?: {
+    [name: string]: {
+      type: 'string' | 'number' | 'boolean' | 'any';
+      required: boolean;
+    };
+  };
+}
+
 export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
   | 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
   | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
@@ -40,6 +51,9 @@ export interface AppManifest {
   };
   jobs?: {
     [name: string]: AppJob;
+  };
+  liquid_extensions?: {
+    [name: string]: AppLiquidExtension;
   };
   channel?: {
     grouping: string;

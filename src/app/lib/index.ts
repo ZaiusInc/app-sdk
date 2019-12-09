@@ -8,3 +8,4 @@ export * from './ChannelPreviewResult';
 export * from './QueryParams';
 export * from './Request';
 export * from './Response';
+export * from './LiquidExtensionResult';

@@ -28,7 +28,7 @@ export class LifecycleSettingsResult extends FormResult {
 
   /**
    * Redirect the user to another page, such as for an OAuth flow. Calling this method will override any value
-   * previously set by {@see redirectToSettings}.
+   * previously set by {@link redirectToSettings}.
    * @param url the destination URL for the redirect (location header)
    */
   public redirect(url: string): this {
@@ -39,7 +39,7 @@ export class LifecycleSettingsResult extends FormResult {
 
   /**
    * Redirect the user to a particular section of the settings form. Calling this method will override any value
-   * previously set by {@see redirect}.
+   * previously set by {@link redirect}.
    * @param section to open
    */
   public redirectToSettings(section: string): this {
