@@ -34,6 +34,12 @@ const appManifest = deepFreeze({
       entry_point: 'Bar',
       description: 'Does a thing'
     }
+  },
+  liquid_extensions: {
+    buzz: {
+      entry_point: 'Buzz',
+      description: 'Buzzes'
+    }
   }
 } as AppManifest);
 
@@ -185,6 +191,30 @@ describe('Runtime', () => {
         await runtime.getJobClass('foo');
       } catch (e) {
         expect(e.message).toMatch(/^No job named foo/);
+      }
+    });
+  });
+
+  describe('getLiquidExtensionClass', () => {
+    it('loads the specified module', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Buzz: 'Buzz'});
+
+      const buzz = await runtime.getLiquidExtensionClass('buzz');
+
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/liquid-extensions/Buzz');
+      expect(buzz).toEqual('Buzz');
+
+      importFn.mockRestore();
+    });
+
+    it("throws an error if the liquid extension isn't in the manifest", async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+      try {
+        await runtime.getLiquidExtensionClass('bar');
+      } catch (e) {
+        expect(e.message).toMatch(/^No liquid extension named bar/);
       }
     });
   });

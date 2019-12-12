@@ -10,6 +10,7 @@ import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
 import {validateLifecycle} from './validateLifecycle';
+import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
@@ -18,6 +19,7 @@ jest.mock('./validateMeta');
 jest.mock('./validateEnvironment');
 jest.mock('./validateFunctions');
 jest.mock('./validateJobs');
+jest.mock('./validateLiquidExtensions');
 jest.mock('./validateLifecycle');
 jest.mock('./validateSchemaObject');
 jest.mock('./validateAssets');
@@ -112,6 +114,7 @@ describe('validateApp', () => {
     (validateEnvironment as jest.Mock).mockReturnValue([]);
     (validateFunctions as jest.Mock).mockResolvedValue([]);
     (validateJobs as jest.Mock).mockResolvedValue([]);
+    (validateLiquidExtensions as jest.Mock).mockResolvedValue([]);
     (validateLifecycle as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
@@ -164,6 +167,7 @@ describe('validateApp', () => {
     (validateEnvironment as jest.Mock).mockReturnValue(['environment error 1', 'environment error 2']);
     (validateFunctions as jest.Mock).mockResolvedValue(['functions error 1', 'functions error 2']);
     (validateJobs as jest.Mock).mockResolvedValue(['jobs error 1', 'jobs error 2']);
+    (validateLiquidExtensions as jest.Mock).mockResolvedValue(['liquid error 1', 'liquid error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
@@ -175,6 +179,7 @@ describe('validateApp', () => {
       'environment error 1', 'environment error 2',
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
+      'liquid error 1', 'liquid error 2',
       'lifecycle error 1', 'lifecycle error 2',
       'asset error 1', 'asset error 2',
       'schema error 1', 'schema error 2',
@@ -184,6 +189,7 @@ describe('validateApp', () => {
     expect(validateMeta).toBeCalledWith(runtime);
     expect(validateFunctions).toBeCalledWith(runtime);
     expect(validateJobs).toBeCalledWith(runtime);
+    expect(validateLiquidExtensions).toBeCalledWith(runtime);
     expect(validateLifecycle).toBeCalledWith(runtime);
     expect((validateSchemaObject as jest.Mock).mock.calls).toEqual([
       [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']],

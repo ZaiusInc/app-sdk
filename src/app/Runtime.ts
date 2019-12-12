@@ -7,6 +7,7 @@ import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
+import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects} from './types/SchemaObject';
@@ -79,6 +80,16 @@ export class Runtime {
 
     const job = jobs[name];
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
+  }
+
+  public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
+    const liquidExtensions = this.manifest.liquid_extensions;
+    if (!liquidExtensions || !liquidExtensions[name]) {
+      throw new Error(`No liquid extension named ${name} defined in manifest`);
+    }
+
+    const ext = liquidExtensions[name];
+    return (await this.import(join(this.dirName, 'liquid-extensions', ext.entry_point)))[ext.entry_point];
   }
 
   public getSchemaObjects(): SchemaObjects {
