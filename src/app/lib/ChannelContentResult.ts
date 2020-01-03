@@ -3,15 +3,15 @@ import {FormResult, Intent} from './FormResult';
 /**
  * @hidden
  */
-export interface ChannelPublishResponse {
+export interface ChannelContentResponse {
   errors?: {[ref: string]: string[]};
   toasts?: Array<{intent: Intent, message: string}>;
 }
 
 /**
- * Result of {@link Channel.publish}.
+ * Result of {@link Channel.validate} and {@link Channel.publish}.
  */
-export class ChannelPublishResult extends FormResult {
+export class ChannelContentResult extends FormResult {
   /**
    * Add an error to display to the user for a particular form field.
    * @param form the type of content form that the error applies to (settings or template)
@@ -27,7 +27,7 @@ export class ChannelPublishResult extends FormResult {
    * @hidden
    * Used internally to get the complete response
    */
-  public getResponse(): ChannelPublishResponse {
+  public getResponse(): ChannelContentResponse {
     return {
       errors: this.errors,
       toasts: this.toasts

@@ -1,5 +1,5 @@
 import {Schema} from '@zaius/app-forms-schema';
-import {ChannelPreviewResult, ChannelPublishResult, ChannelTargetResult} from './lib';
+import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from './lib';
 
 /**
  * Defines the interface of a channel. The typical channel flow in a campaign run is as follows:
@@ -33,8 +33,24 @@ export abstract class Channel {
   public async target?(contentSettings: Schema.FormData): Promise<ChannelTargetResult>;
 
   /**
+   * Validates the given content. This should ensure that the content is suitable for use in the current mode, as
+   * specified in the options (see {@link ChannelValidateOptions.mode}). If specific fields are missing or invalid,
+   * appropriate error messages should be provided using {@link ChannelContentResult.addError}. Any errors that are
+   * not linked to a specific field should be provided using {@link ChannelContentResult.addToast}. If no errors of
+   * either type are returned, the validation is considered successful, and the operation will be allowed to proceed.
+   * @async
+   * @param content the content with translated tempaltes
+   * @param options additional options
+   * @returns result of the operation
+   */
+  public abstract async validate(
+    content: CampaignContent, options: ChannelValidateOptions
+  ): Promise<ChannelContentResult>;
+
+  /**
    * Publishes the given content. This is the place to perform any necessary transformations between the given template
-   * format and the external system's format. It should also perform any necessary validations on the input data.
+   * format and the external system's format. It can be assumed that {@link Channel.validate} has already been called,
+   * but additional errors may still be detected in this phase and returned in the same way as during validation.
    * <p>
    * If the content must be stored in an external system, this is also the time to do that. If the content must instead
    * be known in `prepare` or `deliver`, it should be placed in the document store for future use.
@@ -51,7 +67,7 @@ export abstract class Channel {
    */
   public abstract async publish(
     contentKey: string, content: CampaignContent, options: ChannelPublishOptions
-  ): Promise<ChannelPublishResult>;
+  ): Promise<ChannelContentResult>;
 
   /**
    * Prepares for a campaign run. This can be used to set up an external entity for use in `deliver` (or perform any
@@ -109,7 +125,7 @@ export abstract class Channel {
 /**
  * @hidden
  */
-export const CHANNEL_REQUIRED_METHODS = ['ready', 'publish', 'deliver', 'preview'];
+export const CHANNEL_REQUIRED_METHODS = ['ready', 'validate', 'publish', 'deliver', 'preview'];
 
 /**
  * Defines the targeting requirements for a channel.
@@ -180,6 +196,17 @@ export interface CampaignDelivery {
   substitutions: {
     [variable: string]: string;
   };
+}
+
+/**
+ * Options for {@link Channel.validate}.
+ */
+export interface ChannelValidateOptions {
+  /**
+   * Whether the validation is being performed for a preview, test send, or when going live. This can be used, for
+   * example, to ignore certain fields that aren't required to preview but would cause an error when going live.
+   */
+  mode: 'preview' | 'test' | 'live';
 }
 
 /**

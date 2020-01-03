@@ -1,10 +1,10 @@
 import 'jest';
-import {ChannelPublishResult} from './ChannelPublishResult';
+import {ChannelContentResult} from './ChannelContentResult';
 
-describe('ChannelPublishResult', () => {
+describe('ChannelContentResult', () => {
   describe('addError', () => {
     it('adds errors for specific fields', () => {
-      const result = new ChannelPublishResult()
+      const result = new ChannelContentResult()
         .addError('settings', 'sender', 'name', 'Cannot be blank')
         .addError('template', 'message', 'title', 'Must be less than 50 characters')
         .addError('template', 'message', 'title', 'Cannot contain special characters');
@@ -17,14 +17,14 @@ describe('ChannelPublishResult', () => {
 
   describe('getResponse', () => {
     it('produces a response no errors or toasts', () => {
-      expect(new ChannelPublishResult().getResponse()).toEqual({
+      expect(new ChannelContentResult().getResponse()).toEqual({
         errors: {},
         toasts: []
       });
     });
 
     it('includes errors and toasts in the response', () => {
-      const result = new ChannelPublishResult()
+      const result = new ChannelContentResult()
         .addError('template', 'message', 'title', 'Must be less than 50 characters')
         .addToast('danger', 'Publish failed');
       expect(result.getResponse()).toEqual({
