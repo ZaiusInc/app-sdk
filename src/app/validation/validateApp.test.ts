@@ -6,6 +6,7 @@ import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import {SchemaObject} from '../types/SchemaObject';
 import {validateApp} from './validateApp';
+import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
@@ -21,6 +22,7 @@ jest.mock('./validateFunctions');
 jest.mock('./validateJobs');
 jest.mock('./validateLiquidExtensions');
 jest.mock('./validateLifecycle');
+jest.mock('./validateChannel');
 jest.mock('./validateSchemaObject');
 jest.mock('./validateAssets');
 
@@ -116,6 +118,7 @@ describe('validateApp', () => {
     (validateJobs as jest.Mock).mockResolvedValue([]);
     (validateLiquidExtensions as jest.Mock).mockResolvedValue([]);
     (validateLifecycle as jest.Mock).mockResolvedValue([]);
+    (validateChannel as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
   });
@@ -169,6 +172,7 @@ describe('validateApp', () => {
     (validateJobs as jest.Mock).mockResolvedValue(['jobs error 1', 'jobs error 2']);
     (validateLiquidExtensions as jest.Mock).mockResolvedValue(['liquid error 1', 'liquid error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
+    (validateChannel as jest.Mock).mockResolvedValue(['channel error 1', 'channel error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
@@ -181,6 +185,7 @@ describe('validateApp', () => {
       'jobs error 1', 'jobs error 2',
       'liquid error 1', 'liquid error 2',
       'lifecycle error 1', 'lifecycle error 2',
+      'channel error 1', 'channel error 2',
       'asset error 1', 'asset error 2',
       'schema error 1', 'schema error 2',
       'schema error 3', 'schema error 4'
@@ -191,6 +196,7 @@ describe('validateApp', () => {
     expect(validateJobs).toBeCalledWith(runtime);
     expect(validateLiquidExtensions).toBeCalledWith(runtime);
     expect(validateLifecycle).toBeCalledWith(runtime);
+    expect(validateChannel).toBeCalledWith(runtime);
     expect((validateSchemaObject as jest.Mock).mock.calls).toEqual([
       [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']],
       [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']]
