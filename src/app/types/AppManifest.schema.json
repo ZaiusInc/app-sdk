@@ -10,47 +10,11 @@
                 },
                 "entry_point": {
                     "type": "string"
-                },
-                "method": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "enum": [
-                                    "CONNECT",
-                                    "DELETE",
-                                    "GET",
-                                    "HEAD",
-                                    "OPTIONS",
-                                    "PATCH",
-                                    "POST",
-                                    "PUT",
-                                    "TRACE"
-                                ],
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "enum": [
-                                "CONNECT",
-                                "DELETE",
-                                "GET",
-                                "HEAD",
-                                "OPTIONS",
-                                "PATCH",
-                                "POST",
-                                "PUT",
-                                "TRACE"
-                            ],
-                            "type": "string"
-                        }
-                    ]
                 }
             },
             "required": [
                 "description",
-                "entry_point",
-                "method"
+                "entry_point"
             ],
             "type": "object"
         },

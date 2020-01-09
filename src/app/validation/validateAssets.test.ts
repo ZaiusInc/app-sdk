@@ -1,8 +1,8 @@
-import {Runtime} from '../Runtime';
-import {validateAssets} from './validateAssets';
 import * as deepFreeze from 'deep-freeze';
-import {AppManifest} from '../types';
 import * as mockFs from 'mock-fs';
+import {Runtime} from '../Runtime';
+import {AppManifest} from '../types';
+import {validateAssets} from './validateAssets';
 
 const appManifest = deepFreeze({
   meta: {
@@ -18,7 +18,6 @@ const appManifest = deepFreeze({
   runtime: 'node12',
   functions: {
     foo: {
-      method: 'GET',
       entry_point: 'Foo',
       description: 'gets foo'
     }

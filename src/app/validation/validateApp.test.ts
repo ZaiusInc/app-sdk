@@ -6,6 +6,7 @@ import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import {SchemaObject} from '../types/SchemaObject';
 import {validateApp} from './validateApp';
+import {validateAssets} from './validateAssets';
 import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
@@ -14,7 +15,6 @@ import {validateLifecycle} from './validateLifecycle';
 import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
-import {validateAssets} from './validateAssets';
 
 jest.mock('./validateMeta');
 jest.mock('./validateEnvironment');
@@ -41,7 +41,6 @@ const appManifest = deepFreeze({
   environment: ['APP_ENV_FOO'],
   functions: {
     foo: {
-      method: 'GET',
       entry_point: 'Foo',
       description: 'gets foo'
     }
