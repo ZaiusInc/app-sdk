@@ -19,7 +19,6 @@ const appManifest = deepFreeze({
   environment: ['APP_ENV_FOO'],
   functions: {
     foo: {
-      method: 'GET',
       entry_point: 'Foo',
       description: 'gets foo'
     }

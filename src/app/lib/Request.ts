@@ -1,15 +1,18 @@
+import {HttpMethod} from '../types';
 import {Headers} from './Headers';
 import {QueryParams} from './QueryParams';
 
 export class Request {
-  public readonly method: string;
+  public readonly method: HttpMethod;
   public readonly path: string;
   public readonly params: QueryParams;
   public headers: Headers;
   private bodyData: Uint8Array;
   private parsedJsonBody?: any;
 
-  public constructor(method: string, path: string, params: QueryParams, headers: string[][], body: Uint8Array | null) {
+  public constructor(
+    method: HttpMethod, path: string, params: QueryParams, headers: string[][], body: Uint8Array | null
+  ) {
     this.method = method;
     this.path = path;
     this.params = params;

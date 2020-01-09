@@ -1,5 +1,5 @@
-import 'jest';
 import * as deepFreeze from 'deep-freeze';
+import 'jest';
 import {Function} from '../Function';
 import {Request, Response} from '../lib';
 import {Runtime} from '../Runtime';
@@ -20,7 +20,6 @@ const appManifest = deepFreeze({
   runtime: 'node12',
   functions: {
     foo: {
-      method: 'GET',
       entry_point: 'Foo',
       description: 'gets foo'
     }

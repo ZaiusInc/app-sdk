@@ -1,10 +1,8 @@
 import {ValueHash} from '../../store';
 import {CampaignTargeting} from '../Channel';
-import {HttpMethod} from './HttpMethod';
 
 // regenerate JSON schema with `yarn run update-schema`
 export interface AppFunction {
-  method: HttpMethod | HttpMethod[];
   entry_point: string;
   description: string;
 }
