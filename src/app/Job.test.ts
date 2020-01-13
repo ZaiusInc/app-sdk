@@ -16,37 +16,37 @@ class MyJob extends Job {
 }
 
 describe('Job', () => {
-  describe('performInterruptableTask', () => {
-    it('marks the job interruptable during the task', async () => {
+  describe('performInterruptibleTask', () => {
+    it('marks the job interruptible during the task', async () => {
       const job = new MyJob({} as any);
       expect.assertions(3);
-      expect(job.isInterruptable).toBe(false);
-      await job['performInterruptableTask'](async () => {
-        expect(job.isInterruptable).toBe(true);
+      expect(job.isInterruptible).toBe(false);
+      await job['performInterruptibleTask'](async () => {
+        expect(job.isInterruptible).toBe(true);
       });
-      expect(job.isInterruptable).toBe(false);
+      expect(job.isInterruptible).toBe(false);
     });
 
-    it('restores the original isInterruptable value after', async () => {
+    it('restores the original isInterruptible value after', async () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
-      job.isInterruptable = true;
-      await job['performInterruptableTask'](async () => {
-        expect(job.isInterruptable).toBe(true);
+      job.isInterruptible = true;
+      await job['performInterruptibleTask'](async () => {
+        expect(job.isInterruptible).toBe(true);
       });
-      expect(job.isInterruptable).toBe(true);
+      expect(job.isInterruptible).toBe(true);
     });
 
-    it('restores isInterruptable after an exception', async () => {
+    it('restores isInterruptible after an exception', async () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
       try {
-        await job['performInterruptableTask'](async () => {
-          expect(job.isInterruptable).toBe(true);
+        await job['performInterruptibleTask'](async () => {
+          expect(job.isInterruptible).toBe(true);
           throw new Error('error');
         });
       } catch (e) {
-        expect(job.isInterruptable).toBe(false);
+        expect(job.isInterruptible).toBe(false);
       }
     });
   });
@@ -72,10 +72,10 @@ describe('Job', () => {
       let complete = false;
       const p = job['sleep'](2000).then(() => {
         complete = true;
-        expect(job.isInterruptable).toBe(false);
+        expect(job.isInterruptible).toBe(false);
       });
 
-      expect(job.isInterruptable).toBe(false);
+      expect(job.isInterruptible).toBe(false);
       expect(complete).toBe(false);
       jest.advanceTimersByTime(2000);
       return p;
@@ -89,27 +89,27 @@ describe('Job', () => {
       expect(setTimeoutFn).toHaveBeenCalledWith(expect.anything(), 0);
     });
 
-    it('marks the job interruptable during sleep if specified', () => {
+    it('marks the job interruptible during sleep if specified', () => {
       expect.assertions(2);
       const job = new MyJob({} as any);
-      const promise = job['sleep'](2000, {interruptable: true}).then(() => {
-        expect(job.isInterruptable).toBe(false);
+      const promise = job['sleep'](2000, {interruptible: true}).then(() => {
+        expect(job.isInterruptible).toBe(false);
       });
 
-      expect(job.isInterruptable).toBe(true);
+      expect(job.isInterruptible).toBe(true);
       jest.advanceTimersByTime(2000);
       return promise;
     });
 
-    it('restores the original isInterruptable value after sleep', () => {
+    it('restores the original isInterruptible value after sleep', () => {
       expect.assertions(2);
       const job = new MyJob({} as any);
-      job.isInterruptable = true;
-      const promise = job['sleep'](2000, {interruptable: true}).then(() => {
-        expect(job.isInterruptable).toBe(true);
+      job.isInterruptible = true;
+      const promise = job['sleep'](2000, {interruptible: true}).then(() => {
+        expect(job.isInterruptible).toBe(true);
       });
 
-      expect(job.isInterruptable).toBe(true);
+      expect(job.isInterruptible).toBe(true);
       jest.advanceTimersByTime(2000);
       return promise;
     });

@@ -33,24 +33,24 @@ export interface JobStatus extends ValueHash {
 export interface SleepOptions {
   /**
    * true if the job can be safely interrupted during this sleep (and resumed later with the current job state)
-   * @default undefined the interruptable status of the job will be unchanged
+   * @default undefined the interruptible status of the job will be unchanged
    */
-  interruptable?: boolean;
+  interruptible?: boolean;
 }
 
 export abstract class Job {
   /**
-   * Set this to true during an interruptable operation, such as waiting for a long running export.
+   * Set this to true during an interruptible operation, such as waiting for a long running export.
    * When true, a job can be interrupted and resumed with the PREVIOUS Job state (the one perform was last called with).
    * A job is normally expected to complete a job loop (perform) within < 60s. Your job CAN perform a loop for longer
-   * than 60 seconds if isInterruptable is set to true for a significant part of each 60 seconds of runtime
+   * than 60 seconds if isInterruptible is set to true for a significant part of each 60 seconds of runtime
    * and is performing NON-BLOCKING operations.
-   * @IMPORTANT You MUST ensure the process is **NOT BLOCKED** while interruptable. This can be achieved
+   * @IMPORTANT You MUST ensure the process is **NOT BLOCKED** while interruptible. This can be achieved
    * by manually calling `await this.sleep()` regularly or is automatic if you are waiting on non-blocking calls.
    *
-   * `Job::sleep` and `Job::performInterruptableTask` will set this value automatically.
+   * `Job::sleep` and `Job::performInterruptibleTask` will set this value automatically.
    */
-  public isInterruptable = false;
+  public isInterruptible = false;
 
   /**
    * Initializes a job to be run
@@ -80,21 +80,21 @@ export abstract class Job {
   public abstract async perform(status: JobStatus): Promise<JobStatus>;
 
   /**
-   * Wrapper for interruptable tasks, such as waiting for a long api call or a timeout loop waiting for a result.
-   * Interruptable tasks MUST BE NON-BLOCKING or must manually call `await this.sleep()` regularly (every few seconds).
-   * @usage `const result = await this.performInterruptableTask(() => fetch(...)));`
+   * Wrapper for interruptible tasks, such as waiting for a long api call or a timeout loop waiting for a result.
+   * Interruptible tasks MUST BE NON-BLOCKING or must manually call `await this.sleep()` regularly (every few seconds).
+   * @usage `const result = await this.performInterruptibleTask(() => fetch(...)));`
    * In this example, the job can be interrupted during the fetch operation, and if interrupted will be resumed
    * with the previous job state.
    */
-  protected async performInterruptableTask<T>(task: () => Promise<T>) {
-    const lastInterruptable = this.isInterruptable;
-    this.isInterruptable = true;
+  protected async performInterruptibleTask<T>(task: () => Promise<T>) {
+    const lastInterruptible = this.isInterruptible;
+    this.isInterruptible = true;
     try {
       const result = await task();
-      this.isInterruptable = lastInterruptable;
+      this.isInterruptible = lastInterruptible;
       return result;
     } catch (e) {
-      this.isInterruptable = lastInterruptable;
+      this.isInterruptible = lastInterruptible;
       throw e;
     }
   }
@@ -103,18 +103,18 @@ export abstract class Job {
    * Sleep the job without CPU thrashing. Use this method to wait for long running tasks, like an export API.
    * @usage `await this.sleep(5000);`
    * @param miliseconds duration to sleep in miliseconds
-   * @param options `{interruptable: true}` if the job can be interrupted while sleeping.
-   *                A sleep that is not interruptable cannot safely be longer than ~55 seconds.
+   * @param options `{interruptible: true}` if the job can be interrupted while sleeping.
+   *                A sleep that is not interruptible cannot safely be longer than about 55 seconds.
    */
   protected async sleep(miliseconds?: number, options?: SleepOptions): Promise<void> {
-    const lastInterruptable = this.isInterruptable;
-    if (options?.interruptable !== undefined) {
-      this.isInterruptable = !!options.interruptable;
+    const lastInterruptible = this.isInterruptible;
+    if (options?.interruptible !== undefined) {
+      this.isInterruptible = !!options.interruptible;
     }
 
     // perform the sleep
     await new Promise((resolve) => setTimeout(resolve, miliseconds || 0));
 
-    this.isInterruptable = lastInterruptable;
+    this.isInterruptible = lastInterruptible;
   }
 }
