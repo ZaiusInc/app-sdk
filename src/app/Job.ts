@@ -43,7 +43,7 @@ export abstract class Job {
    * Set this to true during an interruptable operation, such as waiting for a long running export.
    * When true, a job can be interrupted and resumed with the PREVIOUS Job state (the one perform was last called with).
    * A job is normally expected to complete a job loop (perform) within < 60s. Your job CAN perform a loop for longer
-   * than 60 seconds if isInterruptable is set to true for at least significant part of each 60 seconds of runtime
+   * than 60 seconds if isInterruptable is set to true for a significant part of each 60 seconds of runtime
    * and is performing NON-BLOCKING operations.
    * @IMPORTANT You MUST ensure the process is **NOT BLOCKED** while interruptable. This can be achieved
    * by manually calling `await this.sleep()` regularly or is automatic if you are waiting on non-blocking calls.
@@ -104,7 +104,7 @@ export abstract class Job {
    * @usage `await this.sleep(5000);`
    * @param miliseconds duration to sleep in miliseconds
    * @param options `{interruptable: true}` if the job can be interrupted while sleeping.
-   *                A sleep that is not interruptable cannot safely be longer than 60000.
+   *                A sleep that is not interruptable cannot safely be longer than ~55 seconds.
    */
   protected async sleep(miliseconds?: number, options?: SleepOptions): Promise<void> {
     const lastInterruptable = this.isInterruptable;
