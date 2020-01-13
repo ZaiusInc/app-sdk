@@ -1,28 +1,11 @@
 import {FormData} from '@zaius/app-forms-schema';
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
-import {
-  CampaignContent, CampaignDelivery, CampaignTracking, Channel, ChannelDeliverOptions, ChannelDeliverResult,
-  ChannelPrepareOptions, ChannelPrepareResult, ChannelPublishOptions, ChannelValidateOptions
-} from '../Channel';
+import {CampaignContent, CampaignDelivery, CampaignTracking, Channel, ChannelDeliverOptions, ChannelDeliverResult, ChannelPrepareOptions, ChannelPrepareResult, ChannelPublishOptions, ChannelValidateOptions} from '../Channel';
 import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../lib';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import {validateChannel} from './validateChannel';
-
-const badManifest = deepFreeze({
-  meta: {
-    app_id: 'my_app',
-    display_name: 'My App',
-    version: '1.0.0',
-    vendor: 'zaius',
-    support_url: 'https://zaius.com',
-    summary: 'This is an interesting app',
-    contact_email: 'support@zaius.com',
-    categories: ['Channel']
-  },
-  runtime: 'node12'
-} as AppManifest);
 
 const staticManifest = deepFreeze({
   meta: {
@@ -38,25 +21,32 @@ const staticManifest = deepFreeze({
   runtime: 'node12',
   channel: {
     grouping: 'foo',
-    targeting: [{identifier: 'my_app_identifier'}]
+    targeting: [{identifier: 'my_app_identifier'}],
+    options: {
+      prepare: false
+    }
   }
 } as AppManifest);
 
 const dynamicManifest = deepFreeze({
-  meta: {
-    app_id: 'my_app',
-    display_name: 'My App',
-    version: '1.0.0',
-    vendor: 'zaius',
-    support_url: 'https://zaius.com',
-    summary: 'This is an interesting app',
-    contact_email: 'support@zaius.com',
-    categories: ['Channel']
-  },
+  meta: staticManifest.meta,
   runtime: 'node12',
   channel: {
     grouping: 'foo',
     targeting: 'dynamic'
+  }
+} as AppManifest);
+
+const badManifest = deepFreeze({
+  meta: staticManifest.meta,
+  runtime: 'node12'
+} as AppManifest);
+
+const manifestWithoutTargeting = deepFreeze({
+  meta: staticManifest.meta,
+  runtime: 'node12',
+  channel: {
+    grouping: 'foo'
   }
 } as AppManifest);
 
@@ -152,7 +142,20 @@ describe('validateChannel', () => {
     const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel);
 
     expect(await validateChannel(runtime)).toEqual([
-      'Invalid app.yml: channel must exist when meta.categories includes "Channel"'
+      'Invalid app.yml: channel must exist when meta.categories includes "Channel"',
+      expect.stringContaining('Channel implementation is missing the prepare method')
+    ]);
+
+    getChannelClass.mockRestore();
+  });
+
+  it('detects missing target configuration', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifestWithoutTargeting, dirName: '/tmp/foo'}));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel);
+
+    expect(await validateChannel(runtime)).toEqual([
+      'Invalid app.yml: channel.targeting cannot be blank for a channel app',
+      expect.stringContaining('Channel implementation is missing the prepare method')
     ]);
 
     getChannelClass.mockRestore();
@@ -194,13 +197,49 @@ describe('validateChannel', () => {
     getChannelClass.mockRestore();
   });
 
+  it('detects missing prepare implementation when required', async () => {
+    const manifest = {
+      ...staticManifest,
+      channel: {
+        ...staticManifest.channel,
+        options: {
+          ...staticManifest.channel?.options,
+          prepare: true
+        }
+      }
+    };
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+      .mockResolvedValue(ProperChannel as any);
+
+    expect(await validateChannel(runtime)).toEqual([
+      expect.stringMatching('Channel implementation is missing the prepare method')
+    ]);
+
+    getChannelClass.mockRestore();
+  });
+
+  it('detects unused target implementation when not required', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: staticManifest, dirName: '/tmp/foo'}));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+      .mockResolvedValue(MoreProperChannel as any);
+
+    expect(await validateChannel(runtime)).toEqual([
+      'Channel implementation implements the prepare method, but the channel options specify you do not need prepare',
+      'Channel implementation implements the target method, but will not be used for static targeting'
+    ]);
+
+    getChannelClass.mockRestore();
+  });
+
   it('detects missing target implementation when required', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: dynamicManifest, dirName: '/tmp/foo'}));
     const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
       .mockResolvedValue(ProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
-      'Channel implementation is missing the target method (required for dynamic targeting mode)'
+      expect.stringContaining('Channel implementation is missing the prepare method'),
+      'Channel implementation is missing the target method (required for dynamic targeting)'
     ]);
 
     getChannelClass.mockRestore();
