@@ -1,17 +1,57 @@
 import {ValueHash} from '../store';
 
 export interface JobInvocation {
+  /**
+   * A unique id generated for this job run
+   */
   jobId: string;
+  /**
+   * The time the job was scheduled. Can be used to determine if the job was delayed or has been running too long.
+   */
   scheduledAt: Date;
+  /**
+   * Optional parameters that may be supplied from jobs.trigger() or the app.yml.
+   * @default {} (an empty hash)
+   */
   parameters: ValueHash;
 }
 
 export interface JobStatus extends ValueHash {
+  /**
+   * The job's state. Store any state you need to continue on the next perform loop.
+   * The state is expected to change regularly. If your job runs for a long time without
+   * the state changing (hours not minutes), it may be considered stalled and could be terminated.
+   */
   state: ValueHash;
+  /**
+   * Set to true when the job is complete.
+   * If the `complete` is false in the returned job status, perform will be called again.
+   */
   complete: boolean;
 }
 
+export interface SleepOptions {
+  /**
+   * true if the job can be safely interrupted during this sleep (and resumed later with the current job state)
+   * @default undefined the interruptable status of the job will be unchanged
+   */
+  interruptable?: boolean;
+}
+
 export abstract class Job {
+  /**
+   * Set this to true during an interruptable operation, such as waiting for a long running export.
+   * When true, a job can be interrupted and resumed with the PREVIOUS Job state (the one perform was last called with).
+   * A job is normally expected to complete a job loop (perform) within < 60s. Your job CAN perform a loop for longer
+   * than 60 seconds if isInterruptable is set to true for a significant part of each 60 seconds of runtime
+   * and is performing NON-BLOCKING operations.
+   * @IMPORTANT You MUST ensure the process is **NOT BLOCKED** while interruptable. This can be achieved
+   * by manually calling `await this.sleep()` regularly or is automatic if you are waiting on non-blocking calls.
+   *
+   * `Job::sleep` and `Job::performInterruptableTask` will set this value automatically.
+   */
+  public isInterruptable = false;
+
   /**
    * Initializes a job to be run
    * @param invocation details of the job invocation
@@ -25,16 +65,56 @@ export abstract class Job {
    * and again only if the job was interrupted and is being resumed.
    * Use this function to read secrets and establish connections to simplify the job loop (perform).
    * @param params a hash if params were supplied to the job run, otherwise an empty hash
-   * @param status if job was interrupted and should continue from the last known state
+   * @param status provided ONLY if the job was interrupted and should continue from the last known state
+   * @param resuming if the job was interrupted, resuming will be set to true when it is resumed
    */
-  public abstract async prepare(params: ValueHash, status?: JobStatus): Promise<JobStatus>;
+  public abstract async prepare(params: ValueHash, status?: JobStatus, resuming?: boolean): Promise<JobStatus>;
 
   /**
    * Performs a unit of work. Jobs should perform a small unit of work and then return the current state.
-   * Perform is called in a loop where the previously returned state will be given to the next iteration.
-   * Iteration will continue until the returned state.complete is set to true.
+   * Perform is automatically called in a loop where the previously returned state will be given to the next iteration.
+   * Iteration will continue until complete is set to true in the returned job status.
    * @param status last known job state and status
    * @returns The current JobStatus/state that can be used to perform the next iteration or resume a job if interrupted.
    */
   public abstract async perform(status: JobStatus): Promise<JobStatus>;
+
+  /**
+   * Wrapper for interruptable tasks, such as waiting for a long api call or a timeout loop waiting for a result.
+   * Interruptable tasks MUST BE NON-BLOCKING or must manually call `await this.sleep()` regularly (every few seconds).
+   * @usage `const result = await this.performInterruptableTask(() => fetch(...)));`
+   * In this example, the job can be interrupted during the fetch operation, and if interrupted will be resumed
+   * with the previous job state.
+   */
+  protected async performInterruptableTask<T>(task: () => Promise<T>) {
+    const lastInterruptable = this.isInterruptable;
+    this.isInterruptable = true;
+    try {
+      const result = await task();
+      this.isInterruptable = lastInterruptable;
+      return result;
+    } catch (e) {
+      this.isInterruptable = lastInterruptable;
+      throw e;
+    }
+  }
+
+  /**
+   * Sleep the job without CPU thrashing. Use this method to wait for long running tasks, like an export API.
+   * @usage `await this.sleep(5000);`
+   * @param miliseconds duration to sleep in miliseconds
+   * @param options `{interruptable: true}` if the job can be interrupted while sleeping.
+   *                A sleep that is not interruptable cannot safely be longer than ~55 seconds.
+   */
+  protected async sleep(miliseconds?: number, options?: SleepOptions): Promise<void> {
+    const lastInterruptable = this.isInterruptable;
+    if (options?.interruptable !== undefined) {
+      this.isInterruptable = !!options.interruptable;
+    }
+
+    // perform the sleep
+    await new Promise((resolve) => setTimeout(resolve, miliseconds || 0));
+
+    this.isInterruptable = lastInterruptable;
+  }
 }

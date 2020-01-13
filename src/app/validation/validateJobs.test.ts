@@ -48,7 +48,7 @@ class PartialBar extends Job {
 }
 
 class ProperBar extends Job {
-  public async prepare(params: ValueHash, _status?: JobStatus): Promise<JobStatus> {
+  public async prepare(params: ValueHash, _status?: JobStatus, _resuming?: boolean): Promise<JobStatus> {
     return {complete: false, state: params};
   }
   public async perform(status: JobStatus): Promise<JobStatus> {
