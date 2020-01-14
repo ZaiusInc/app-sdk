@@ -226,7 +226,7 @@ describe('validateChannel', () => {
 
     expect(await validateChannel(runtime)).toEqual([
       'Channel implementation implements the prepare method, but the channel options specify you do not need prepare',
-      'Channel implementation implements the target method, but will not be used for static targeting'
+      'Channel implementation implements the target method, but it will not be used with static targeting'
     ]);
 
     getChannelClass.mockRestore();

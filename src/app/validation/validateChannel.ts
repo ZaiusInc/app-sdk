@@ -46,7 +46,9 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
       if (needsTarget && !hasTarget) {
         errors.push('Channel implementation is missing the target method (required for dynamic targeting)');
       } else if (!needsTarget && hasTarget) {
-        errors.push('Channel implementation implements the target method, but will not be used for static targeting');
+        errors.push(
+          'Channel implementation implements the target method, but it will not be used with static targeting'
+        );
       }
     }
   }
