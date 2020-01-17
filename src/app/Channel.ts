@@ -277,7 +277,7 @@ export interface ChannelDeliverResult {
   retryAfterSeconds?: number;
 
   /**
-   * An array of error messages to display to the user.
+   * An array of messages to display to the user.
    */
   toasts?: Array<{intent: Intent, message: string}>;
 }
