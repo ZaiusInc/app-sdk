@@ -278,6 +278,7 @@ export interface ChannelDeliverResult {
 
   /**
    * An array of messages to display to the user.
+   * This should only be set when testing delivery (i.e ChannelDeliverOptions.test is true).
    */
   toasts?: Array<{intent: Intent, message: string}>;
 }
