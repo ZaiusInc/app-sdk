@@ -1,5 +1,6 @@
 import {Schema} from '@zaius/app-forms-schema';
 import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from './lib';
+import {Intent} from './lib/FormResult';
 
 /**
  * Defines the interface of a channel. The typical channel flow in a campaign run is as follows:
@@ -274,4 +275,10 @@ export interface ChannelDeliverResult {
    * If the failure is retriable, the number of seconds to wait before retrying.
    */
   retryAfterSeconds?: number;
+
+  /**
+   * An array of messages to display to the user.
+   * This should only be set when testing delivery (i.e ChannelDeliverOptions.test is true).
+   */
+  toasts?: Array<{intent: Intent, message: string}>;
 }
