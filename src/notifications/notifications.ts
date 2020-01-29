@@ -10,13 +10,13 @@ export class InvalidNotificationError extends Error {}
 
 const validate = (activity: string, title: string, summary: string, _details?: string) => {
   if (activity.trim().length === 0) {
-    throw new InvalidNotificationError('activity is empty');
+    throw new InvalidNotificationError('activity cannot be blank');
   }
   if (title.trim().length === 0) {
-    throw new InvalidNotificationError('title is empty');
+    throw new InvalidNotificationError('title cannot be blank');
   }
   if (summary.trim().length === 0) {
-    throw new InvalidNotificationError('summary is empty');
+    throw new InvalidNotificationError('summary cannot be blank');
   }
 };
 /**
