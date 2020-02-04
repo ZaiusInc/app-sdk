@@ -52,7 +52,7 @@
     "tslint": "^5.14.0",
     "typedoc": "^0.16.2",
     "typescript": "^3.7.4",
-    "typescript-json-schema": "^0.37.0"
+    "typescript-json-schema": "^0.42.0"
   },
   "peerDependencies": {},
   "publishConfig": {

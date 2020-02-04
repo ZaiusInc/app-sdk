@@ -111,6 +111,15 @@
             ],
             "type": "object"
         },
+        "ChannelType": {
+            "enum": [
+                "app_push",
+                "email",
+                "sms",
+                "web_push"
+            ],
+            "type": "string"
+        },
         "ValueHash": {
             "additionalProperties": {
                 "anyOf": [
@@ -153,9 +162,6 @@
         "channel": {
             "additionalProperties": false,
             "properties": {
-                "grouping": {
-                    "type": "string"
-                },
                 "options": {
                     "additionalProperties": false,
                     "properties": {
@@ -180,11 +186,14 @@
                             "type": "string"
                         }
                     ]
+                },
+                "type": {
+                    "$ref": "#/definitions/ChannelType"
                 }
             },
             "required": [
-                "grouping",
-                "targeting"
+                "targeting",
+                "type"
             ],
             "type": "object"
         },

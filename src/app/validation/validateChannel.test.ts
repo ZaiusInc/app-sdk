@@ -20,7 +20,7 @@ const staticManifest = deepFreeze({
   },
   runtime: 'node12',
   channel: {
-    grouping: 'foo',
+    type: 'sms',
     targeting: [{identifier: 'my_app_identifier'}],
     options: {
       prepare: false
@@ -32,7 +32,7 @@ const dynamicManifest = deepFreeze({
   meta: staticManifest.meta,
   runtime: 'node12',
   channel: {
-    grouping: 'foo',
+    type: 'sms',
     targeting: 'dynamic'
   }
 } as AppManifest);
@@ -46,7 +46,7 @@ const manifestWithoutTargeting = deepFreeze({
   meta: staticManifest.meta,
   runtime: 'node12',
   channel: {
-    grouping: 'foo'
+    type: 'sms'
   }
 } as AppManifest);
 
