@@ -113,10 +113,19 @@
         },
         "ChannelType": {
             "enum": [
+                "ad",
+                "api",
                 "app_push",
+                "direct_mail",
                 "email",
+                "facebook_messenger",
+                "segment_sync",
                 "sms",
-                "web_push"
+                "test_channel",
+                "web_embed",
+                "web_modal",
+                "web_push",
+                "whatsapp"
             ],
             "type": "string"
         },
