@@ -36,7 +36,16 @@ export enum ChannelType {
   Email = 'email',
   AppPush = 'app_push',
   WebPush = 'web_push',
-  SMS = 'sms'
+  WebModal = 'web_modal',
+  WebEmbed = 'web_embed',
+  SMS = 'sms',
+  Api = 'api',
+  DirectMail = 'direct_mail',
+  WhatsApp = 'whatsapp',
+  FacebookMessenger = 'facebook_messenger',
+  Ad = 'ad',
+  SegmentSync = 'segment_sync',
+  TestChannel = 'test_channel'
 }
 
 export interface AppManifest {
