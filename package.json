@@ -1,6 +1,6 @@
 {
   "name": "@zaius/app-sdk",
-  "version": "0.10.4",
+  "version": "0.11.0",
   "description": "Zaius App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "UNLICENSED",
@@ -52,7 +52,7 @@
     "tslint": "^5.14.0",
     "typedoc": "^0.16.2",
     "typescript": "^3.7.4",
-    "typescript-json-schema": "^0.37.0"
+    "typescript-json-schema": "^0.42.0"
   },
   "peerDependencies": {},
   "publishConfig": {

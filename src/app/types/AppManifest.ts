@@ -32,6 +32,13 @@ export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture'
   | 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
   | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience';
 
+export enum ChannelType {
+  Email = 'email',
+  AppPush = 'app_push',
+  WebPush = 'web_push',
+  SMS = 'sms'
+}
+
 export interface AppManifest {
   meta: {
     app_id: string;
@@ -55,7 +62,7 @@ export interface AppManifest {
     [name: string]: AppLiquidExtension;
   };
   channel?: {
-    grouping: string;
+    type: ChannelType;
     targeting: 'dynamic' | CampaignTargeting[];
     options?: {
       prepare?: boolean;

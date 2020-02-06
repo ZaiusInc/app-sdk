@@ -63,7 +63,7 @@ const channelAppManifest = deepFreeze({
     categories: ['Channel']
   },
   channel: {
-    grouping: 'messenger',
+    type: 'sms',
     targeting: 'dynamic'
   }
 } as AppManifest) as AppManifest;
