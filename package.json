@@ -14,7 +14,7 @@
   "types": "dist/index.d.ts",
   "directories": {},
   "scripts": {
-    "build": "tsc",
+    "build": "yarn update-schema && tsc",
     "build-watch": "tsc -w",
     "lint": "tslint --project ./tsconfig.json --config ./tslint.json",
     "test": "jest",
