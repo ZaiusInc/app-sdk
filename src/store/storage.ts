@@ -7,6 +7,36 @@ let settingsStore: BaseKVStore = new LocalStore();
 let secretsStore: BaseKVStore = new LocalStore();
 let kvStore: KVStore = new LocalKVStore();
 
+export function resetLocalStores() {
+  resetLocalSettingsStore();
+  resetLocalSecretsStore();
+  resetLocalKvStore();
+}
+
+export function resetLocalSettingsStore() {
+  if (storage.settings instanceof LocalStore) {
+    storage.settings.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+export function resetLocalSecretsStore() {
+  if (storage.secrets instanceof LocalStore) {
+    storage.secrets.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+export function resetLocalKvStore() {
+  if (storage.kvStore instanceof LocalKVStore) {
+    storage.kvStore.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
 /**
  * @hidden
  */
