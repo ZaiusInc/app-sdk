@@ -4,12 +4,6 @@ import {KVHash, KVPatchUpdater, KVRowOptions, KVStore, MultiValue} from './KVSto
 import {NumberSet} from './NumberSet';
 import {StringSet} from './StringSet';
 
-let kvStoreData: {[key: string]: any} = {};
-
-export function resetLocalKVStore() {
-  kvStoreData = {};
-}
-
 function filterFields(result: any, fields?: string[]) {
   if (fields && fields.length > 0) {
     const filtered: any = {};
@@ -26,8 +20,14 @@ function filterFields(result: any, fields?: string[]) {
  * @TODO implement the stub for local development purposes
  */
 export class LocalKVStore implements KVStore {
+  private data: {[key: string]: any} = {};
+
+  public reset() {
+    this.data = {};
+  }
+
   public async get<T extends KVHash>(key: string, fields?: string[]): Promise<T> {
-    const result = kvStoreData[key] || {};
+    const result = this.data[key] || {};
     return filterFields(result, fields);
   }
 
@@ -35,7 +35,7 @@ export class LocalKVStore implements KVStore {
     if (options?.ttl) {
       logger.debug('ttl will be ignored in local KV store');
     }
-    return (kvStoreData[key] = value) || {};
+    return (this.data[key] = value) || {};
   }
 
   public async patch<T extends KVHash>(
@@ -45,25 +45,25 @@ export class LocalKVStore implements KVStore {
       logger.debug('ttl will be ignored in local KV store');
     }
     if (typeof value === 'function') {
-      return (kvStoreData[key] = value(kvStoreData[key], options || {})) || {};
+      return (this.data[key] = value(this.data[key], options || {})) || {};
     } else {
-      return (kvStoreData[key] = Object.assign({}, kvStoreData[key], value));
+      return (this.data[key] = Object.assign({}, this.data[key], value));
     }
   }
 
   public async delete<T extends KVHash>(key: string, fields?: string[]): Promise<T> {
     if (fields) {
-      const value = kvStoreData[key] || {};
+      const value = this.data[key] || {};
       fields.forEach((f) => delete value[f]);
-      kvStoreData[key] = value;
+      this.data[key] = value;
     } else {
-      delete kvStoreData[key];
+      delete this.data[key];
     }
-    return kvStoreData[key] || {};
+    return this.data[key] || {};
   }
 
   public async exists(key: string): Promise<boolean> {
-    return Object.keys(kvStoreData).includes(key) && Object.keys(kvStoreData[key]).length > 0;
+    return Object.keys(this.data).includes(key) && Object.keys(this.data[key]).length > 0;
   }
 
   public increment(_key: string, _field: string, _amount?: number): Promise<number> {
