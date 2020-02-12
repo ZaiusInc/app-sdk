@@ -1,3 +1,6 @@
+# 0.11.5
+Update app-forms-schema (corrected json schema)
+
 # 0.11.4
 Update app-forms-schema (adds support for zaiusAdminOnly sections)
 
