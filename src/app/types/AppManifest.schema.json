@@ -171,6 +171,51 @@
         "channel": {
             "additionalProperties": false,
             "properties": {
+                "events": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "active_actions": {
+                            "items": {
+                                "enum": [
+                                    "click",
+                                    "disengage",
+                                    "engage",
+                                    "impression",
+                                    "open"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "delivery": {
+                            "type": "boolean"
+                        },
+                        "delivery_unknown": {
+                            "type": "boolean"
+                        },
+                        "hard_bounce": {
+                            "type": "boolean"
+                        },
+                        "send": {
+                            "type": "boolean"
+                        },
+                        "soft_bounce": {
+                            "type": "boolean"
+                        },
+                        "spam_report": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
+                        "delivery",
+                        "delivery_unknown",
+                        "hard_bounce",
+                        "send",
+                        "soft_bounce",
+                        "spam_report"
+                    ],
+                    "type": "object"
+                },
                 "options": {
                     "additionalProperties": false,
                     "properties": {
@@ -201,6 +246,7 @@
                 }
             },
             "required": [
+                "events",
                 "targeting",
                 "type"
             ],
