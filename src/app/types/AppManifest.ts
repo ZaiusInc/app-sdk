@@ -1,5 +1,5 @@
 import {ValueHash} from '../../store';
-import {CampaignTargeting} from '../Channel';
+import {CampaignTargeting, ActiveAction} from '../Channel';
 
 // regenerate JSON schema with `yarn run update-schema`
 export interface AppFunction {
@@ -75,6 +75,15 @@ export interface AppManifest {
     targeting: 'dynamic' | CampaignTargeting[];
     options?: {
       prepare?: boolean;
+    },
+    events: {
+      send: boolean;
+      delivery: boolean;
+      delivery_unknown: boolean;
+      active_actions?: ActiveAction[];
+      hard_bounce: boolean;
+      soft_bounce: boolean;
+      spam_report: boolean;
     }
   };
 }

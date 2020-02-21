@@ -282,3 +282,11 @@ export interface ChannelDeliverResult {
    */
   toasts?: Array<{intent: Intent, message: string}>;
 }
+
+export enum ActiveAction {
+  Impression = 'impression',
+  Open = 'open',
+  Click = 'click',
+  Engage = 'engage',
+  Disengage = 'disengage'
+}
