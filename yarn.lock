@@ -413,6 +413,13 @@
   dependencies:
     ajv "^6.10.0"
 
+"@zaius/node-sdk@^0.6.2":
+  version "0.6.2"
+  resolved "http://npm-registry.prod.zaius/@zaius%2fnode-sdk/-/node-sdk-0.6.2.tgz#ed06f87ec9095b253841b02297c4587b2fb8d531"
+  integrity sha512-0JEj1XN7aDFd6vzPX7prYlHd0i81ELhc06bdXT4tIYLl9QhFyVRd8LEW9sgmAX6dK7jGMvaeOxs5Hxz7PZV+Bg==
+  dependencies:
+    node-fetch "^2.6.0"
+
 "@zaiusinc/tslint-presets@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@zaiusinc/tslint-presets/-/tslint-presets-1.0.1.tgz#f8110222a21620b2ba791ca96dbed01d39cb4a30"
@@ -2744,6 +2751,11 @@ node-emoji@^1.4.1:
   resolved "https://registry.yarnpkg.com/node-emoji/-/node-emoji-1.10.0.tgz#8886abd25d9c7bb61802a658523d1f8d2a89b2da"
   dependencies:
     lodash.toarray "^4.4.0"
+
+node-fetch@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
+  integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
 
 node-int64@^0.4.0:
   version "0.4.0"
