@@ -34,27 +34,27 @@ export const setNotifier = (otherNotifier: Notifier) => {
  * Namespace for accessing notifications
  */
 export const notifications: LocalNotifier = {
-  info(activity: string, title: string, summary: string, details?: string) {
+  async info(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      notifier.info(activity, title, summary, details);
+      await notifier.info(activity, title, summary, details);
     }
   },
 
-  success(activity: string, title: string, summary: string, details?: string) {
+  async success(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      notifier.success(activity, title, summary, details);
+      await notifier.success(activity, title, summary, details);
     }
   },
 
-  warn(activity: string, title: string, summary: string, details?: string) {
+  async warn(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      notifier.warn(activity, title, summary, details);
+      await notifier.warn(activity, title, summary, details);
     }
   },
 
-  error(activity: string, title: string, summary: string, details?: string) {
+  async error(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      notifier.error(activity, title, summary, details);
+      await notifier.error(activity, title, summary, details);
     }
   }
 };
