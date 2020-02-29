@@ -6,7 +6,7 @@ export interface Notifier {
    * @param summary The activity summary, must not be empty
    * @param [details] The activity details
    */
-  info(activity: string, title: string, summary: string, details?: string): void;
+  info(activity: string, title: string, summary: string, details?: string): Promise<void>;
 
   /**
    * Create a success notification.
@@ -15,7 +15,7 @@ export interface Notifier {
    * @param summary The activity summary, must not be empty
    * @param [details] The activity details
    */
-  success(activity: string, title: string, summary: string, details?: string): void;
+  success(activity: string, title: string, summary: string, details?: string): Promise<void>;
 
   /**
    * Create a warning notification.
@@ -24,7 +24,7 @@ export interface Notifier {
    * @param summary The activity summary, must not be empty
    * @param [details] The activity details
    */
-  warn(activity: string, title: string, summary: string, details?: string): void;
+  warn(activity: string, title: string, summary: string, details?: string): Promise<void>;
 
   /**
    * Create an error notification.
@@ -33,5 +33,5 @@ export interface Notifier {
    * @param summary The activity summary, must not be empty
    * @param [details] The activity details
    */
-  error(activity: string, title: string, summary: string, details?: string): void;
+  error(activity: string, title: string, summary: string, details?: string): Promise<void>;
 }
