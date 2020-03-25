@@ -2,9 +2,68 @@ import {logger} from '../logging';
 import * as csv from 'csv-parser';
 import * as ObjectHash from 'object-hash';
 import {Stream} from 'stream';
-import {CsvRowProcessor} from './CsvRowProcessor';
+import fetch from 'node-fetch';
+import {URL} from 'url';
+import * as zlib from 'zlib';
 
-export abstract class CsvStream {
+export interface CsvRow {
+  [column: string]: string;
+}
+
+export interface CsvRowProcessor<T = CsvRow> {
+  /**
+   * Process a row from a csv file.
+   * @param row to process
+   * @return true if it is safe to pause after this row, false otherwise
+   */
+  process(row: T): Promise<boolean>;
+
+  /**
+   * Complete any pending work. Called when the source csv file has
+   * been completely processed.
+   */
+  complete(): Promise<void>;
+}
+
+/**
+ * Builds source streams for the CsvStream to process.
+ */
+export type CsvReadableStreamBuilder = () => Promise<NodeJS.ReadableStream>;
+
+/**
+ * General utility for processing streams that are CSV formatted.
+ */
+export class CsvStream {
+  /**
+   * Build a CsvStream from an existing ReadableStream.
+   * @param stream source stream
+   * @param processor the row processor
+   * @param options options to provide the underlying parser,
+   * see https://github.com/mafintosh/csv-parser#csvoptions--headers
+   */
+  public static fromStream(stream: NodeJS.ReadableStream, processor: CsvRowProcessor, options = {}): CsvStream {
+    return new CsvStream(async () => stream, processor, options);
+  }
+
+  /**
+   * Build a CsvStream that reads from a web resource.
+   * @param stream source stream
+   * @param processor the row processor
+   * @param options options to provide the underlying parser,
+   * see https://github.com/mafintosh/csv-parser#csvoptions--headers
+   */
+  public static fromUrl(url: string, processor: CsvRowProcessor, options = {}): CsvStream {
+    const builder: CsvReadableStreamBuilder = async () => {
+      const response = await fetch(url);
+      const pipeline = response.body;
+      return /\.gz$/.test(new URL(url).pathname)
+        ? pipeline.pipe(zlib.createGunzip())
+        : pipeline;
+    };
+
+    return new CsvStream(builder, processor, options);
+  }
+
   private readStream?: NodeJS.ReadableStream;
   private pipelineFinished = false;
   private onPause!: (marker: string | null) => void;
@@ -12,7 +71,9 @@ export abstract class CsvStream {
   private resume?: () => void;
   private fastforwardMarker?: string;
 
-  constructor(private rowProcessor: CsvRowProcessor, private options = {}) { }
+  constructor(private streamBuilder: CsvReadableStreamBuilder,
+              private rowProcessor: CsvRowProcessor,
+              private options = {}) { }
 
   public get isFinished() {
     return this.pipelineFinished;
@@ -46,10 +107,8 @@ export abstract class CsvStream {
     });
   }
 
-  protected abstract async buildPipeline(): Promise<NodeJS.ReadableStream>;
-
   private async createPipe() {
-    let pipeline = this.readStream = await this.buildPipeline();
+    let pipeline = this.readStream = await this.streamBuilder();
     const rowProcessor = this.rowProcessor;
     pipeline = pipeline.pipe(csv(this.options)).pipe(new Stream.Transform({
       writableObjectMode: true,
