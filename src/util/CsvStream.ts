@@ -5,6 +5,7 @@ import {Stream} from 'stream';
 import fetch from 'node-fetch';
 import {URL} from 'url';
 import * as zlib from 'zlib';
+import {Options} from 'csv-parser';
 
 export interface CsvRow {
   [column: string]: string;
@@ -30,29 +31,28 @@ export interface CsvRowProcessor<T = CsvRow> {
  */
 export type CsvReadableStreamBuilder = () => Promise<NodeJS.ReadableStream>;
 
-/**
- * General utility for processing streams that are CSV formatted.
- */
-export class CsvStream {
+export class CsvStream<T> {
   /**
    * Build a CsvStream from an existing ReadableStream.
-   * @param stream source stream
+   * @param stream source stream for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,
    * see https://github.com/mafintosh/csv-parser#csvoptions--headers
    */
-  public static fromStream(stream: NodeJS.ReadableStream, processor: CsvRowProcessor, options = {}): CsvStream {
+  public static fromStream<T>(stream: NodeJS.ReadableStream,
+                              processor: CsvRowProcessor<T>,
+                              options: Options = {}): CsvStream<T> {
     return new CsvStream(async () => stream, processor, options);
   }
 
   /**
    * Build a CsvStream that reads from a web resource.
-   * @param stream source stream
+   * @param url source url for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,
    * see https://github.com/mafintosh/csv-parser#csvoptions--headers
    */
-  public static fromUrl(url: string, processor: CsvRowProcessor, options = {}): CsvStream {
+  public static fromUrl<T>(url: string, processor: CsvRowProcessor<T>, options: Options = {}): CsvStream<T> {
     const builder: CsvReadableStreamBuilder = async () => {
       const response = await fetch(url);
       const pipeline = response.body;
@@ -72,8 +72,8 @@ export class CsvStream {
   private fastforwardMarker?: string;
 
   constructor(private streamBuilder: CsvReadableStreamBuilder,
-              private rowProcessor: CsvRowProcessor,
-              private options = {}) { }
+              private rowProcessor: CsvRowProcessor<T>,
+              private options: Options = {}) { }
 
   public get isFinished() {
     return this.pipelineFinished;
