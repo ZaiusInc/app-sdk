@@ -3,6 +3,7 @@ import {CsvRowProcessor, CsvStream} from '../CsvStream';
 import * as nock from 'nock';
 import {Stream} from 'stream';
 import {Options} from 'csv-parser';
+import * as ObjectHash from 'object-hash';
 
 interface Row {
   col1: string;
@@ -23,7 +24,7 @@ class TestCsvRowProcessor implements CsvRowProcessor<Row> {
 
   public async process(row: Row): Promise<boolean> {
     this.rows.push(row);
-    return false;
+    return this.rows.length % 2 === 0;
   }
 
   public async complete(): Promise<void> {
@@ -81,5 +82,65 @@ describe('CsvStream', () => {
       CsvStream.fromStream(readable, processor, options),
       processor
     );
+  });
+
+  it('should pause and resume', async () => {
+    const readable = new Stream.Readable();
+    readable.push('col1,col2,col3\n');
+    readable.push('val1,val2,val3\n');
+    readable.push('val4,val5,val6\n');
+    readable.push('val7,val8,val9\n');
+    readable.push(null);
+
+    const processor = new TestCsvRowProcessor();
+    const stream = CsvStream.fromStream(readable, processor);
+    await stream.processSome();
+    expect(processor.isCompleted).toBe(false);
+    expect(processor.rows.length).toBe(2);
+    expect(processor.rows[0]).toEqual({
+      col1: 'val1',
+      col2: 'val2',
+      col3: 'val3'
+    });
+    expect(processor.rows[1]).toEqual({
+      col1: 'val4',
+      col2: 'val5',
+      col3: 'val6'
+    });
+
+    await stream.processSome();
+    expect(processor.isCompleted).toBe(true);
+    expect(processor.rows.length).toBe(3);
+    expect(processor.rows[2]).toEqual({
+      col1: 'val7',
+      col2: 'val8',
+      col3: 'val9'
+    });
+  });
+
+  it('should fast forward to a specified record and resume', async () => {
+    const readable = new Stream.Readable();
+    readable.push('col1,col2,col3\n');
+    readable.push('val1,val2,val3\n');
+    readable.push('val4,val5,val6\n');
+    readable.push(null);
+
+    const processor = new TestCsvRowProcessor();
+    const marker = ObjectHash.sha1({
+      col1: 'val1',
+      col2: 'val2',
+      col3: 'val3'
+    });
+
+    const stream = CsvStream.fromStream(readable, processor);
+    await stream.fastforward(marker);
+    await stream.processSome();
+    expect(processor.isCompleted).toBe(true);
+    expect(processor.rows.length).toBe(1);
+    expect(processor.rows[0]).toEqual({
+      col1: 'val4',
+      col2: 'val5',
+      col3: 'val6'
+    });
   });
 });
