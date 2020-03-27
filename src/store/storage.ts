@@ -6,7 +6,7 @@ import {LocalStore} from './LocalStore';
 
 let settingsStore: BaseKVStore = new LocalStore();
 let secretsStore: BaseKVStore = new LocalStore();
-let kvStore: KVStore = new LocalKVStore(new AsyncStore(50));
+let kvStore: KVStore = new LocalKVStore(new AsyncStore());
 
 export function resetLocalStores() {
   resetLocalSettingsStore();
