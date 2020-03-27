@@ -24,8 +24,6 @@ module.exports = {
     '!src/jobs/JobApi.ts',
     '!src/jobs/LocalJobApi.ts',
     '!src/notifications/LocalNotifier.ts',
-    '!src/store/LocalStore.ts',
-    '!src/store/LocalKVStore.ts',
   ],
   coverageThreshold: {
     global: {
