@@ -65,38 +65,30 @@ export class LocalKVStore implements KVStore {
   }
 
   public async increment(key: string, field: string, amount: number = 1): Promise<number> {
-    try {
-      return (await this.incrementMulti(key, {[field]: amount}))[key];
-    } catch (e) {
-      throw e;
-    }
+    return (await this.incrementMulti(key, {[field]: amount}))[key];
   }
 
   public async incrementMulti(
     key: string,
     fieldAmounts: {[field: string]: number}
   ): Promise<{[field: string]: number}> {
-    try {
-      return filterFields(await this.store.atomicPatch(key, (previous, _options) => {
-        const fields = Object.keys(fieldAmounts);
-        for (const field of fields) {
-          if (typeof fieldAmounts[field] !== 'number') {
-            throw new Error(`Cannot increment by non-numeric value for field ${key}.${field}`);
-          }
-          const value = previous[field];
-          if (value == null) {
-            previous[field] = fieldAmounts[field];
-          } else if (typeof value === 'number' || Number(value).toString() === value) {
-            previous[field] = Number(value) + fieldAmounts[field];
-          } else {
-            throw new Error(`Cannot increment non-numeric value at ${key}.${field}. Value is type ${typeof value}.`);
-          }
+    return filterFields(await this.store.atomicPatch(key, (previous, _options) => {
+      const fields = Object.keys(fieldAmounts);
+      for (const field of fields) {
+        if (typeof fieldAmounts[field] !== 'number') {
+          throw new Error(`Cannot increment by non-numeric value for field ${key}.${field}`);
         }
-        return previous;
-      }), Object.keys(fieldAmounts));
-    } catch (e) {
-      throw e;
-    }
+        const value = previous[field];
+        if (value == null) {
+          previous[field] = fieldAmounts[field];
+        } else if (typeof value === 'number' || Number(value).toString() === value) {
+          previous[field] = Number(value) + fieldAmounts[field];
+        } else {
+          throw new Error(`Cannot increment non-numeric value at ${key}.${field}. Value is type ${typeof value}.`);
+        }
+      }
+      return previous;
+    }), Object.keys(fieldAmounts));
   }
 
   public async shift<T extends Value>(key: string, field: string): Promise<T | undefined> {
