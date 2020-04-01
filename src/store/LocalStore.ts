@@ -1,4 +1,7 @@
-import {BaseKVStore, PatchUpdater, Value, ValueHash} from './BaseKVStore';
+import {logger} from '../logging';
+import {BaseKVStore, PatchUpdater, ValueHash} from './BaseKVStore';
+import {CasError} from './CasError';
+import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 
 /**
  * @hidden
@@ -7,55 +10,49 @@ import {BaseKVStore, PatchUpdater, Value, ValueHash} from './BaseKVStore';
  * @TODO implement the stub for local development purposes
  */
 export class LocalStore implements BaseKVStore<ValueHash, true> {
-  private data: {[key: string]: ValueHash} = {};
+  constructor(private store: LocalAsyncStoreBackend<ValueHash>) {}
 
   public reset() {
-    this.data = {};
+    this.store.reset();
   }
 
   public async get<T extends ValueHash>(key: string, fields?: string[]): Promise<T> {
-    return this.filter(this.data[key] || {}, fields) as T;
+    return this.filter((await this.store.get(key)).value || {}, fields) as T;
   }
 
   public async put(key: string, value?: ValueHash): Promise<true> {
     if (value) {
-      this.data[key] = this.copy(value);
+      await this.store.put(key, value);
     } else {
-      delete this.data[key];
+      await this.store.delete(key);
     }
     return true;
   }
 
   public async patch<T extends ValueHash>(key: string, value?: ValueHash | PatchUpdater): Promise<T> {
-    const original = this.copy(this.data[key] || {});
     if (typeof value === 'function') {
-      this.data[key] = this.copy(value(this.copy(this.data[key] || {})));
+      return await this.patchWithRetry(key, value) as T;
     } else {
-      this.data[key] = Object.assign(this.data[key] || {}, this.copy(value));
+      return await this.patchWithRetry(key, (previous) => {
+        return Object.assign(previous, value);
+      });
     }
-    return original;
   }
 
   public async delete(key: string, fields?: string[]): Promise<true> {
     if (fields) {
-      if (this.data[key]) {
-        fields.forEach((f) => delete this.data[key][f]);
-      }
+      await this.patchWithRetry(key, (previous) => {
+        fields.forEach((f) => delete previous[f]);
+        return previous;
+      });
     } else {
-      delete this.data[key];
+      await this.store.delete(key);
     }
     return true;
   }
 
   public async exists(key: string): Promise<boolean> {
-    return Object.keys(this.data).includes(key);
-  }
-
-  private copy(value?: Value) {
-    if (value === undefined) {
-      return undefined;
-    }
-    return JSON.parse(JSON.stringify(value));
+    return await this.store.exists(key);
   }
 
   private filter(result: ValueHash, fields?: string[]) {
@@ -64,6 +61,26 @@ export class LocalStore implements BaseKVStore<ValueHash, true> {
       fields.forEach((f) => copy[f] = result[f]);
       return copy;
     }
-    return this.copy(result);
+    return result;
+  }
+
+  private async patchWithRetry<T extends ValueHash>(key: string, updater: PatchUpdater<T>, retries = 5): Promise<T> {
+    try {
+      const stored = await this.store.get<T>(key);
+      const previous = JSON.stringify(stored.value);
+      const update = updater(stored.value);
+      await this.store.put(key, update, undefined, stored.cas);
+      return JSON.parse(previous);
+    } catch (e) {
+      if (e instanceof CasError) {
+        if (retries > 0) {
+          return this.patchWithRetry(key, updater, retries - 1);
+        }
+        throw new Error(`Failed to update key ${key}. CAS retries exhausted.`);
+      } else {
+        logger.error(e);
+      }
+      throw new Error(`Failed to update key ${key}`);
+    }
   }
 }

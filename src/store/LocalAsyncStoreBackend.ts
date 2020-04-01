@@ -15,15 +15,24 @@ interface StoreEntry<T> {
 }
 
 /**
- * Simulates access to a remote data store by performing operations asynchronously
+ * Simulates access to a remote data store by performing operations asynchronously.
+ * Used as a backend for local dev and testing to the local stores
  */
-export class AsyncStore<T extends {}> {
-  private data: {[key: string]: CasEntry<T>} = {};
+export class LocalAsyncStoreBackend<T extends {}> {
+  private data: {[key: string]: CasEntry<T>};
+  private hasChanges = false;
+  private changeTimer?: NodeJS.Timeout;
 
   /**
    * @param avgDelay Average delay per request in miliseconds
    */
-  constructor(private avgDelay = 0) {}
+  constructor(
+    private avgDelay = 0,
+    sourceData?: {[key: string]: CasEntry<T>},
+    private changeHandler?: (data: {[key: string]: CasEntry<T>}) => Promise<void>
+  ) {
+    this.data = sourceData || {};
+  }
 
   public async get<O extends T>(key: string): Promise<StoreEntry<O>> {
     return this.async(() => {
@@ -47,6 +56,7 @@ export class AsyncStore<T extends {}> {
           if (ttl != null) {
             entry.expires = this.epoch() + ttl;
           }
+          this.onChange();
           return previous;
         } else {
           throw new CasError();
@@ -57,6 +67,7 @@ export class AsyncStore<T extends {}> {
           expires: ttl && this.epoch() + ttl,
           value: this.copy(value)
         };
+        this.onChange();
         return {};
       }
     });
@@ -81,6 +92,7 @@ export class AsyncStore<T extends {}> {
         entry.value = this.copy(updater(entry.value as O, options));
         entry.cas++;
         entry.expires = options.ttl == null ? undefined : (epoch + options.ttl!);
+        this.onChange();
       } else {
         const options = {ttl: undefined};
         let value = {} as O;
@@ -90,6 +102,7 @@ export class AsyncStore<T extends {}> {
           expires: options.ttl == null ? undefined : (epoch + options.ttl!),
           value: this.copy(value)
         };
+        this.onChange();
       }
       return this.translateExpiresToTTL(this.data[key], epoch);
     });
@@ -102,6 +115,7 @@ export class AsyncStore<T extends {}> {
         value = this.data[key].value as O;
       }
       delete this.data[key];
+      this.onChange();
       return value;
     });
   }
@@ -115,6 +129,7 @@ export class AsyncStore<T extends {}> {
 
   public reset() {
     this.data = {};
+    this.onChange();
   }
 
   private expired(time?: number) {
@@ -151,5 +166,21 @@ export class AsyncStore<T extends {}> {
 
   private epoch() {
     return Math.floor(new Date().getTime() / 1000);
+  }
+
+  private onChange() {
+    this.hasChanges = true;
+    if (!this.changeTimer && this.changeHandler) {
+      this.changeTimer = setTimeout(async () => {
+        if (this.hasChanges && this.changeHandler) {
+          this.hasChanges = false;
+          await this.changeHandler(this.data);
+        }
+        this.changeTimer = undefined;
+        if (this.hasChanges) {
+          this.onChange();
+        }
+      }, process.env.ZAIUS_ENV === 'test' ? 0 : 10);
+    }
   }
 }

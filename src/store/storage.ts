@@ -1,12 +1,12 @@
-import {AsyncStore} from './AsyncStore';
 import {BaseKVStore} from './BaseKVStore';
 import {KVStore} from './KVStore';
+import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 import {LocalKVStore} from './LocalKVStore';
 import {LocalStore} from './LocalStore';
 
-let settingsStore: BaseKVStore = new LocalStore();
-let secretsStore: BaseKVStore = new LocalStore();
-let kvStore: KVStore = new LocalKVStore(new AsyncStore());
+let settingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+let secretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+let kvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
 
 export function resetLocalStores() {
   resetLocalSettingsStore();

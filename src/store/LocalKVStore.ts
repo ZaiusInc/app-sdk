@@ -1,8 +1,8 @@
 import {logger} from '../logging';
-import {AsyncStore} from './AsyncStore';
 import {Value} from './BaseKVStore';
 import {CasError} from './CasError';
 import {KVHash, KVPatchUpdater, KVRowOptions, KVStore, KVValue, MultiValue} from './KVStore';
+import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 import {NumberSet} from './NumberSet';
 import {StringSet} from './StringSet';
 
@@ -22,7 +22,7 @@ function filterFields(result: any, fields?: string[]) {
  * @TODO implement the stub for local development purposes
  */
 export class LocalKVStore implements KVStore {
-  constructor(private store: AsyncStore<KVHash>) {}
+  constructor(private store: LocalAsyncStoreBackend<KVHash>) {}
 
   public reset() {
     this.store.reset();
