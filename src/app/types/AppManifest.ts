@@ -1,10 +1,11 @@
 import {ValueHash} from '../../store';
-import {CampaignTargeting, ActiveAction} from '../Channel';
+import {ActiveAction, CampaignTargeting} from '../Channel';
 
 // regenerate JSON schema with `yarn run update-schema`
 export interface AppFunction {
   entry_point: string;
   description: string;
+  global?: boolean;
 }
 
 export interface AppJob {
