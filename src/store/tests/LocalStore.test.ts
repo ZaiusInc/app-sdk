@@ -1,17 +1,20 @@
 import 'jest';
+import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 import {LocalStore} from '../LocalStore';
 
 describe('LocalStore', () => {
-  let store: LocalStore = new LocalStore();
+  let store: LocalStore = new LocalStore(new LocalAsyncStoreBackend());
   beforeEach(() => {
-    store = new LocalStore();
+    store = new LocalStore(new LocalAsyncStoreBackend());
   });
 
   describe('get / put / delete', () => {
     it('overwrites and reads data from the store', async () => {
       // inital put
+      expect(await store.exists('foo')).toBeFalsy();
       await store.put('foo', {foo: 'foo', bar: 'bar'});
       expect(await store.get('foo')).toEqual({foo: 'foo', bar: 'bar'});
+      expect(await store.exists('foo')).toBeTruthy();
 
       // filtered get
       expect(await store.get('foo', ['bar'])).toEqual({bar: 'bar'});

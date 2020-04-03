@@ -1,13 +1,13 @@
 import 'jest';
 import {StringSet} from '..';
-import {AsyncStore} from '../AsyncStore';
+import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 import {LocalKVStore} from '../LocalKVStore';
 import {NumberSet} from '../NumberSet';
 
 describe('LocalKVStore', () => {
   let store: LocalKVStore;
   beforeEach(async () => {
-    store = new LocalKVStore(new AsyncStore());
+    store = new LocalKVStore(new LocalAsyncStoreBackend());
     await store.put('foo', {bar: 'bar'});
     await store.put('foo2', {foo: 'foo', bar: 'bar'});
   });
@@ -25,16 +25,13 @@ describe('LocalKVStore', () => {
     it('returns {} for expired data', async () => {
       const mockTime = 1585273000000;
       const dateSpy = jest.spyOn(Date.prototype, 'getTime').mockReturnValue(mockTime);
-      console.log('TIME1', new Date().getTime());
       await store.put('foo', {foo: 'foo'}, {ttl: 60});
       expect(await store.get('foo')).toEqual({foo: 'foo'});
 
       dateSpy.mockReturnValue(mockTime + 100 * 1000);
-      console.log('TIME2', new Date().getTime());
       expect(await store.get('foo')).toEqual({});
 
       dateSpy.mockRestore();
-      console.log('TIME3', new Date().getTime());
     });
   });
 
