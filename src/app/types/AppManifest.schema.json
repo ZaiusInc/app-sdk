@@ -10,6 +10,9 @@
                 },
                 "entry_point": {
                     "type": "string"
+                },
+                "global": {
+                    "type": "boolean"
                 }
             },
             "required": [

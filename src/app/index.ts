@@ -1,6 +1,7 @@
 export * from './AppContext';
 export * from './Channel';
 export * from './Function';
+export * from './GlobalFunction';
 export * from './Job';
 export * from './lib';
 export * from './Lifecycle';
