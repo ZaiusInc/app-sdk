@@ -7,7 +7,11 @@ import {FunctionApi, FunctionEndpoints} from './FunctionApi';
  * @TODO implement the stub for local development purposes
  */
 export class LocalFunctionApi implements FunctionApi {
-  public getEndpoints(): Promise<FunctionEndpoints> {
+  public getEndpoints(_installId?: number): Promise<FunctionEndpoints> {
+    throw new Error('Method not implemented.');
+  }
+
+  public getGlobalEndpoints(): Promise<FunctionEndpoints> {
     throw new Error('Method not implemented.');
   }
 

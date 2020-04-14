@@ -14,8 +14,12 @@ export const initializeFunctionApi = (api: FunctionApi) => {
  * The functions api implementation
  */
 export const functions: FunctionApi = {
-  getEndpoints(): Promise<{[name: string]: string}> {
-    return functionApi.getEndpoints();
+  getEndpoints(installId?: number): Promise<{[name: string]: string}> {
+    return functionApi.getEndpoints(installId);
+  },
+
+  getGlobalEndpoints(): Promise<{[name: string]: string}> {
+    return functionApi.getGlobalEndpoints();
   },
 
   getAuthorizationGrantUrl(): string {
