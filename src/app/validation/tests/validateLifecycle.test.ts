@@ -4,7 +4,7 @@ import {LifecycleSettingsResult, Request} from '../../lib';
 import {AuthorizationGrantResult} from '../../lib/AuthorizationGrantResult';
 import {Lifecycle} from '../../Lifecycle';
 import {Runtime} from '../../Runtime';
-import {AppManifest, LifecycleResult} from '../../types';
+import {AppManifest, LifecycleResult, CanUninstallResult} from '../../types';
 import {validateLifecycle} from '../validateLifecycle';
 
 const appManifest = deepFreeze({
@@ -45,8 +45,13 @@ abstract class PartialLifecycle extends Lifecycle {
 }
 
 class ProperLifecycle extends Lifecycle {
+
   public constructor() {
     super();
+  }
+
+  public canUninstall(): Promise<CanUninstallResult> {
+    throw {success: true};
   }
 
   public async onInstall(): Promise<LifecycleResult> {

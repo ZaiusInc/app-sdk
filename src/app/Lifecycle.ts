@@ -1,7 +1,7 @@
-import {PrimitiveFormValue} from '@zaius/app-forms-schema';
-import {LifecycleSettingsResult, Request} from './lib';
-import {AuthorizationGrantResult} from './lib/AuthorizationGrantResult';
-import {LifecycleResult} from './types';
+import { PrimitiveFormValue } from '@zaius/app-forms-schema';
+import { LifecycleSettingsResult, Request } from './lib';
+import { AuthorizationGrantResult } from './lib/AuthorizationGrantResult';
+import { LifecycleResult, CanUninstallResult } from './types';
 
 /**
  * The format form data will be provided in when the user submits a form or performs a button action.
@@ -84,6 +84,11 @@ export abstract class Lifecycle {
    * @returns {AuthorizationGrantResult} with appropriate settings redirect and messaging
    */
   public abstract async onAuthorizationGrant(request: Request): Promise<AuthorizationGrantResult>;
+
+  /**
+   * Called before an app is uninstalled.
+   */
+  public abstract async canUninstall(): Promise<CanUninstallResult>;
 }
 
 /**
@@ -96,5 +101,6 @@ export const LIFECYCLE_REQUIRED_METHODS = [
   'onFinalizeUpgrade',
   'onUninstall',
   'onAuthorizationRequest',
-  'onAuthorizationGrant'
+  'onAuthorizationGrant',
+  'canUninstall'
 ];
