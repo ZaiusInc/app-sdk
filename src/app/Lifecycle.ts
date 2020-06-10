@@ -59,7 +59,9 @@ export abstract class Lifecycle {
    * Called before an app is uninstalled.
    * @returns {CanUninstallResult} specifying if the app can be uninstalled and an optional user facing message.
    */
-  public abstract async canUninstall(): Promise<CanUninstallResult>;
+  public async canUninstall(): Promise<CanUninstallResult> {
+    return {uninstallable: true}
+  }
 
   /**
    * Perform any actions on the integrations platform to complete an uninstall, such as removing
@@ -102,6 +104,5 @@ export const LIFECYCLE_REQUIRED_METHODS = [
   'onFinalizeUpgrade',
   'onUninstall',
   'onAuthorizationRequest',
-  'onAuthorizationGrant',
-  'canUninstall'
+  'onAuthorizationGrant'
 ];

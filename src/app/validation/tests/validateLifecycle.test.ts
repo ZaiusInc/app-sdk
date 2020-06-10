@@ -45,13 +45,8 @@ abstract class PartialLifecycle extends Lifecycle {
 }
 
 class ProperLifecycle extends Lifecycle {
-
   public constructor() {
     super();
-  }
-
-  public canUninstall(): Promise<CanUninstallResult> {
-    throw {success: true};
   }
 
   public async onInstall(): Promise<LifecycleResult> {
