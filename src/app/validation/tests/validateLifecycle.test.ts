@@ -4,7 +4,7 @@ import {LifecycleSettingsResult, Request} from '../../lib';
 import {AuthorizationGrantResult} from '../../lib/AuthorizationGrantResult';
 import {Lifecycle} from '../../Lifecycle';
 import {Runtime} from '../../Runtime';
-import {AppManifest, LifecycleResult, CanUninstallResult} from '../../types';
+import {AppManifest, LifecycleResult} from '../../types';
 import {validateLifecycle} from '../validateLifecycle';
 
 const appManifest = deepFreeze({

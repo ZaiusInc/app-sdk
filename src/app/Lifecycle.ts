@@ -60,7 +60,7 @@ export abstract class Lifecycle {
    * @returns {CanUninstallResult} specifying if the app can be uninstalled and an optional user facing message.
    */
   public async canUninstall(): Promise<CanUninstallResult> {
-    return {uninstallable: true}
+    return {uninstallable: true};
   }
 
   /**
