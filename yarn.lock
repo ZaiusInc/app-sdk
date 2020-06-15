@@ -443,9 +443,10 @@
   dependencies:
     ajv "^6.10.0"
 
-"@zaius/node-sdk@^0.6.2":
-  version "0.6.2"
-  resolved "http://npm-registry.prod.zaius/@zaius%2fnode-sdk/-/node-sdk-0.6.2.tgz#ed06f87ec9095b253841b02297c4587b2fb8d531"
+"@zaius/node-sdk@^0.7.1":
+  version "0.7.1"
+  resolved "http://npm-registry.prod.zaius/@zaius%2fnode-sdk/-/node-sdk-0.7.1.tgz#43615364d944e4c8e13310b1fe8894866cc631b5"
+  integrity sha512-UqgYAbj7K8wMGibwgLzR7ADpCAvSTlywgmL2kulp9MR/0DrggyanHmv9eq86mJAEvW8L8eolzlzm3iDbFf3XUQ==
   dependencies:
     node-fetch "^2.6.0"
 
