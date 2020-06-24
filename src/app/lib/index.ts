@@ -4,6 +4,7 @@ export * from './CampaignEvents';
 export * from './ChannelContentResult';
 export * from './ChannelPreviewResult';
 export * from './ChannelTargetResult';
+export * from './forms';
 export * from './FormResult';
 export * from './Headers';
 export * from './LifecycleSettingsResult';
