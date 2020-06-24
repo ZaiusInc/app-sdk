@@ -1,7 +1,7 @@
-import {storage, ValueHash} from '../../store';
+import { storage, ValueHash } from '../../store';
 
 interface FormState extends ValueHash {
-  openSection?: string;
+  defaultSection?: string;
 }
 
 /**
@@ -10,15 +10,15 @@ interface FormState extends ValueHash {
 export namespace Form {
   const formStateKey = '$formState';
 
-  export async function setOpenSection(openSection: string): Promise<void> {
-    await storage.settings.patch(formStateKey, {openSection});
+  export async function setDefaultSection(defaultSection: string): Promise<void> {
+    await storage.settings.patch(formStateKey, { defaultSection });
   }
 
-  export async function clearOpenSection(): Promise<void> {
-    await storage.settings.delete(formStateKey, ['openSection']);
+  export async function clearDefaultSection(): Promise<void> {
+    await storage.settings.delete(formStateKey, ['defaultSection']);
   }
 
-  export async function getOpenSection(): Promise<string | undefined> {
-    return (await storage.settings.get<FormState>(formStateKey)).openSection;
+  export async function getDefaultSection(): Promise<string | undefined> {
+    return (await storage.settings.get<FormState>(formStateKey)).defaultSection;
   }
 }
