@@ -56,6 +56,17 @@ export abstract class Lifecycle {
   public abstract async onFinalizeUpgrade(fromVersion: string): Promise<LifecycleResult>;
 
   /**
+   * Perform any actions, such as one scheduling one-time jobs, that can only be preformed after
+   * the upgrade was successfully completed.  This function is called *after* onFinalizeUpgrade
+   * when the installation has been fully upgraded.
+   * @returns {LifecycleResult} e.g., {success: true} if the call was successful.
+   * If false, the app will remain at the same version.
+   */
+  public async afterUpgrade(): Promise<LifecycleResult> {
+    return {success: true};
+  }
+
+  /**
    * Called before an app is uninstalled.
    * @returns {CanUninstallResult} specifying if the app can be uninstalled and an optional user facing message.
    */
