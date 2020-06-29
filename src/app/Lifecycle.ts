@@ -62,7 +62,7 @@ export abstract class Lifecycle {
    * @returns {LifecycleResult} e.g., {success: true} if the call was successful.
    * If false, the app will remain at the new version?
    */
-  public async afterUpgrade(): Promise<LifecycleResult> {
+  public async onAfterUpgrade(): Promise<LifecycleResult> {
     return {success: true};
   }
 
