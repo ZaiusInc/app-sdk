@@ -60,7 +60,7 @@ export abstract class Lifecycle {
    * the upgrade was successfully completed.  This function is called *after* onFinalizeUpgrade
    * when the installation has been fully upgraded.
    * @returns {LifecycleResult} e.g., {success: true} if the call was successful.
-   * If false, the app will remain at the same version.
+   * If false, the app will remain at the new version?
    */
   public async afterUpgrade(): Promise<LifecycleResult> {
     return {success: true};
