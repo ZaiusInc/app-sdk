@@ -50,6 +50,41 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
           'Channel implementation implements the target method, but it will not be used with static targeting'
         );
       }
+
+      // validate delivery options (supplemental to JSON schema)
+      const delivery = channelManifest?.delivery;
+      if (delivery) {
+        if (typeof delivery.batch_size === 'number') {
+          if (delivery.batch_size < 1 || delivery.batch_size > 1000) {
+            errors.push('channel.delivery.batch_size must be between 1 and 1000 (inclusive)');
+          } else if (delivery.batch_size !== Math.floor(delivery.batch_size)) {
+            errors.push('channel.delivery.batch_size must be an integer');
+          }
+        }
+        const concurrency = delivery.concurrent_batches;
+        if (typeof concurrency === 'number') {
+          if (concurrency < 1 || concurrency > 1000) {
+            errors.push('channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)');
+          } else if (concurrency !== Math.floor(concurrency)) {
+            errors.push('channel.delivery.concurrent_batches must be an integer');
+          }
+        }
+        for (let i = 0; i < (delivery.rate_limits || []).length; i++) {
+          const limit = delivery.rate_limits![i];
+          if (limit.count < 1) {
+            errors.push(`channel.delivery.rate_limit[${i}].count must be > 0`);
+          } else if (limit.count !== Math.floor(limit.count)) {
+            errors.push(`channel.delivery.rate_limit[${i}].count must be an integer`);
+          }
+          if (typeof limit.unit === 'number') {
+            if (limit.unit < 1) {
+              errors.push(`channel.delivery.rate_limit[${i}].unit must be > 0 if specifying a number of seconds`);
+            } else if (limit.unit !== Math.floor(limit.unit)) {
+              errors.push(`channel.delivery.rate_limit[${i}].unit must be an integer or a unit of time`);
+            }
+          }
+        }
+      }
     }
   }
 
