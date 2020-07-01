@@ -76,12 +76,10 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
           } else if (limit.count !== Math.floor(limit.count)) {
             errors.push(`channel.delivery.rate_limit[${i}].count must be an integer`);
           }
-          if (typeof limit.unit === 'number') {
-            if (limit.unit < 1) {
-              errors.push(`channel.delivery.rate_limit[${i}].unit must be > 0 if specifying a number of seconds`);
-            } else if (limit.unit !== Math.floor(limit.unit)) {
-              errors.push(`channel.delivery.rate_limit[${i}].unit must be an integer or a unit of time`);
-            }
+          if (limit.period < 1) {
+            errors.push(`channel.delivery.rate_limit[${i}].period must be > 0 if specifying a number of seconds`);
+          } else if (limit.period !== Math.floor(limit.period)) {
+            errors.push(`channel.delivery.rate_limit[${i}].period must be an integer`);
           }
         }
       }

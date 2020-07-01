@@ -50,19 +50,23 @@ export enum ChannelType {
 }
 
 /**
- * Defines a rate limit for channel delivery in to form of <count> per <unit>
+ * Defines a rate limit for channel delivery in to form of <count> per <n> <unit>
  * where unit is `second`, `minute`, `hour`, `day`, or <number> of seconds.
- * E.g., count: 100, unit: 15 => 100 per 15 seconds
+ * E.g., count: 100, period: 15, unit: second => 100 per 15 seconds
  */
 export interface ChannelRateLimit {
   /**
-   * The number of delivery requests (batches) per unit of time
+   * The number of delivery requests (batches) per period of time
    */
   count: number;
   /**
-   * The unit of time to measure over. If a number, the unit will be that number of seconds.
+   * The number of units of time to measure the rate limit over
    */
-  unit: 'second' | 'minute' | 'hour' | 'day' | number;
+  period: number;
+  /**
+   * The unit of time applied to the perioid
+   */
+  unit: 'second' | 'minute' | 'hour' | 'day';
   /**
    * Whether this rate limit applies to the app as a whole or per each install
    */

@@ -30,6 +30,7 @@ const staticManifest = deepFreeze({
       concurrent_batches: 5,
       rate_limits: [{
         count: 20,
+        period: 1,
         unit: 'minute',
         grouping: 'install'
       }]
@@ -307,11 +308,13 @@ describe('validateChannel', () => {
           concurrent_batches: 10,
           rate_limits: [{
             count: 0,
-            unit: 0,
+            period: 0,
+            unit: 'second',
             grouping: 'install'
           }, {
             count: 1.25,
-            unit: 1.99,
+            period: 1.99,
+            unit: 'minute',
             grouping: 'app'
           }]
         }
@@ -323,9 +326,9 @@ describe('validateChannel', () => {
 
     expect(await validateChannel(runtime)).toEqual([
       'channel.delivery.rate_limit[0].count must be > 0',
-      'channel.delivery.rate_limit[0].unit must be > 0 if specifying a number of seconds',
+      'channel.delivery.rate_limit[0].period must be > 0 if specifying a number of seconds',
       'channel.delivery.rate_limit[1].count must be an integer',
-      'channel.delivery.rate_limit[1].unit must be an integer or a unit of time',
+      'channel.delivery.rate_limit[1].period must be an integer',
     ]);
 
     getChannelClass.mockRestore();
