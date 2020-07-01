@@ -24,6 +24,16 @@ const staticManifest = deepFreeze({
     targeting: [{identifier: 'my_app_identifier'}],
     options: {
       prepare: false
+    },
+    delivery: {
+      batch_size: 10,
+      concurrent_batches: 5,
+      rate_limits: [{
+        count: 20,
+        period: 1,
+        unit: 'minute',
+        grouping: 'install'
+      }]
     }
   }
 } as AppManifest);
@@ -240,6 +250,85 @@ describe('validateChannel', () => {
     expect(await validateChannel(runtime)).toEqual([
       expect.stringContaining('Channel implementation is missing the prepare method'),
       'Channel implementation is missing the target method (required for dynamic targeting)'
+    ]);
+
+    getChannelClass.mockRestore();
+  });
+
+  it('detects detects invalid delivery options', async () => {
+    const manifest = {
+      ...staticManifest,
+      channel: {
+        ...staticManifest.channel,
+        delivery: {
+          batch_size: 15.5,
+          concurrent_batches: 13.2
+        }
+      }
+    } as AppManifest;
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+      .mockResolvedValue(ProperChannel as any);
+
+    expect(await validateChannel(runtime)).toEqual([
+      'channel.delivery.batch_size must be an integer',
+      'channel.delivery.concurrent_batches must be an integer',
+    ]);
+
+    Object.assign(runtime.manifest.channel?.delivery, {
+      batch_size: -1,
+      concurrent_batches: -1
+    });
+
+    expect(await validateChannel(runtime)).toEqual([
+      'channel.delivery.batch_size must be between 1 and 1000 (inclusive)',
+      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
+    ]);
+
+    Object.assign(runtime.manifest.channel?.delivery, {
+      batch_size: 10000,
+      concurrent_batches: 1001
+    });
+
+    expect(await validateChannel(runtime)).toEqual([
+      'channel.delivery.batch_size must be between 1 and 1000 (inclusive)',
+      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
+    ]);
+
+    getChannelClass.mockRestore();
+  });
+
+  it('detects detects invalid rate limit options', async () => {
+    const manifest = {
+      ...staticManifest,
+      channel: {
+        ...staticManifest.channel,
+        delivery: {
+          batch_size: 100,
+          concurrent_batches: 10,
+          rate_limits: [{
+            count: 0,
+            period: 0,
+            unit: 'second',
+            grouping: 'install'
+          }, {
+            count: 1.25,
+            period: 1.99,
+            unit: 'minute',
+            grouping: 'app'
+          }]
+        }
+      }
+    } as AppManifest;
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+      .mockResolvedValue(ProperChannel as any);
+
+    expect(await validateChannel(runtime)).toEqual([
+      'channel.delivery.rate_limit[0].count must be > 0',
+      'channel.delivery.rate_limit[0].period must be > 0 if specifying a number of seconds',
+      'channel.delivery.rate_limit[1].count must be an integer',
+      'channel.delivery.rate_limit[1].period must be an integer',
     ]);
 
     getChannelClass.mockRestore();

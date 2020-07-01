@@ -49,6 +49,30 @@ export enum ChannelType {
   TestChannel = 'test_channel'
 }
 
+/**
+ * Defines a rate limit for channel delivery in to form of <count> per <n> <unit>
+ * where unit is `second`, `minute`, `hour`, `day`, or <number> of seconds.
+ * E.g., count: 100, period: 15, unit: second => 100 per 15 seconds
+ */
+export interface ChannelRateLimit {
+  /**
+   * The number of delivery requests (batches) per period of time
+   */
+  count: number;
+  /**
+   * The number of units of time to measure the rate limit over
+   */
+  period: number;
+  /**
+   * The unit of time applied to the perioid
+   */
+  unit: 'second' | 'minute' | 'hour' | 'day';
+  /**
+   * Whether this rate limit applies to the app as a whole or per each install
+   */
+  grouping: 'app' | 'install';
+}
+
 export interface AppManifest {
   meta: {
     app_id: string;
@@ -76,6 +100,11 @@ export interface AppManifest {
     targeting: 'dynamic' | CampaignTargeting[];
     options?: {
       prepare?: boolean;
+    },
+    delivery?: {
+      batch_size?: number;
+      concurrent_batches?: number;
+      rate_limits?: ChannelRateLimit[];
     },
     events: {
       send: boolean;
