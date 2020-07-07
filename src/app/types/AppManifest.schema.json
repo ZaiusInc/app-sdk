@@ -114,6 +114,45 @@
             ],
             "type": "object"
         },
+        "ChannelRateLimit": {
+            "additionalProperties": false,
+            "description": "Defines a rate limit for channel delivery in to form of <count> per <n> <unit>\nwhere unit is `second`, `minute`, `hour`, `day`, or <number> of seconds.\nE.g., count: 100, period: 15, unit: second => 100 per 15 seconds",
+            "properties": {
+                "count": {
+                    "description": "The number of delivery requests (batches) per period of time",
+                    "type": "number"
+                },
+                "grouping": {
+                    "description": "Whether this rate limit applies to the app as a whole or per each install",
+                    "enum": [
+                        "app",
+                        "install"
+                    ],
+                    "type": "string"
+                },
+                "period": {
+                    "description": "The number of units of time to measure the rate limit over",
+                    "type": "number"
+                },
+                "unit": {
+                    "description": "The unit of time applied to the perioid",
+                    "enum": [
+                        "day",
+                        "hour",
+                        "minute",
+                        "second"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "count",
+                "grouping",
+                "period",
+                "unit"
+            ],
+            "type": "object"
+        },
         "ChannelType": {
             "enum": [
                 "ad",
@@ -174,16 +213,33 @@
         "channel": {
             "additionalProperties": false,
             "properties": {
-                "events": {
+                "delivery": {
                     "additionalProperties": false,
                     "properties": {
-                        "active_actions": {
+                        "batch_size": {
+                            "type": "number"
+                        },
+                        "concurrent_batches": {
+                            "type": "number"
+                        },
+                        "rate_limits": {
+                            "items": {
+                                "$ref": "#/definitions/ChannelRateLimit"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "metrics": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "attributable": {
                             "items": {
                                 "enum": [
                                     "click",
-                                    "disengage",
+                                    "delivery",
                                     "engage",
-                                    "impression",
                                     "open"
                                 ],
                                 "type": "string"
@@ -191,32 +247,50 @@
                             "type": "array"
                         },
                         "delivery": {
-                            "type": "boolean"
+                            "items": {
+                                "enum": [
+                                    "delivery",
+                                    "delivery_unknown",
+                                    "sent"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
                         },
-                        "delivery_unknown": {
-                            "type": "boolean"
+                        "disengagement": {
+                            "items": {
+                                "enum": [
+                                    "disengage",
+                                    "list_unsubscribe",
+                                    "opt-out",
+                                    "spam_report"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
                         },
-                        "hard_bounce": {
-                            "type": "boolean"
+                        "engagement": {
+                            "items": {
+                                "enum": [
+                                    "click",
+                                    "engage",
+                                    "open"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
                         },
-                        "send": {
-                            "type": "boolean"
-                        },
-                        "soft_bounce": {
-                            "type": "boolean"
-                        },
-                        "spam_report": {
-                            "type": "boolean"
+                        "reachability": {
+                            "items": {
+                                "enum": [
+                                    "hard_bounce",
+                                    "soft_bounce"
+                                ],
+                                "type": "string"
+                            },
+                            "type": "array"
                         }
                     },
-                    "required": [
-                        "delivery",
-                        "delivery_unknown",
-                        "hard_bounce",
-                        "send",
-                        "soft_bounce",
-                        "spam_report"
-                    ],
                     "type": "object"
                 },
                 "options": {
@@ -249,7 +323,6 @@
                 }
             },
             "required": [
-                "events",
                 "targeting",
                 "type"
             ],

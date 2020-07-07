@@ -1,5 +1,5 @@
 import {ValueHash} from '../../store';
-import {ActiveAction, CampaignTargeting} from '../Channel';
+import {CampaignTargeting} from '../Channel';
 
 // regenerate JSON schema with `yarn run update-schema`
 export interface AppFunction {
@@ -47,6 +47,37 @@ export enum ChannelType {
   Ad = 'ad',
   SegmentSync = 'segment_sync',
   TestChannel = 'test_channel'
+}
+
+export enum DeliveryMetric {
+  Sent = 'sent',
+  Delivery = 'delivery',
+  DeliveryUnknown = 'delivery_unknown'
+}
+
+export enum EngagementMetric {
+  Open = 'open',
+  Click = 'click',
+  Engage = 'engage'
+}
+
+export enum AttributableMetric {
+  Open = 'open',
+  Click = 'click',
+  Engage = 'engage',
+  Delivery = 'delivery'
+}
+
+export enum DisengagementMetric {
+  Disengage = 'disengage',
+  OptOut = 'opt-out',
+  SpamReport = 'spam_report',
+  ListUnsubscribe = 'list_unsubscribe'
+}
+
+export enum ReachablityMetric {
+  HardBounce = 'hard_bounce',
+  SoftBounce = 'soft_bounce'
 }
 
 /**
@@ -106,14 +137,12 @@ export interface AppManifest {
       concurrent_batches?: number;
       rate_limits?: ChannelRateLimit[];
     },
-    events: {
-      send: boolean;
-      delivery: boolean;
-      delivery_unknown: boolean;
-      active_actions?: ActiveAction[];
-      hard_bounce: boolean;
-      soft_bounce: boolean;
-      spam_report: boolean;
+    metrics?: {
+      delivery?: DeliveryMetric[];
+      engagement?: EngagementMetric[];
+      attributable?: AttributableMetric[];
+      disengagement?: DisengagementMetric[];
+      reachability?: ReachablityMetric[];
     }
   };
 }
