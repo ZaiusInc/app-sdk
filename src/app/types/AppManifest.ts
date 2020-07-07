@@ -75,7 +75,7 @@ export enum DisengagementMetric {
   ListUnsubscribe = 'list_unsubscribe'
 }
 
-export enum ReachablityMetric {
+export enum ReachabilityMetric {
   HardBounce = 'hard_bounce',
   SoftBounce = 'soft_bounce'
 }
@@ -142,7 +142,7 @@ export interface AppManifest {
       engagement?: EngagementMetric[];
       attributable?: AttributableMetric[];
       disengagement?: DisengagementMetric[];
-      reachability?: ReachablityMetric[];
+      reachability?: ReachabilityMetric[];
     }
   };
 }
