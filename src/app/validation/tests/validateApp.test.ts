@@ -50,7 +50,10 @@ const appManifest = deepFreeze({
       entry_point: 'Bar',
       description: 'Does a thing'
     }
-  }
+  },
+  outbound_domains: [
+    'foo.zaius.com'
+  ]
 } as AppManifest);
 
 const schemaObjects = deepFreeze({

@@ -425,6 +425,12 @@
                 "node12"
             ],
             "type": "string"
+        },
+        "outbound_domains": {
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
         }
     },
     "required": [
@@ -433,4 +439,3 @@
     ],
     "type": "object"
 }
-
