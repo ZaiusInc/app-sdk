@@ -145,6 +145,7 @@ export interface AppManifest {
       reachability?: ReachabilityMetric[];
     }
   };
+  outbound_domains?: string[];
 }
 
 export const APP_ID_FORMAT = /^[a-z][a-z_0-9]{2,31}$/;

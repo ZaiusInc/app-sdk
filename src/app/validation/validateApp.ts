@@ -12,6 +12,7 @@ import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
+import {validateOutboundDomains} from './validateOutboundDomains';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -32,7 +33,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(await validateLiquidExtensions(runtime))
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
-      .concat(await validateAssets(runtime));
+      .concat(await validateAssets(runtime))
+      .concat(validateOutboundDomains(runtime));
   }
 
   const schemaObjects = runtime.getSchemaObjects();
