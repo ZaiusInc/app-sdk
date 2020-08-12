@@ -325,11 +325,11 @@ export class LocalKVStore implements KVStore {
   }
 
   private async patchWithRetry<T extends KVHash>(key: string, updater: KVPatchUpdater<T>, retries = 5): Promise<T> {
+    const stored = await this.store.get<T>(key);
+    const previous = JSON.stringify(stored.value);
+    const options = {ttl: stored.ttl};
+    const update = updater(stored.value, options);
     try {
-      const stored = await this.store.get<T>(key);
-      const previous = JSON.stringify(stored.value);
-      const options = {ttl: stored.ttl};
-      const update = updater(stored.value, options);
       await this.store.put(key, update, options.ttl, stored.cas);
       return JSON.parse(previous);
     } catch (e) {
