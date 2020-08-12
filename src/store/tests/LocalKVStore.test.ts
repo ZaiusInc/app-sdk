@@ -68,6 +68,12 @@ describe('LocalKVStore', () => {
       expect(await store.get('baz')).toEqual({baz: 'baz'});
       expect(await store.get('foo')).toEqual({bar: 'bar'});
     });
+
+    it('properly surfaces errors thrown in a function patch', async () => {
+      await expect(store.patch('foo', () => {
+        throw new Error('nah');
+      })).rejects.toThrowError('nah');
+    });
   });
 
   describe('delete', () => {
