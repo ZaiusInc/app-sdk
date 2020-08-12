@@ -65,10 +65,10 @@ export class LocalStore implements BaseKVStore<ValueHash, true> {
   }
 
   private async patchWithRetry<T extends ValueHash>(key: string, updater: PatchUpdater<T>, retries = 5): Promise<T> {
+    const stored = await this.store.get<T>(key);
+    const previous = JSON.stringify(stored.value);
+    const update = updater(stored.value);
     try {
-      const stored = await this.store.get<T>(key);
-      const previous = JSON.stringify(stored.value);
-      const update = updater(stored.value);
       await this.store.put(key, update, undefined, stored.cas);
       return JSON.parse(previous);
     } catch (e) {
