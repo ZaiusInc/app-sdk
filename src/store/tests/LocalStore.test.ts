@@ -74,8 +74,6 @@ describe('LocalStore', () => {
     });
 
     it('properly surfaces errors thrown in a function patch', async () => {
-      // patch existing
-      await store.put('foo', {foo: 1, bar: 2});
       await expect(store.patch('foo', () => {
         throw new Error('nah');
       })).rejects.toThrowError('nah');
