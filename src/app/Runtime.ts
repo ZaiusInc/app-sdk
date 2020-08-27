@@ -1,3 +1,4 @@
+/* tslint:disable:max-classes-per-file */
 import {Ajv} from 'ajv';
 import {readFileSync} from 'fs';
 import * as jsYaml from 'js-yaml';
@@ -18,6 +19,8 @@ interface SerializedRuntime {
   appManifest: AppManifest;
   dirName: string;
 }
+
+export class FunctionClassNotFoundError extends Error { }
 
 export class Runtime {
   /**
@@ -57,7 +60,7 @@ export class Runtime {
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;
     if (!functions || !functions[name]) {
-      throw new Error(`No function named ${name} defined in manifest`);
+      throw new FunctionClassNotFoundError(`No function named ${name} defined in manifest`);
     }
 
     const fn = functions[name];
