@@ -252,6 +252,10 @@ export interface ChannelDeliverOptions {
    * Whether this is for a test send.
    */
   test?: boolean;
+  /**
+   * Whether this is for a transactional send.
+   */
+  transactional?: boolean;
 }
 
 /**
