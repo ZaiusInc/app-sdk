@@ -1,6 +1,6 @@
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
-import {Runtime} from '../Runtime';
+import {FunctionClassNotFoundError, Runtime} from '../Runtime';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -13,7 +13,10 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       try {
         fnClass = await runtime.getFunctionClass(name);
       } catch (e) {
-        // Failed to load
+        if (!(e instanceof FunctionClassNotFoundError)) {
+          errors.push(`Failed to load function class ${name}.  Error was: ${e.message}`);
+          return errors;
+        }
       }
       if (!fnClass) {
         errors.push(`Entry point not found for function: ${name}`);

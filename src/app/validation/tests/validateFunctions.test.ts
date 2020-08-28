@@ -3,7 +3,7 @@ import 'jest';
 import {Function} from '../../Function';
 import {GlobalFunction} from '../../GlobalFunction';
 import {Request, Response} from '../../lib';
-import {Runtime} from '../../Runtime';
+import {FunctionClassNotFoundError, Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {validateFunctions} from '../validateFunctions';
 
@@ -95,9 +95,19 @@ describe('validateFunctions', () => {
   it('detects missing function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
-      .mockRejectedValue(new Error('not found'));
+      .mockRejectedValue(new FunctionClassNotFoundError('not found'));
 
     expect(await validateFunctions(runtime)).toEqual(['Entry point not found for function: foo', 'Entry point not found for function: global_foo']);
+
+    getFunctionClass.mockRestore();
+  });
+
+  it('detects loading errors', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockRejectedValue(new Error('dependent module not found'));
+
+    expect(await validateFunctions(runtime)).toEqual(['Failed to load function class foo.  Error was: dependent module not found']);
 
     getFunctionClass.mockRestore();
   });
