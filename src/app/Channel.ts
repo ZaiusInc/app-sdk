@@ -130,12 +130,10 @@ export abstract class Channel {
    * @param template the untranslated template
    * @returns result of the operation
    */
-  /* tslint:disable:no-unused-variable */
   // @ts-ignore TS6133: 'template' is declared but its value is never read.
   public async templatePreview(template: CampaignContent['template']): Promise<TemplatePreviewResult> {
     return {};
   }
-  /* tslint:enable:no-unused-variable */
 }
 
 /**
