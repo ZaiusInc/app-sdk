@@ -131,7 +131,7 @@ export abstract class Channel {
    * @returns result of the operation
    */
   // @ts-ignore TS6133: 'template' is declared but its value is never read.
-  public async templatePreview(template: CampaignContent['template']): Promise<TemplatePreviewResult> {
+  public async templatePreview(template: CampaignContent['template']): Promise<ChannelTemplatePreviewResult> {
     return {};
   }
 }
@@ -300,7 +300,7 @@ export interface ChannelDeliverResult {
   toasts?: Array<{intent: Intent, message: string}>;
 }
 
-export interface TemplatePreviewResult {
+export interface ChannelTemplatePreviewResult {
   /**
    * HTML from which to create template thumbnails.
    */
