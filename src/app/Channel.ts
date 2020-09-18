@@ -121,6 +121,19 @@ export abstract class Channel {
    * @returns result of the operation
    */
   public abstract async preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<ChannelPreviewResult>;
+
+  /**
+   * Renders an untranslated template (containing Liquid code rather than substitution identifiers) to HTML to be
+   * used for thumbnail creation for users to browse templates for this channel. Thumbnails will be generated at
+   * resolution of 600px by 600px with a 50% scale factor (actual size 300px by 300px).
+   * @async
+   * @param template the untranslated template
+   * @returns result of the operation
+   */
+  // @ts-ignore TS6133: 'template' is declared but its value is never read.
+  public async templatePreview(template: CampaignContent['template']): Promise<ChannelTemplatePreviewResult> {
+    return {};
+  }
 }
 
 /**
@@ -285,4 +298,11 @@ export interface ChannelDeliverResult {
    * This should only be set when testing delivery (i.e ChannelDeliverOptions.test is true).
    */
   toasts?: Array<{intent: Intent, message: string}>;
+}
+
+export interface ChannelTemplatePreviewResult {
+  /**
+   * HTML from which to create template thumbnails.
+   */
+  preview?: string;
 }
