@@ -130,7 +130,9 @@ export abstract class Channel {
    * @param template the untranslated template
    * @returns result of the operation
    */
-  public abstract async templatePreview(template: CampaignContent['template']): Promise<TemplatePreviewResult>;
+  public async templatePreview(template: CampaignContent['template']): Promise<TemplatePreviewResult> {
+    return Promise.resolve({});
+  }
 }
 
 /**
@@ -301,5 +303,5 @@ export interface TemplatePreviewResult {
   /**
    * HTML from which to create template thumbnails.
    */
-  preview: string;
+  preview?: string;
 }
