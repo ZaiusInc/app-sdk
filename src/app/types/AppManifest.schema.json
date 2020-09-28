@@ -382,6 +382,7 @@
                             "Productivity",
                             "Reviews & Ratings",
                             "Site & Content Experience",
+                            "Subscriptions",
                             "Surveys & Feedback",
                             "Testing & Utilities"
                         ],
@@ -420,17 +421,17 @@
             ],
             "type": "object"
         },
-        "runtime": {
-            "enum": [
-                "node12"
-            ],
-            "type": "string"
-        },
         "outbound_domains": {
             "items": {
                 "type": "string"
             },
             "type": "array"
+        },
+        "runtime": {
+            "enum": [
+                "node12"
+            ],
+            "type": "string"
         }
     },
     "required": [
@@ -439,3 +440,4 @@
     ],
     "type": "object"
 }
+
