@@ -132,6 +132,7 @@ export interface AppManifest {
     targeting: 'dynamic' | CampaignTargeting[];
     options?: {
       prepare?: boolean;
+      template_preview?: boolean;
     },
     delivery?: {
       batch_size?: number;
