@@ -24,7 +24,7 @@ describe('Logger', () => {
     });
 
     it('sets the default visibility', () => {
-      new Logger(LogLevel.Debug, LogVisibility.Zaius).debug('debug');
+      new Logger({level: LogLevel.Debug, defaultVisibility: LogVisibility.Zaius}).debug('debug');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
 
@@ -53,15 +53,15 @@ describe('Logger', () => {
 
   describe('debug', () => {
     it('logs to stdout', () => {
-      new Logger(LogLevel.Debug).debug('debug');
+      new Logger({level: LogLevel.Debug}).debug('debug');
       expect(process.stdout.write).toHaveBeenCalledTimes(1);
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({message: 'debug'}));
     });
 
     it('does nothing if log level > debug', () => {
-      new Logger(LogLevel.Warn).debug('debug');
-      new Logger(LogLevel.Info).debug('debug');
-      new Logger(LogLevel.Error).debug('debug');
+      new Logger({level: LogLevel.Warn}).debug('debug');
+      new Logger({level: LogLevel.Info}).debug('debug');
+      new Logger({level: LogLevel.Error}).debug('debug');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
@@ -78,16 +78,16 @@ describe('Logger', () => {
 
   describe('info', () => {
     it('logs to stdout when the log level is <= info', () => {
-      new Logger(LogLevel.Debug).info('debug');
-      new Logger(LogLevel.Info).info('info');
+      new Logger({level: LogLevel.Debug}).info('debug');
+      new Logger({level: LogLevel.Info}).info('info');
       expect(process.stdout.write).toHaveBeenCalledTimes(2);
       expect(process.stdout.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stdout.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
     });
 
     it('does nothing if log level > info', () => {
-      new Logger(LogLevel.Warn).info('info');
-      new Logger(LogLevel.Error).info('info');
+      new Logger({level: LogLevel.Warn}).info('info');
+      new Logger({level: LogLevel.Error}).info('info');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
@@ -100,13 +100,13 @@ describe('Logger', () => {
       logger.info(LogVisibility.Zaius, 'check check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
-});
+  });
 
   describe('warn', () => {
     it('logs to stdout when the log level is <= warn', () => {
-      new Logger(LogLevel.Debug).warn('debug');
-      new Logger(LogLevel.Info).warn('info');
-      new Logger(LogLevel.Warn).warn('warn');
+      new Logger({level: LogLevel.Debug}).warn('debug');
+      new Logger({level: LogLevel.Info}).warn('info');
+      new Logger({level: LogLevel.Warn}).warn('warn');
       expect(process.stdout.write).toHaveBeenCalledTimes(3);
       expect(process.stdout.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stdout.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
@@ -114,7 +114,7 @@ describe('Logger', () => {
     });
 
     it('does nothing if log level > warn', () => {
-      new Logger(LogLevel.Error).warn('warn');
+      new Logger({level: LogLevel.Error}).warn('warn');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
@@ -131,11 +131,11 @@ describe('Logger', () => {
 
   describe('error', () => {
     it('logs to stderr', () => {
-      new Logger(LogLevel.Debug).error('debug');
-      new Logger(LogLevel.Info).error('info');
-      new Logger(LogLevel.Warn).error('warn');
-      new Logger(LogLevel.Error).error('error');
-      new Logger(LogLevel.NEVER).error('never'); // suppresses log
+      new Logger({level: LogLevel.Debug}).error('debug');
+      new Logger({level: LogLevel.Info}).error('info');
+      new Logger({level: LogLevel.Warn}).error('warn');
+      new Logger({level: LogLevel.Error}).error('error');
+      new Logger({level: LogLevel.NEVER}).error('never'); // suppresses log
       expect(process.stderr.write).toHaveBeenCalledTimes(4);
       expect(process.stderr.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stderr.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
@@ -144,7 +144,7 @@ describe('Logger', () => {
     });
 
     it('logs even if log level is error', () => {
-      new Logger(LogLevel.Error).error('error');
+      new Logger({level: LogLevel.Error}).error('error');
       expect(process.stderr.write).toHaveBeenCalledWith(expect.jsonContaining({message: 'error'}));
     });
 
@@ -216,6 +216,18 @@ describe('Logger', () => {
           request_id: '12345-678-90'
         }
       }));
+    });
+
+    it.each([
+      ['a'.repeat(15), 'a'.repeat(15)],
+      ['a'.repeat(16), 'a'.repeat(16)],
+      ['a'.repeat(17), 'a'.repeat(13) + '...'],
+      ['a'.repeat(18), 'a'.repeat(13) + '...']
+    ])('truncates long messages', (input, expected) => {
+      new Logger({maxLineLength: 16}).info(input);
+      expect(process.stdout.write).toHaveBeenCalledWith(
+        expect.jsonContaining({message: expected})
+      );
     });
   });
 });

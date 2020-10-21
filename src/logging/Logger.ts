@@ -1,3 +1,4 @@
+import {truncate} from 'lodash';
 import * as util from 'util';
 
 /**
@@ -53,6 +54,12 @@ export interface LogContext {
   entry_point?: string; // e.g., function:fn_name
   request_id?: string;
   job_id?: string;
+}
+
+export interface LoggerOptions {
+  maxLineLength?: number;
+  defaultVisibility?: LogVisibility;
+  level?: LogLevel;
 }
 
 const visibilityValues = new Set([
@@ -168,12 +175,27 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
+const DEFAULT_OPTIONS: LoggerOptions = {
+  level: LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug,
+  maxLineLength: parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10),
+  defaultVisibility: LogVisibility.Developer
+};
+
 /**
  * @hidden
  * Internal Logger implementation. Use the instance provided by the App SDK exports instead.
  */
 export class Logger implements ILogger {
-  constructor(level: LogLevel, private defaultVisibility = LogVisibility.Developer) {
+  private maxLineLength: number;
+  private defaultVisibility: LogVisibility;
+
+  constructor(options: LoggerOptions = {}) {
+    const level = options.level || DEFAULT_OPTIONS.level!;
+    this.maxLineLength = Math.min(
+      options.maxLineLength || DEFAULT_OPTIONS.maxLineLength!,
+      DEFAULT_OPTIONS.maxLineLength!
+    );
+    this.defaultVisibility = options.defaultVisibility || DEFAULT_OPTIONS.defaultVisibility!;
     if (level > LogLevel.Debug) {
       this.debug = noop;
     }
@@ -241,7 +263,7 @@ export class Logger implements ILogger {
     (level === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
       level: LOG_LEVELS[level],
-      message: args.join(' '),
+      message: truncate(args.join(' '), {length: this.maxLineLength}),
       stacktrace,
       audience: visibility,
       context
@@ -255,4 +277,4 @@ export class Logger implements ILogger {
  *   LOG_LEVEL=warn
  * Accepted levels include debug, info, warn, error (or NEVER for silencing logs)
  */
-export const logger: ILogger = new Logger(LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug);
+export const logger: ILogger = new Logger();
