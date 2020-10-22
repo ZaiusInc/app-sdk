@@ -1,4 +1,3 @@
-import {truncate} from 'lodash';
 import * as util from 'util';
 
 /**
@@ -57,9 +56,9 @@ export interface LogContext {
 }
 
 export interface LoggerOptions {
-  maxLineLength?: number;
-  defaultVisibility?: LogVisibility;
-  level?: LogLevel;
+  maxLineLength: number;
+  defaultVisibility: LogVisibility;
+  level: LogLevel;
 }
 
 const visibilityValues = new Set([
@@ -189,11 +188,11 @@ export class Logger implements ILogger {
   private maxLineLength: number;
   private defaultVisibility: LogVisibility;
 
-  constructor(options: LoggerOptions = {}) {
-    const level = options.level || DEFAULT_OPTIONS.level!;
+  constructor(options: Partial<LoggerOptions> = {}) {
+    const level = options.level || DEFAULT_OPTIONS.level;
     this.maxLineLength = Math.min(
-      options.maxLineLength || DEFAULT_OPTIONS.maxLineLength!,
-      DEFAULT_OPTIONS.maxLineLength!
+      options.maxLineLength || DEFAULT_OPTIONS.maxLineLength,
+      DEFAULT_OPTIONS.maxLineLength
     );
     this.defaultVisibility = options.defaultVisibility || DEFAULT_OPTIONS.defaultVisibility!;
     if (level > LogLevel.Debug) {
@@ -263,11 +262,18 @@ export class Logger implements ILogger {
     (level === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
       level: LOG_LEVELS[level],
-      message: truncate(args.join(' '), {length: this.maxLineLength}),
+      message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
       context
     } as LogMessage) + '\n');
+  }
+
+  private truncateMessage(message: string): string {
+    if (message.length <= this.maxLineLength) {
+      return message;
+    }
+    return message.slice(0, this.maxLineLength - 3) + '...';
   }
 }
 
