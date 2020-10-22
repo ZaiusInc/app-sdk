@@ -55,6 +55,12 @@ export interface LogContext {
   job_id?: string;
 }
 
+export interface LoggerOptions {
+  maxLineLength: number;
+  defaultVisibility: LogVisibility;
+  level: LogLevel;
+}
+
 const visibilityValues = new Set([
   LogVisibility.Zaius,
   LogVisibility.Developer
@@ -168,12 +174,25 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
+const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
+const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
+const DEFAULT_VISIBILITY = LogVisibility.Developer;
+
 /**
  * @hidden
  * Internal Logger implementation. Use the instance provided by the App SDK exports instead.
  */
 export class Logger implements ILogger {
-  constructor(level: LogLevel, private defaultVisibility = LogVisibility.Developer) {
+  private maxLineLength: number;
+  private defaultVisibility: LogVisibility;
+
+  constructor(options: Partial<LoggerOptions> = {}) {
+    const level = options.level || DEFAULT_LOG_LEVEL;
+    this.maxLineLength = Math.min(
+      options.maxLineLength || MAX_LINE_LENGTH,
+      MAX_LINE_LENGTH
+    );
+    this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
     if (level > LogLevel.Debug) {
       this.debug = noop;
     }
@@ -241,11 +260,18 @@ export class Logger implements ILogger {
     (level === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
       level: LOG_LEVELS[level],
-      message: args.join(' '),
+      message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
       context
     } as LogMessage) + '\n');
+  }
+
+  private truncateMessage(message: string): string {
+    if (message.length <= this.maxLineLength) {
+      return message;
+    }
+    return message.slice(0, this.maxLineLength - 3) + '...';
   }
 }
 
@@ -255,4 +281,4 @@ export class Logger implements ILogger {
  *   LOG_LEVEL=warn
  * Accepted levels include debug, info, warn, error (or NEVER for silencing logs)
  */
-export const logger: ILogger = new Logger(LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug);
+export const logger: ILogger = new Logger();
