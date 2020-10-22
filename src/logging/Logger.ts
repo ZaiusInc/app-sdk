@@ -174,11 +174,9 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
-const DEFAULT_OPTIONS: LoggerOptions = {
-  level: LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug,
-  maxLineLength: parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10),
-  defaultVisibility: LogVisibility.Developer
-};
+const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
+const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
+const DEFAULT_VISIBILITY = LogVisibility.Developer;
 
 /**
  * @hidden
@@ -189,12 +187,12 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   constructor(options: Partial<LoggerOptions> = {}) {
-    const level = options.level || DEFAULT_OPTIONS.level;
+    const level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
-      options.maxLineLength || DEFAULT_OPTIONS.maxLineLength,
-      DEFAULT_OPTIONS.maxLineLength
+      options.maxLineLength || MAX_LINE_LENGTH,
+      MAX_LINE_LENGTH
     );
-    this.defaultVisibility = options.defaultVisibility || DEFAULT_OPTIONS.defaultVisibility!;
+    this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
     if (level > LogLevel.Debug) {
       this.debug = noop;
     }
