@@ -436,10 +436,10 @@
   version "12.0.12"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
 
-"@zaius/app-forms-schema@^0.3.8":
-  version "0.3.8"
-  resolved "http://npm-registry.prod.zaius/@zaius%2fapp-forms-schema/-/app-forms-schema-0.3.8.tgz#a673433815f2d33f025932f03ed4e9844579e5ab"
-  integrity sha512-V0KvRcSzywgwsNOhFTSkXnp9NVrZp3yXm0VTsRks24ZPuspsEbkTCqTikqC6YAoeeIOpqoG31iOJSox9xnLT5g==
+"@zaius/app-forms-schema@^0.3.9":
+  version "0.3.9"
+  resolved "http://npm-registry.prod.zaius/@zaius%2fapp-forms-schema/-/app-forms-schema-0.3.9.tgz#7c0cb93a90d2cd3c30751606b3c2d78b96f5b91c"
+  integrity sha512-O/EW8tmlO1cvj2v1R5ImYNxV7qLAInwdtDP3jxjEroM1wZzJDGWqS2PvM6C2NGHj2+eMrB3n4m/5FnJKhxBIoA==
   dependencies:
     ajv "^6.10.0"
 
