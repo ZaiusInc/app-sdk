@@ -18,8 +18,8 @@ describe('Logger', () => {
   describe('constructor', () => {
     it('defaults to developer visibility', () => {
       const logFn = jest.spyOn(logger as any, 'log');
-      logger.info('message');
-      expect(logFn).toHaveBeenCalledWith(LogLevel.Info, LogVisibility.Developer, 'message');
+      logger.debug('debug');
+      expect(logFn).toHaveBeenCalledWith(LogLevel.Debug, LogVisibility.Developer, 'debug');
       logFn.mockRestore();
     });
 
@@ -37,7 +37,7 @@ describe('Logger', () => {
         entry_point: 'job:foo',
         job_id: '123-456'
       });
-      logger.info('message');
+      logger.debug('debug');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
         context: {
           app_id: 'sample',
@@ -66,12 +66,12 @@ describe('Logger', () => {
     });
 
     it('sets the log level to debug on the log', () => {
-      new Logger({level: LogLevel.Debug}).debug('level check');
+      logger.debug('level check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({level: 'debug'}));
     });
 
     it('respects visibility', () => {
-      new Logger({level: LogLevel.Debug}).debug(LogVisibility.Zaius, 'check check');
+      logger.debug(LogVisibility.Zaius, 'check check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
   });
