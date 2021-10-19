@@ -436,17 +436,17 @@
   version "12.0.12"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-12.0.12.tgz#45dd1d0638e8c8f153e87d296907659296873916"
 
-"@zaius/app-forms-schema@^0.4.0":
+"@zaiusinc/app-forms-schema@^0.4.0":
   version "0.4.0"
-  resolved "http://npm-registry.prod.zaius/@zaius%2fapp-forms-schema/-/app-forms-schema-0.4.0.tgz#63b2894233784b684b19cd0ccf80a6bef0dba753"
-  integrity sha512-+A0hBPfqjrsmU85pVpIFe5zAxIqNSNwI3jBc+yfmpzB2eCd5Pu/6xxrt0cPcST31TPhzqBdmTx75f6JRB1edhA==
+  resolved "https://registry.yarnpkg.com/@zaiusinc/app-forms-schema/-/app-forms-schema-0.4.0.tgz#2eb6a2a02f4ab4f798cfc007976ac2cfa5f1f9c1"
+  integrity sha512-GkG6k9JQ8vG0oKaAPT06oAuxkiZmta2wnQ+buEeOmjA6V0jCD73oT7Qr6ySNhADE5Cjj5QaHZXa/G2Kii4EzuA==
   dependencies:
     ajv "^6.10.0"
 
-"@zaius/node-sdk@^0.8.0":
+"@zaiusinc/node-sdk@^0.8.0":
   version "0.8.0"
-  resolved "http://npm-registry.prod.zaius/@zaius%2fnode-sdk/-/node-sdk-0.8.0.tgz#b5d18fcb12081b37f8cd05d2bfd963c4ff6a20af"
-  integrity sha512-HLM3ohKXf+dua+bphKm0EOzQqRdOJAO24vVTITnL+yOTWTTWdFn4CBfnZtoOaXHcE/JQwkw9zrn/jfhZDxEbvQ==
+  resolved "https://registry.yarnpkg.com/@zaiusinc/node-sdk/-/node-sdk-0.8.0.tgz#267927c83dd468e933e8a0441f3bf7905929d0f3"
+  integrity sha512-AONBwDaspBVWdBpnZLe9G7Sv4d+M0ZqktUibRyAWCHVrYwPGUvIvVkdxozrReqpmzAV9dh9P+VTHUicyF/KaIw==
   dependencies:
     node-fetch "^2.6.0"
 
