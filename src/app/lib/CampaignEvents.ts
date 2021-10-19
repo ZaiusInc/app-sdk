@@ -1,4 +1,4 @@
-import {EventData, z} from '@zaius/node-sdk';
+import {EventData, z} from '@zaiusinc/node-sdk';
 import {getAppContext} from '../AppContext';
 import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';

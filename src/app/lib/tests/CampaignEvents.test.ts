@@ -1,9 +1,9 @@
-import {z} from '@zaius/node-sdk';
+import {z} from '@zaiusinc/node-sdk';
 import 'jest';
 import {setContext} from '../../AppContext';
 import {CampaignEvents} from '../CampaignEvents';
 
-jest.mock('@zaius/node-sdk');
+jest.mock('@zaiusinc/node-sdk');
 
 const CAMPAIGN_TRACKING = Object.freeze({
   campaign_schedule_run_ts: 1582240000,

@@ -1,4 +1,4 @@
-import {validateFormDefinition} from '@zaius/app-forms-schema/dist/validation/validateForm';
+import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation/validateForm';
 import * as fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';

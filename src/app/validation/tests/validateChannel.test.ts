@@ -1,4 +1,4 @@
-import {FormData} from '@zaius/app-forms-schema';
+import {FormData} from '@zaiusinc/app-forms-schema';
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {CampaignContent, CampaignDelivery, CampaignTracking, Channel, ChannelDeliverOptions, ChannelDeliverResult, ChannelPrepareOptions, ChannelPrepareResult, ChannelPublishOptions, ChannelValidateOptions} from '../../Channel';
