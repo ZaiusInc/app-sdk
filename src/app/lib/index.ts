@@ -7,6 +7,7 @@ export * from './ChannelTargetResult';
 export * from './forms';
 export * from './FormResult';
 export * from './Headers';
+export * from './InternalRequest';
 export * from './LifecycleSettingsResult';
 export * from './LiquidExtensionResult';
 export * from './QueryParams';
