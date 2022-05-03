@@ -26,7 +26,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   if (!ajv.validate(manifestSchema, runtime.manifest)) {
     ajv.errors!.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {
-    errors = errors.concat(validateMeta(runtime))
+    errors = errors.concat(await validateMeta(runtime))
       .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))

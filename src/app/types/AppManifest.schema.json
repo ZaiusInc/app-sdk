@@ -361,6 +361,12 @@
                 "app_id": {
                     "type": "string"
                 },
+                "availability": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "categories": {
                     "items": {
                         "enum": [
@@ -414,6 +420,7 @@
             },
             "required": [
                 "app_id",
+                "availability",
                 "categories",
                 "contact_email",
                 "display_name",
