@@ -51,9 +51,9 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
   }
 
   // Validate meta.availability
-  if (!availability.length) {
+  if (availability && !availability.length) {
     errors.push('Invalid app.yml: meta.availability must contain at least one availability zone');
-  } else {
+  } else if (availability) {
     if (availability.includes('all') && availability.length > 1) {
       errors.push('Invalid app.yml: meta.availability should only contain "all" without other availability zones');
     }
