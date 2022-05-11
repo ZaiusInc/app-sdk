@@ -1,24 +1,23 @@
-import * as csv from 'csv-parser';
 import fetch from 'node-fetch';
 import {URL} from 'url';
 import * as zlib from 'zlib';
-import {Options} from 'csv-parser';
 import {FileReadableStreamBuilder, FileRowProcessor, FileStream} from './FileStream';
+import {parse, Options} from './JsonLinesParser';
 
-export interface CsvRow {
-  [column: string]: string;
+type JsonLineRowBasics = string | number | boolean | Date | JsonLineRow;
+
+export interface JsonLineRow {
+  [column: string]: JsonLineRowBasics | JsonLineRowBasics[];
 }
 
-export type CsvRowProcessor<T = CsvRow> = FileRowProcessor<T>;
-
 /**
- * Builds source streams for the CsvStream to process.
+ * Builds source streams for the JsonLinesStream to process.
  */
-export type CsvReadableStreamBuilder = FileReadableStreamBuilder;
+export type JsonLineReadableStreamBuilder = FileReadableStreamBuilder;
 
-export class CsvStream<T> extends FileStream<T, Options> {
+export class JsonLinesStream<T> extends FileStream<T, Options> {
   /**
-   * Build a CsvStream from an existing ReadableStream.
+   * Build a JsonLinesStream from an existing ReadableStream.
    * @param stream source stream for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,
@@ -26,14 +25,14 @@ export class CsvStream<T> extends FileStream<T, Options> {
    */
   public static fromStream<T>(
     stream: NodeJS.ReadableStream,
-    processor: CsvRowProcessor<T>,
+    processor: FileRowProcessor<T>,
     options: Options = {}
-  ): CsvStream<T> {
-    return new CsvStream(async () => stream, processor, options);
+  ): JsonLinesStream<T> {
+    return new JsonLinesStream(async () => stream, processor, options);
   }
 
   /**
-   * Build a CsvStream that reads from a web resource.
+   * Build a JsonLinesStream that reads from a web resource.
    * @param url source url for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,
@@ -41,10 +40,10 @@ export class CsvStream<T> extends FileStream<T, Options> {
    */
   public static fromUrl<T>(
     url: string,
-    processor: CsvRowProcessor<T>,
+    processor: FileRowProcessor<T>,
     options: Options = {}
-  ): CsvStream<T> {
-    const builder: CsvReadableStreamBuilder = async () => {
+  ): JsonLinesStream<T> {
+    const builder: JsonLineReadableStreamBuilder = async () => {
       const response = await fetch(url);
       const pipeline = response.body;
       return /\.gz$/.test(new URL(url).pathname)
@@ -52,14 +51,14 @@ export class CsvStream<T> extends FileStream<T, Options> {
         : pipeline;
     };
 
-    return new CsvStream(builder, processor, options);
+    return new JsonLinesStream(builder, processor, options);
   }
 
   constructor(
-    streamBuilder: CsvReadableStreamBuilder,
-    rowProcessor: CsvRowProcessor<T>,
+    streamBuilder: JsonLineReadableStreamBuilder,
+    rowProcessor: FileRowProcessor<T>,
     options: Options = {}
   ) {
-    super(streamBuilder, rowProcessor, csv, options);
+    super(streamBuilder, rowProcessor, parse, options);
   }
 }
