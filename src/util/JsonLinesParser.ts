@@ -12,7 +12,8 @@ export interface Options {
 const [cr] = Buffer.from('\r');
 const [nl] = Buffer.from('\n');
 
-/*
+/**
+ * @hidden
  * This parser is based on the syntax showed on https://jsonlines.org/
  */
 class JsonLinesParser extends Transform {

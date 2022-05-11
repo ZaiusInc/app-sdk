@@ -22,7 +22,11 @@ export interface FileRowProcessor<T> {
  */
 export type FileReadableStreamBuilder = () => Promise<NodeJS.ReadableStream>;
 
-export class FileStream<T, O> {
+/**
+ * @hidden
+ * Generic class of stream file reader
+ */
+export abstract class FileStream<T, O> {
   private readStream?: NodeJS.ReadableStream;
   private pipelineFinished = false;
   private onPause!: (marker: string | null) => void;
