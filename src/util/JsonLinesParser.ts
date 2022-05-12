@@ -1,11 +1,46 @@
 import {Transform, TransformCallback} from 'stream';
 
 export interface Options {
+  /**
+   * Specifies the headers to use. Headers define the property key for each value in a JsonLines row. If no `headers`
+   * option is provided, `JsonLinesParser` will use the first line in a JsonLines file as the header specification.
+   */
   readonly headers?: ReadonlyArray<string> | boolean;
+
+  /**
+   * Specifies a single-character string to denote the end of a line in a JsonLines file.
+   * @default '\n'
+   */
   readonly newline?: string;
+
+  /**
+   * Instructs the parser to ignore lines which represent comments in a JsonLines file. Since there is no specification
+   * that dictates what a JsonLines comment looks like, comments should be considered non-standard. The "most common"
+   * character used to signify a comment in a JsonLines file is `"#"`. If this option is set to `true`, lines which
+   * begin with `#` will be skipped. If a custom character is needed to denote a commented line, this option may be set
+   * to a string which represents the leading character(s) signifying a comment line.
+   * @default false
+   */
   readonly skipComments?: boolean | string;
+
+  /**
+   * Specifies the number of lines at the beginning of a data file that the parser should skip over, prior to parsing
+   * headers.
+   * @default 0
+   */
   readonly skipLines?: number;
+
+  /**
+   * Maximum number of bytes per row. An error is thrown if a line exceeds this value.
+   * The default value is on 8 peta byte.
+   * @default Number.MAX_SAFE_INTEGER
+   */
   readonly maxRowBytes?: number;
+
+  /**
+   * If `true`, instructs the parser that the number of columns
+   * in each row must match the number of `headers` specified.
+   */
   readonly strict?: boolean;
 }
 

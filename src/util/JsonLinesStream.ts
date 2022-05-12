@@ -18,10 +18,9 @@ export type JsonLineReadableStreamBuilder = FileReadableStreamBuilder;
 export class JsonLinesStream<T> extends FileStream<T, Options> {
   /**
    * Build a JsonLinesStream from an existing ReadableStream.
-   * @param stream source stream for the csv data
+   * @param stream source stream for the JsonLines data
    * @param processor the row processor
-   * @param options options to provide the underlying parser,
-   * see https://github.com/mafintosh/csv-parser#csvoptions--headers
+   * @param options options to provide the JsonLinesParser {@link Options}
    */
   public static fromStream<T>(
     stream: NodeJS.ReadableStream,
@@ -33,10 +32,9 @@ export class JsonLinesStream<T> extends FileStream<T, Options> {
 
   /**
    * Build a JsonLinesStream that reads from a web resource.
-   * @param url source url for the csv data
+   * @param url source url for the JsonLines data
    * @param processor the row processor
-   * @param options options to provide the underlying parser,
-   * see https://github.com/mafintosh/csv-parser#csvoptions--headers
+   * @param options options to provide the JsonLinesParser {@link Options}
    */
   public static fromUrl<T>(
     url: string,
