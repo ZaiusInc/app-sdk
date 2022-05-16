@@ -170,35 +170,39 @@ class JsonLinesParser extends Transform {
       }
     }
 
-    const cells: unknown = JSON.parse(buffer.subarray(start, end).toString());
-    if (!Array.isArray(cells)) {
-      const e = new TypeError('Each line must be an array of objects');
-      this.emit('error', e);
-    } else {
-      const skip = this.skipLines > this.state.lineNumber;
-      this.state.lineNumber++;
+    try {
+      const cells: unknown = JSON.parse(buffer.subarray(start, end).toString());
+      if (!Array.isArray(cells)) {
+        const e = new TypeError('Each line must be an array of objects');
+        this.emit('error', e);
+      } else {
+        const skip = this.skipLines > this.state.lineNumber;
+        this.state.lineNumber++;
 
-      if (!skip) {
-        if (this.state.first) {
-          if (cells.every((it) => typeof it === 'string')) {
-            this.state.first = false;
-            this.headers = cells;
+        if (!skip) {
+          if (this.state.first) {
+            if (cells.every((it) => typeof it === 'string')) {
+              this.state.first = false;
+              this.headers = cells;
 
-            this.emit('headers', this.headers);
-            return;
-          } else {
-            const e = new TypeError('The first line must be an array of strings');
+              this.emit('headers', this.headers);
+              return;
+            } else {
+              const e = new TypeError('The first line must be an array of strings');
+              this.emit('error', e);
+            }
+          }
+
+          if (this.strict && cells.length !== this.headers!.length) {
+            const e = new RangeError('Row length does not match headers');
             this.emit('error', e);
+          } else {
+            this.writeRow(cells);
           }
         }
-
-        if (this.strict && cells.length !== this.headers!.length) {
-          const e = new RangeError('Row length does not match headers');
-          this.emit('error', e);
-        } else {
-          this.writeRow(cells);
-        }
       }
+    } catch (e) {
+      this.emit('Problems paring line', e);
     }
   }
 
