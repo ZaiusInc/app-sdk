@@ -51,7 +51,7 @@ describe('JsonLinesStream', () => {
 
     const processor = new TestJsonLinesRowProcessor();
     await processAndVerify(
-      JsonLinesStream.fromStream(readable, processor),
+      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
       processor
     );
   });
@@ -63,7 +63,7 @@ describe('JsonLinesStream', () => {
 
     const processor = new TestJsonLinesRowProcessor();
     await processAndVerify(
-      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor),
+      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor, {tabularFormat: true}),
       processor
     );
   });
@@ -77,7 +77,7 @@ describe('JsonLinesStream', () => {
     readable.push(null);
 
     const processor = new TestJsonLinesRowProcessor();
-    const stream = JsonLinesStream.fromStream(readable, processor);
+    const stream = JsonLinesStream.fromStream(readable, processor, {tabularFormat: true});
     await stream.processSome();
     expect(processor.isCompleted).toBe(false);
     expect(processor.rows.length).toBe(2);
@@ -116,7 +116,7 @@ describe('JsonLinesStream', () => {
       col3: 'val3'
     });
 
-    const stream = JsonLinesStream.fromStream(readable, processor);
+    const stream = JsonLinesStream.fromStream(readable, processor, {tabularFormat: true});
     await stream.fastforward(marker);
     await stream.processSome();
     expect(processor.isCompleted).toBe(true);
