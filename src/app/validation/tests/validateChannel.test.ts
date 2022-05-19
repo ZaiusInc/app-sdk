@@ -16,7 +16,8 @@ const staticManifest = deepFreeze({
     support_url: 'https://zaius.com',
     summary: 'This is an interesting app',
     contact_email: 'support@zaius.com',
-    categories: ['Channel']
+    categories: ['Channel'],
+    availability: ['all']
   },
   runtime: 'node12',
   channel: {

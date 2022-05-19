@@ -1,13 +1,14 @@
 import * as EmailValidator from 'email-validator';
 import * as urlRegex from 'url-regex';
+import { Rivendell } from '../../util/Rivendell';
 import {Runtime} from '../Runtime';
 import {APP_ID_FORMAT, VENDOR_FORMAT, VERSION_FORMAT} from '../types';
 
-export function validateMeta(runtime: Runtime): string[] {
+export async function validateMeta(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
 
   const {
-    app_id, display_name, version, vendor, support_url, contact_email, summary, categories
+    app_id, display_name, version, vendor, support_url, contact_email, summary, categories, availability
   } = runtime.manifest.meta;
 
   // App ID, version, vendor, support url, and contact email must be in the correct format
@@ -47,6 +48,32 @@ export function validateMeta(runtime: Runtime): string[] {
   }
   if (categories.length === 2 && categories[0] === categories[1]) {
     errors.push('Invalid app.yml: meta.categories contains two identical categories');
+  }
+
+  // Validate meta.availability
+  if (availability && !availability.length) {
+    errors.push('Invalid app.yml: meta.availability must contain at least one availability zone');
+  } else if (availability) {
+    if (availability.includes('all') && availability.length > 1) {
+      errors.push('Invalid app.yml: meta.availability should only contain "all" without other availability zones');
+    }
+
+    if (!availability.includes('all')) {
+      if (!availability.includes('us')) {
+        errors.push('Invalid app.yml: meta.availability must at least include "us" availability zone');
+      }
+
+      const shards = await Rivendell.shards();
+      const invalid = availability.filter((zone) => {
+        return !shards.includes(zone);
+      });
+
+      if (invalid.length) {
+        errors.push(
+          `Invalid app.yml: meta.availability should only contain ` +
+          `valid availability zones (${shards}) found: ${invalid}`);
+      }
+    }
   }
 
   return errors;

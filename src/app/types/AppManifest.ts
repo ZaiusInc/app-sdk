@@ -115,6 +115,7 @@ export interface AppManifest {
     summary: string;
     contact_email: string;
     categories: AppCategory[];
+    availability?: string[];
   };
   runtime: 'node12';
   environment?: string[];
