@@ -109,7 +109,6 @@ export abstract class FileStream<T, O> {
       this.pipelineFinished = true;
       this.resume = undefined;
       if (error) {
-        console.error(error);
         this.onError(error);
       } else {
         await this.rowProcessor.complete();
