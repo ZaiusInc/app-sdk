@@ -1,3 +1,6 @@
+# 0.17.6
+AppManifest.meta.availability is now required to be present in the manfiest.
+
 # 0.11.5
 Update app-forms-schema (corrected json schema)
 
