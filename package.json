@@ -1,6 +1,6 @@
 {
   "name": "@zaius/app-sdk",
-  "version": "0.17.6",
+  "version": "0.17.7",
   "description": "Zaius App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -31,7 +31,7 @@
     "node": ">=8.0"
   },
   "dependencies": {
-    "@zaiusinc/app-forms-schema": "^0.4.0",
+    "@zaiusinc/app-forms-schema": "^0.4.1",
     "ajv": "^6.10.0",
     "deep-freeze": "^0.0.1",
     "email-validator": "^2.0.4",
