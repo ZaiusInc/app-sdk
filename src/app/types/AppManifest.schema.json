@@ -420,6 +420,7 @@
             },
             "required": [
                 "app_id",
+                "availability",
                 "categories",
                 "contact_email",
                 "display_name",
