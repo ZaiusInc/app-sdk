@@ -11,7 +11,7 @@ import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects} from './types/SchemaObject';
+import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 
@@ -100,7 +100,7 @@ export class Runtime {
     const files = glob.sync('schema/*.yml', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.safeLoad(readFileSync(join(this.dirName, file), 'utf8'));
+        schemaObjects[file] = jsYaml.safeLoad(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
       }
     }
     return schemaObjects;

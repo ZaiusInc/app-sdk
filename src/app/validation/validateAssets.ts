@@ -12,6 +12,7 @@ import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import glob = require('glob');
+import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
   'assets/directory/overview.md',
@@ -81,7 +82,7 @@ class AssetValidator {
     for (const file of files) {
       const filePath = path.join(this.baseDir, file);
       if (fs.existsSync(filePath)) {
-        (await validateFormDefinition(jsYaml.safeLoad(fs.readFileSync(filePath, 'utf8'))))
+        (await validateFormDefinition(jsYaml.safeLoad(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
           .forEach((message) => this.errors.push(`Invalid ${file}: ${message}`));
       }
     }
