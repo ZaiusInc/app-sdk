@@ -22,7 +22,7 @@ export abstract class Lifecycle {
    * If false, the app will not be installed and any data stored will be deleted, however,
    * schema or other account changes are not transactional and will not be undone.
    */
-  public abstract async onInstall(): Promise<LifecycleResult>;
+  public abstract onInstall(): Promise<LifecycleResult>;
 
   /**
    * Handle a submission of a form section. You are responsible for performing any validation or
@@ -32,7 +32,7 @@ export abstract class Lifecycle {
    * @param formData the data for the section as a hash of key/value pairs
    * @returns {LifecycleSettingsResult} with any errors that should be displayed to the user
    */
-  public abstract async onSettingsForm(
+  public abstract onSettingsForm(
     section: string, action: string, formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
@@ -44,7 +44,7 @@ export abstract class Lifecycle {
    * @returns {LifecycleResult} e.g., {success: true} if the upgrade was successful.
    * If false, the app will be rolled back to the fromVersion.
    */
-  public abstract async onUpgrade(fromVersion: string): Promise<LifecycleResult>;
+  public abstract onUpgrade(fromVersion: string): Promise<LifecycleResult>;
 
   /**
    * Perform any final actions, such as registering new functions that were added to this version.
@@ -53,7 +53,7 @@ export abstract class Lifecycle {
    * @returns {LifecycleResult} e.g., {success: true} if the upgrade was successful.
    * If false, the app will be rolled back to the fromVersion.
    */
-  public abstract async onFinalizeUpgrade(fromVersion: string): Promise<LifecycleResult>;
+  public abstract onFinalizeUpgrade(fromVersion: string): Promise<LifecycleResult>;
 
   /**
    * Perform any actions, such as one scheduling one-time jobs, that can only be preformed after
@@ -79,7 +79,7 @@ export abstract class Lifecycle {
    * webhooks pointing at this installation.
    * @returns {LifecycleResult} specify if the uninstall was successful. If false, it may be retried.
    */
-  public abstract async onUninstall(): Promise<LifecycleResult>;
+  public abstract onUninstall(): Promise<LifecycleResult>;
 
   /**
    * Handles outbound OAuth requests. This is triggered by an `oauth_button` on the settings form. The section of the
@@ -90,7 +90,7 @@ export abstract class Lifecycle {
    * @param formData the data for the section as a hash of key/value pairs
    * @returns {LifecycleSettingsResult} with a redirect to the external oauth endpoint
    */
-  public abstract async onAuthorizationRequest(
+  public abstract onAuthorizationRequest(
     section: string, formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
@@ -102,7 +102,7 @@ export abstract class Lifecycle {
    * @param request the details of the inbound http request
    * @returns {AuthorizationGrantResult} with appropriate settings redirect and messaging
    */
-  public abstract async onAuthorizationGrant(request: Request): Promise<AuthorizationGrantResult>;
+  public abstract onAuthorizationGrant(request: Request): Promise<AuthorizationGrantResult>;
 }
 
 /**

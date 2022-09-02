@@ -156,7 +156,7 @@ export class LocalAsyncStoreBackend<T extends {}> {
     return JSON.parse(JSON.stringify(value));
   }
 
-  private translateExpiresToTTL<O>(entry: CasEntry<O>, epoch: number): StoreEntry<O> {
+  private translateExpiresToTTL<O extends {}>(entry: CasEntry<O>, epoch: number): StoreEntry<O> {
     return {
       cas: entry.cas,
       value: this.copy(entry.value),

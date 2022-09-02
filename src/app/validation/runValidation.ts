@@ -12,9 +12,9 @@ Runtime.initialize(path.resolve(process.cwd(), 'dist'), true).then(async (runtim
     } else {
       console.log(chalk.green(`Looks good to me`));
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error(chalk.red(`Validation process failed: ${e.message}`));
   }
-}).catch((e) => {
+}).catch((e: any) => {
   console.error(chalk.red(`Validation process failed: ${e.message}`));
 });

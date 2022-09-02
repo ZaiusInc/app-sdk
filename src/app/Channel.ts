@@ -20,7 +20,7 @@ export abstract class Channel {
    * @async
    * @returns true if the channel is ready to use
    */
-  public abstract async ready(): Promise<boolean>;
+  public abstract ready(): Promise<boolean>;
 
   /**
    * Dynamically determines campaign targeting requirements. It should also perform any necessary validations on the
@@ -44,7 +44,7 @@ export abstract class Channel {
    * @param options additional options
    * @returns result of the operation
    */
-  public abstract async validate(
+  public abstract validate(
     content: CampaignContent, options: ChannelValidateOptions
   ): Promise<ChannelContentResult>;
 
@@ -66,7 +66,7 @@ export abstract class Channel {
    * @param options additional options
    * @returns result of the operation
    */
-  public abstract async publish(
+  public abstract publish(
     contentKey: string, content: CampaignContent, options: ChannelPublishOptions
   ): Promise<ChannelContentResult>;
 
@@ -104,7 +104,7 @@ export abstract class Channel {
    * @param previousResult previous result of the operation, if this is a retry
    * @returns result of the operation
    */
-  public abstract async deliver(
+  public abstract deliver(
     contentKey: string,
     tracking: CampaignTracking,
     options: ChannelDeliverOptions,
@@ -120,7 +120,7 @@ export abstract class Channel {
    * @param batch of recipients and substitutions
    * @returns result of the operation
    */
-  public abstract async preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<ChannelPreviewResult>;
+  public abstract preview(content: CampaignContent, batch: CampaignDelivery[]): Promise<ChannelPreviewResult>;
 
   /**
    * Renders an untranslated template (containing Liquid code rather than substitution identifiers) to HTML to be

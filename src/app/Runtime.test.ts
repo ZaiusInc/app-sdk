@@ -122,7 +122,7 @@ describe('Runtime', () => {
 
       try {
         await Runtime.initialize('/tmp/foo');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/Invalid app.yml manifest/);
       }
 
@@ -165,7 +165,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getFunctionClass('bar');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No function named bar/);
       }
     });
@@ -189,7 +189,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getJobClass('foo');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No job named foo/);
       }
     });
@@ -213,7 +213,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getLiquidExtensionClass('bar');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No liquid extension named bar/);
       }
     });

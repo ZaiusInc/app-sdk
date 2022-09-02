@@ -7,5 +7,5 @@ export abstract class RequestHandler {
     this.request = request;
   }
 
-  public abstract async perform(): Promise<Response>;
+  public abstract perform(): Promise<Response>;
 }

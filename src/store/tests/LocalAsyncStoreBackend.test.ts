@@ -174,7 +174,7 @@ describe('LocalAsyncStoreBackend', () => {
       expect(store['hasChanges']).toBeTruthy();
 
       // ensure we wait for our onChange timer to complete, by scheduling a timer after to complete the test
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         setTimeout(() => {
           expect(changeHandler).toHaveBeenCalledWith({foo: {cas: 0, expires: undefined, value: {bar: 'bar'}}});
           expect(store['hasChanges']).toBeFalsy();

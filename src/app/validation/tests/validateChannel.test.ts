@@ -276,7 +276,7 @@ describe('validateChannel', () => {
       'channel.delivery.concurrent_batches must be an integer',
     ]);
 
-    Object.assign(runtime.manifest.channel?.delivery, {
+    Object.assign<any, any>(runtime.manifest.channel?.delivery, {
       batch_size: -1,
       concurrent_batches: -1
     });
@@ -286,7 +286,7 @@ describe('validateChannel', () => {
       'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
     ]);
 
-    Object.assign(runtime.manifest.channel?.delivery, {
+    Object.assign<any, any>(runtime.manifest.channel?.delivery, {
       batch_size: 10000,
       concurrent_batches: 1001
     });
