@@ -141,8 +141,8 @@ describe('validateApp', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(await validateApp(runtime)).toEqual([
-      "Invalid app.yml: functions.foo must have required property 'entry_point'",
-      'Invalid app.yml: meta.categories[0] must be equal to one of the allowed values',
+      "Invalid app.yml: functions/foo must have required property 'entry_point'",
+      'Invalid app.yml: meta/categories/0 must be equal to one of the allowed values',
       'Invalid app.yml: runtime must be equal to one of the allowed values'
     ]);
   });
@@ -158,9 +158,9 @@ describe('validateApp', () => {
     } as any);
 
     expect(await validateApp(runtime)).toEqual([
-      "Invalid schema/events.yml: fields[0] must have required property 'description'",
-      'Invalid schema/events.yml: fields[0].type must be equal to one of the allowed values',
-      "Invalid schema/events.yml: must have required property 'name'"
+      "Invalid schema/events.yml: must have required property 'name'",
+      "Invalid schema/events.yml: fields/0 must have required property 'description'",
+      'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
     ]);
 
     getSchemaObjects.mockRestore();

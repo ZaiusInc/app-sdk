@@ -1,5 +1,5 @@
 import {ErrorObject} from 'ajv';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import {Runtime} from '../Runtime';
 import * as manifestSchema from '../types/AppManifest.schema.json';
 import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
@@ -51,6 +51,6 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
 }
 
 function formatAjvError(file: string, e: ErrorObject): string {
-  const adjustedDataPath = e.dataPath.length > 0 ? e.dataPath.substring(1).replace(/\['([^']+)']/, '.$1') + ' ' : '';
+  const adjustedDataPath = e.instancePath.length > 0 ? e.instancePath.substring(1).replace(/\['([^']+)']/, '.$1') + ' ' : '';
   return `Invalid ${file}: ${adjustedDataPath}${e.message!.replace(/\bshould\b/, 'must')}`;
 }

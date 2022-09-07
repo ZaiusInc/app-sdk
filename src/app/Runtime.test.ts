@@ -1,4 +1,4 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import * as deepFreeze from 'deep-freeze';
 import * as fs from 'fs';
 import 'jest';

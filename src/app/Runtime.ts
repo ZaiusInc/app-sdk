@@ -1,5 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import {Ajv} from 'ajv';
+import Ajv from 'ajv';
 import {readFileSync} from 'fs';
 import * as jsYaml from 'js-yaml';
 import {join} from 'path';
