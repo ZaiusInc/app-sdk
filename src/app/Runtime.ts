@@ -100,7 +100,7 @@ export class Runtime {
     const files = glob.sync('schema/*.yml', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.safeLoad(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
       }
     }
     return schemaObjects;
@@ -121,7 +121,7 @@ export class Runtime {
   private async initialize(dirName: string, skipJsonValidation: boolean) {
     this.dirName = dirName;
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
-    const manifest = (await import('js-yaml')).safeLoad(
+    const manifest = (await import('js-yaml')).load(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
     ) as unknown;
 

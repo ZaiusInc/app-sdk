@@ -82,7 +82,7 @@ class AssetValidator {
     for (const file of files) {
       const filePath = path.join(this.baseDir, file);
       if (fs.existsSync(filePath)) {
-        (await validateFormDefinition(jsYaml.safeLoad(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
+        (await validateFormDefinition(jsYaml.load(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
           .forEach((message) => this.errors.push(`Invalid ${file}: ${message}`));
       }
     }

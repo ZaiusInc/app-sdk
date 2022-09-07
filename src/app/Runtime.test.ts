@@ -100,7 +100,7 @@ describe('Runtime', () => {
 
   describe('initialize', () => {
     it('loads and validates the manifest', async () => {
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
       const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(true);
 
       const runtime = await Runtime.initialize('/tmp/foo');
@@ -117,7 +117,7 @@ describe('Runtime', () => {
     });
 
     it('throws an error when the manifest is invalid', async () => {
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
       const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(false);
 
       try {
@@ -252,7 +252,7 @@ describe('Runtime', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const origReadFileSync = fs.readFileSync;
       const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
 
       const result = await runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
