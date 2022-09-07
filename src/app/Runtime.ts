@@ -1,4 +1,4 @@
-/* tslint:disable:max-classes-per-file */
+/* eslint-disable max-classes-per-file */
 import Ajv from 'ajv';
 import {readFileSync} from 'fs';
 import * as jsYaml from 'js-yaml';
@@ -25,10 +25,11 @@ export class FunctionClassNotFoundError extends Error { }
 export class Runtime {
   /**
    * Initializes from a directory. Used during startup.
+   *
    * @param dirName the base directory of the app
    * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
    */
-  public static async initialize(dirName: string, skipJsonValidation: boolean = false) {
+  public static async initialize(dirName: string, skipJsonValidation = false) {
     const runtime = new Runtime();
     await runtime.initialize(dirName, skipJsonValidation);
     return runtime;
@@ -36,6 +37,7 @@ export class Runtime {
 
   /**
    * Initializes from a pre-validated JSON definition. Used during task execution.
+   *
    * @param serializedRuntime JSON-serialized runtime definition
    */
   public static fromJson(serializedRuntime: string) {
@@ -56,7 +58,7 @@ export class Runtime {
     return this.dirName;
   }
 
-  // tslint:disable-next-line:ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;
     if (!functions || !functions[name]) {
@@ -123,10 +125,10 @@ export class Runtime {
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
     const manifest = (await import('js-yaml')).load(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
-    ) as unknown;
+    ) ;
 
     if (!skipJsonValidation) {
-      const ajv: Ajv = new (require('ajv') as any)();
+      const ajv: Ajv = new Ajv();
       if (!ajv.validate(manifestSchema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }

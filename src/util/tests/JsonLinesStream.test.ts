@@ -12,7 +12,7 @@ interface Row {
 }
 
 class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
-  constructor(private completed = false, private readRows: Row[] = []) { }
+  public constructor(private completed = false, private readRows: Row[] = []) { }
 
   public get isCompleted() {
     return this.completed;
@@ -22,13 +22,18 @@ class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
     return this.readRows;
   }
 
-  public async process(row: Row): Promise<boolean> {
-    this.rows.push(row);
-    return this.rows.length % 2 === 0;
+  public process(row: Row): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.rows.push(row);
+      resolve(this.rows.length % 2 === 0);
+    });
   }
 
   public async complete(): Promise<void> {
-    this.completed = true;
+    return new Promise((resolve) => {
+      this.completed = true;
+      resolve();
+    });
   }
 }
 

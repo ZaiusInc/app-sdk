@@ -12,7 +12,7 @@ interface Row {
 }
 
 class TestCsvRowProcessor implements CsvRowProcessor<Row> {
-  constructor(private completed = false, private readRows: Row[] = []) { }
+  public constructor(private completed = false, private readRows: Row[] = []) { }
 
   public get isCompleted() {
     return this.completed;
@@ -23,12 +23,17 @@ class TestCsvRowProcessor implements CsvRowProcessor<Row> {
   }
 
   public async process(row: Row): Promise<boolean> {
-    this.rows.push(row);
-    return this.rows.length % 2 === 0;
+    return new Promise((resolve) => {
+      this.rows.push(row);
+      resolve(this.rows.length % 2 === 0);
+    });
   }
 
   public async complete(): Promise<void> {
-    this.completed = true;
+    return new Promise((resolve) => {
+      this.completed = true;
+      resolve();
+    });
   }
 }
 
@@ -74,7 +79,7 @@ describe('CsvStream', () => {
     readable.push(null);
     const options: Options = {
       mapHeaders: ({ header}) => header.toLowerCase(),
-      mapValues: ({ value }) => value.toLowerCase()
+      mapValues: ({ value }) => (value as string).toLowerCase()
     };
 
     const processor = new TestCsvRowProcessor();

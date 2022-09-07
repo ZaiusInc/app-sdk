@@ -3,6 +3,7 @@ import {BaseKVStore, initializeStores, LocalKVStore, storage} from '..';
 import {LocalStore} from '../LocalStore';
 import {resetLocalKvStore, resetLocalSecretsStore, resetLocalSettingsStore, resetLocalStores} from '../storage';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 class SampleStore implements BaseKVStore {
 }
@@ -31,10 +32,13 @@ describe('storage', () => {
   describe('initializeStores', () => {
     it('replaces the local stores with the provided stores', () => {
       initializeStores({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         secrets: new SampleStore(),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         settings: new SampleStore(),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         kvStore: new SampleStore()
       });

@@ -7,7 +7,7 @@ import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
  */
 describe('LocalAsyncStoreBackend', () => {
   let store: LocalAsyncStoreBackend<any>;
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.spyOn(LocalAsyncStoreBackend.prototype, 'epoch' as any).mockReturnValue(1585273000);
     store = new LocalAsyncStoreBackend(0, {foo: {cas: 1, expires: 1585273000 + 500, value: {bar: 'bar'}}});
   });

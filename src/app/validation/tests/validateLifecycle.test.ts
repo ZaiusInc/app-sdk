@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {LifecycleSettingsResult, Request} from '../../lib';
@@ -34,7 +35,6 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
 class NonExtendedLifecycle {
   // Nothing
 }
@@ -50,35 +50,34 @@ class ProperLifecycle extends Lifecycle {
     super();
   }
 
-  public async onInstall(): Promise<LifecycleResult> {
-    return {success: true};
+  public onInstall(): Promise<LifecycleResult> {
+    return Promise.resolve({success: true});
   }
 
-  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
-    return new LifecycleSettingsResult();
+  public onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return Promise.resolve(new LifecycleSettingsResult());
   }
 
-  public async onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return {success: true};
+  public onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
+    return Promise.resolve({success: true});
   }
 
-  public async onFinalizeUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return {success: true};
+  public onFinalizeUpgrade(_fromVersion: string): Promise<LifecycleResult> {
+    return Promise.resolve({success: true});
   }
 
-  public async onUninstall(): Promise<LifecycleResult> {
-    return {success: true};
+  public onUninstall(): Promise<LifecycleResult> {
+    return Promise.resolve({success: true});
   }
 
-  public async onAuthorizationRequest(_page: string, _formData: object): Promise<LifecycleSettingsResult> {
-    return new LifecycleSettingsResult();
+  public onAuthorizationRequest(_page: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return Promise.resolve(new LifecycleSettingsResult());
   }
 
-  public async onAuthorizationGrant(_request: Request): Promise<AuthorizationGrantResult> {
-    return new AuthorizationGrantResult('oauth');
+  public onAuthorizationGrant(_request: Request): Promise<AuthorizationGrantResult> {
+    return Promise.resolve(new AuthorizationGrantResult('oauth'));
   }
 }
-/* tslint:enable */
 
 describe('validateLifecycle', () => {
   it('succeeds with a proper definition', async () => {

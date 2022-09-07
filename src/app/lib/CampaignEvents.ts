@@ -4,7 +4,7 @@ import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';
 
 export type CampaignAction = 'sent' | 'delivery' | 'open' | 'click' | 'engage' | 'disengage'
-  | 'soft_bounce' | 'hard_bounce' | 'spam_report';
+| 'soft_bounce' | 'hard_bounce' | 'spam_report';
 
 /**
  * A class to help batch and send campaign related events
@@ -25,7 +25,7 @@ export class CampaignEvents {
    * @param identifierField the name of the identifier field used to target the user.
    * The identifier value provided to a campaign event must be for this identifier field name.
    */
-  constructor(
+  public constructor(
     private identifierField: string,
     public tracking: Partial<CampaignTracking>,
     type?: string
@@ -50,6 +50,7 @@ export class CampaignEvents {
 
   /**
    * Send a campaign related event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param action the campaign action
    * @param ts the time of the event. If left blank, the recevied time will be used.
@@ -59,20 +60,21 @@ export class CampaignEvents {
     await this.eventBatcher.append({
       identifiers: {
         [this.identifierField]: identifier
-       },
-       type: this.type,
-       action,
-       data: {
-         ts: ts instanceof Date ? ts.toISOString() : ts,
-         target_address: identifier,
-         ...this.tracking,
-         ...data
-       }
-     });
+      },
+      type: this.type,
+      action,
+      data: {
+        ts: ts instanceof Date ? ts.toISOString() : ts,
+        target_address: identifier,
+        ...this.tracking,
+        ...data
+      }
+    });
   }
 
   /**
    * Send a campaign delivery event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param ts the time of the event. If left blank, the recevied time will be used.
    * @param data additional event data to add to the event
@@ -83,6 +85,7 @@ export class CampaignEvents {
 
   /**
    * Send a campaign open event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param ts the time of the event. If left blank, the recevied time will be used.
    * @param data additional event data to add to the event
@@ -93,6 +96,7 @@ export class CampaignEvents {
 
   /**
    * Send a campaign click event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param ts the time of the event. If left blank, the recevied time will be used.
    * @param data additional event data to add to the event
@@ -103,6 +107,7 @@ export class CampaignEvents {
 
   /**
    * Send a campaign engage event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param ts the time of the event. If left blank, the recevied time will be used.
    * @param data additional event data to add to the event
@@ -113,6 +118,7 @@ export class CampaignEvents {
 
   /**
    * Send a campaign disengage event
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param ts the time of the event. If left blank, the recevied time will be used.
    * @param data additional event data to add to the event
@@ -124,6 +130,7 @@ export class CampaignEvents {
   /**
    * Send a campaign hard bounce event, which means you were unable to deliver AND
    * the identifier is definitely no longer reachable. E.g., an invalid address.
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param reason a human readable reason for the hard bounce
    * @param ts the time of the event. If left blank, the recevied time will be used.
@@ -147,6 +154,7 @@ export class CampaignEvents {
   /**
    * Send a campaign soft bounce event, which means you were unable to deliver,
    * but the identifier may still be reachable. E.g., the provider is temporarily unavailable.
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param reason a human readable reason for the soft bounce
    * @param ts the time of the event. If left blank, the recevied time will be used.
@@ -171,6 +179,7 @@ export class CampaignEvents {
   /**
    * Send a campaign related opt-out event, such as, when a customer unsubscribes or replies STOP to an SMS.
    * Consent will be revoked on the identifier.
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param reason a human readable reason for the opt-out
    * @param ts the time of the event. If left blank, the recevied time will be used.
@@ -193,6 +202,7 @@ export class CampaignEvents {
   /**
    * Send a campaign related opt-in event, such as, when a customer re-subscribes or replies UNSTOP to an SMS.
    * This is considered a consent opt-in for the identifier.
+   *
    * @param identifier the identifier value / target identifier value related to this event
    * @param reason a human readable reason for the opt-in
    * @param ts the time of the event. If left blank, the recevied time will be used.

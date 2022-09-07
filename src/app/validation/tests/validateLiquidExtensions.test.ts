@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {LiquidExtensionResult} from '../../lib';
@@ -39,7 +40,7 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
+
 class NonExtendedBuzz {
   // Nothing
 }
@@ -49,11 +50,10 @@ abstract class PartialBuzz extends LiquidExtension {
 }
 
 class ProperBuzz extends LiquidExtension {
-  public async perform(): Promise<LiquidExtensionResult> {
-    return LiquidExtensionResult.success('buzz');
+  public perform(): Promise<LiquidExtensionResult> {
+    return Promise.resolve(LiquidExtensionResult.success('buzz'));
   }
 }
-/* tslint:disable */
 
 describe('validateLiquidExtensions', () => {
   it('succeeds with a proper definition', async () => {

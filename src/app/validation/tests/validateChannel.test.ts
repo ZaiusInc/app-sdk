@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {FormData} from '@zaiusinc/app-forms-schema';
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
@@ -61,7 +62,6 @@ const manifestWithoutTargeting = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
 class NonExtendedChannel {
   // Nothing
 }
@@ -77,32 +77,32 @@ class ProperChannel extends Channel {
     super();
   }
 
-  public async ready(): Promise<boolean> {
-    return true;
+  public ready(): Promise<boolean> {
+    return Promise.resolve(true);
   }
 
-  public async validate(_content: CampaignContent, _options: ChannelValidateOptions): Promise<ChannelContentResult> {
-    return new ChannelContentResult();
+  public validate(_content: CampaignContent, _options: ChannelValidateOptions): Promise<ChannelContentResult> {
+    return Promise.resolve(new ChannelContentResult());
   }
 
-  public async publish(
+  public publish(
     _contentKey: string, _content: CampaignContent, _options: ChannelPublishOptions
   ): Promise<ChannelContentResult> {
-    return new ChannelContentResult();
+    return Promise.resolve(new ChannelContentResult());
   }
 
-  public async deliver(
+  public deliver(
     _contentKey: string,
     _tracking: CampaignTracking,
     _options: ChannelDeliverOptions,
     _batch: CampaignDelivery[],
     _previousResult?: ChannelDeliverResult
   ): Promise<ChannelDeliverResult> {
-    return {success: true};
+    return Promise.resolve({success: true});
   }
 
-  public async preview(_content: CampaignContent, _batch: CampaignDelivery[]): Promise<ChannelPreviewResult> {
-    return new ChannelPreviewResult();
+  public preview(_content: CampaignContent, _batch: CampaignDelivery[]): Promise<ChannelPreviewResult> {
+    return Promise.resolve(new ChannelPreviewResult());
   }
 }
 
@@ -111,17 +111,16 @@ class MoreProperChannel extends ProperChannel {
     super();
   }
 
-  public async target(_contentSettings: FormData): Promise<ChannelTargetResult> {
-    return new ChannelTargetResult();
+  public target(_contentSettings: FormData): Promise<ChannelTargetResult> {
+    return Promise.resolve(new ChannelTargetResult());
   }
 
-  public async prepare(
+  public prepare(
     _contentKey: string, _tracking: CampaignTracking, _options: ChannelPrepareOptions
   ): Promise<ChannelPrepareResult> {
-    return {success: true};
+    return Promise.resolve({success: true});
   }
 }
-/* tslint:enable */
 
 describe('validateChannel', () => {
   it('succeeds with a proper static-targeting definition', async () => {

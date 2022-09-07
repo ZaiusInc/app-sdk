@@ -5,7 +5,7 @@ import {FormResult, Intent} from './FormResult';
  */
 export interface LifecycleSettingsResponse {
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
   redirect?: string;
   redirectMode?: 'url' | 'settings';
 }
@@ -19,6 +19,7 @@ export class LifecycleSettingsResult extends FormResult {
 
   /**
    * Add an error to display to the user for a particular form field (implicitly scoped to the submitted section)
+   *
    * @param field key to display the error under, as defined in the form schema
    * @param error message to display to the user
    */
@@ -29,6 +30,7 @@ export class LifecycleSettingsResult extends FormResult {
   /**
    * Redirect the user to another page, such as for an OAuth flow. Calling this method will override any value
    * previously set by {@link redirectToSettings}.
+   *
    * @param url the destination URL for the redirect (location header)
    */
   public redirect(url: string): this {
@@ -40,6 +42,7 @@ export class LifecycleSettingsResult extends FormResult {
   /**
    * Redirect the user to a particular section of the settings form. Calling this method will override any value
    * previously set by {@link redirect}.
+   *
    * @param section to open
    */
   public redirectToSettings(section: string): this {

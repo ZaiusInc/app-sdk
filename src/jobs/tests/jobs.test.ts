@@ -13,21 +13,21 @@ describe('jobs', () => {
     jest.resetAllMocks();
   });
 
-  it('uses the configured implementation for trigger', () => {
+  it('uses the configured implementation for trigger', async () => {
     initializeJobApi(mockJobApi);
-    jobs.trigger('foo', {});
+    await jobs.trigger('foo', {});
     expect(mockJobApi.trigger).toHaveBeenCalled();
   });
 
-  it('uses the configured implementation for getJobDetail', () => {
+  it('uses the configured implementation for getJobDetail', async () => {
     initializeJobApi(mockJobApi);
-    jobs.getDetail(mockJobId);
+    await jobs.getDetail(mockJobId);
     expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
   });
 
-  it('uses the configured implementation for getStatus', () => {
+  it('uses the configured implementation for getStatus', async () => {
     initializeJobApi(mockJobApi);
-    jobs.getStatus(mockJobId);
+    await jobs.getStatus(mockJobId);
     expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
   });
 });

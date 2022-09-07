@@ -14,6 +14,7 @@ export class AuthorizationGrantResult extends FormResult {
 
   /**
    * Add an error to display to the user for a particular form field (implicitly scoped to the redirected section)
+   *
    * @param field key to display the error under, as defined in the form schema
    * @param error message to display to the user
    */

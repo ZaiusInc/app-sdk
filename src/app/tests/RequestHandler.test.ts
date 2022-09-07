@@ -3,8 +3,8 @@ import {Request, Response} from '../lib';
 import {RequestHandler} from '../RequestHandler';
 
 class SubClass extends RequestHandler {
-  public async perform() {
-    return new Response();
+  public perform() {
+    return Promise.resolve(new Response());
   }
 }
 

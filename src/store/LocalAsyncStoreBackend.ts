@@ -1,6 +1,6 @@
 import {CasError} from './CasError';
 
-type PatchUpdater<T extends {}> = (previous: T, options: {ttl?: number}) => T;
+type PatchUpdater<T> = (previous: T, options: {ttl?: number}) => T;
 
 interface CasEntry<T> {
   cas: number;
@@ -18,7 +18,7 @@ interface StoreEntry<T> {
  * Simulates access to a remote data store by performing operations asynchronously.
  * Used as a backend for local dev and testing to the local stores
  */
-export class LocalAsyncStoreBackend<T extends {}> {
+export class LocalAsyncStoreBackend<T> {
   private data: {[key: string]: CasEntry<T>};
   private hasChanges = false;
   private changeTimer?: NodeJS.Timeout;
@@ -26,7 +26,7 @@ export class LocalAsyncStoreBackend<T extends {}> {
   /**
    * @param avgDelay Average delay per request in miliseconds
    */
-  constructor(
+  public constructor(
     private avgDelay = 0,
     sourceData?: {[key: string]: CasEntry<T>},
     private changeHandler?: (data: {[key: string]: CasEntry<T>}) => Promise<void>
@@ -76,6 +76,7 @@ export class LocalAsyncStoreBackend<T extends {}> {
   /**
    * Normal KV patch is not atomic without CAS and potentially retries. This implementation
    * is specifically for operations that are atomic on the data store side, such as mutating a list.
+   *
    * @param key to update
    * @param updater callback to perform atomic update
    */
@@ -91,15 +92,15 @@ export class LocalAsyncStoreBackend<T extends {}> {
         };
         entry.value = this.copy(updater(entry.value as O, options));
         entry.cas++;
-        entry.expires = options.ttl == null ? undefined : (epoch + options.ttl!);
+        entry.expires = options.ttl == null ? undefined : (epoch + options.ttl);
         this.onChange();
       } else {
         const options = {ttl: undefined};
         let value = {} as O;
-        value = this.copy(updater(value as O, options));
+        value = this.copy(updater(value , options));
         this.data[key] = {
           cas: 0,
-          expires: options.ttl == null ? undefined : (epoch + options.ttl!),
+          expires: options.ttl == null ? undefined : (epoch + Number(options.ttl)),
           value: this.copy(value)
         };
         this.onChange();
@@ -110,7 +111,7 @@ export class LocalAsyncStoreBackend<T extends {}> {
 
   public async delete<O extends T>(key: string): Promise<O> {
     return this.async(() => {
-      let value: O | {} = {};
+      let value: O | any = {};
       if (this.data[key] && !this.expired(this.data[key].expires)) {
         value = this.data[key].value as O;
       }
@@ -152,11 +153,11 @@ export class LocalAsyncStoreBackend<T extends {}> {
     );
   }
 
-  private copy<O extends {}>(value: O): O {
+  private copy<O>(value: O): O {
     return JSON.parse(JSON.stringify(value));
   }
 
-  private translateExpiresToTTL<O extends {}>(entry: CasEntry<O>, epoch: number): StoreEntry<O> {
+  private translateExpiresToTTL<O>(entry: CasEntry<O>, epoch: number): StoreEntry<O> {
     return {
       cas: entry.cas,
       value: this.copy(entry.value),

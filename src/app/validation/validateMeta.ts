@@ -15,17 +15,17 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
   if (!app_id.match(APP_ID_FORMAT)) {
     errors.push(
       'Invalid app.yml: meta.app_id must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
-      `and be between 3 and 32 characters long (${APP_ID_FORMAT})`
+      `and be between 3 and 32 characters long (${APP_ID_FORMAT.toString()})`
     );
   }
   if (!version.match(VERSION_FORMAT)) {
     errors.push(
-      `Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ` +
-      `or -private (${VERSION_FORMAT})`
+      'Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ' +
+      `or -private (${VERSION_FORMAT.toString()})`
     );
   }
   if (!vendor.match(VENDOR_FORMAT)) {
-    errors.push(`Invalid app.yml: meta.vendor must be lower snake case (${VENDOR_FORMAT})`);
+    errors.push(`Invalid app.yml: meta.vendor must be lower snake case (${VENDOR_FORMAT.toString()})`);
   }
   if (!support_url.match(urlRegex({exact: true})) || !support_url.startsWith('http')) {
     errors.push('Invalid app.yml: meta.support_url must be a valid web address');
@@ -64,14 +64,12 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
       }
 
       const shards = await Rivendell.shards();
-      const invalid = availability.filter((zone) => {
-        return !shards.includes(zone);
-      });
+      const invalid = availability.filter((zone) => !shards.includes(zone));
 
       if (invalid.length) {
         errors.push(
-          `Invalid app.yml: meta.availability should only contain ` +
-          `valid availability zones (${shards}) found: ${invalid}`);
+          'Invalid app.yml: meta.availability should only contain ' +
+          `valid availability zones (${shards.toString()}) found: ${invalid.toString()}`);
       }
     }
   }

@@ -2,6 +2,7 @@ export type BatchOperation<T> = (batch: T[]) => Promise<any>;
 
 /**
  * A class to aid in batching operations, such as sending requests to Zaius APIs.
+ *
  * @usage ```
  * const eventBatcher = new Batcher(z.event);
  * ...
@@ -12,11 +13,12 @@ export type BatchOperation<T> = (batch: T[]) => Promise<any>;
  */
 export class Batcher<T> {
   private batch: T[] = [];
-  constructor(private operation: BatchOperation<T>, private limit = 100) {
+  public constructor(private operation: BatchOperation<T>, private limit = 100) {
   }
 
   /**
    * Append data to the batch, and if the batch size reaches the limit, perform and await the desired operation
+   *
    * @param data the data needed by the operation. Of type T in new Batcher<T>((data: T) => Promise<void>)
    */
   public async append(data: T) {

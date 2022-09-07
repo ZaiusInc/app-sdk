@@ -40,8 +40,8 @@ const appManifest = deepFreeze({
 
 describe('validateMeta', () => {
   afterEach(() => {
-    jest.clearAllMocks
-  })
+    jest.clearAllMocks();
+  });
 
   it('succeeds with a proper definition', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
@@ -151,7 +151,7 @@ describe('validateMeta', () => {
   it('detects invalid shards', async () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['us', 'fuz']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    jest.mocked(Rivendell.shards).mockResolvedValue(['us', 'bar']);
+    jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'bar']);
 
     expect(await validateMeta(runtime)).toEqual(
       ['Invalid app.yml: meta.availability should only contain valid availability zones (us,bar) found: fuz']);
@@ -160,7 +160,7 @@ describe('validateMeta', () => {
   it('detects if "us" shard is not included', async () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['foo', 'bar']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    jest.mocked(Rivendell.shards).mockResolvedValue(['us', 'foo', 'bar']);
+    jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'foo', 'bar']);
 
     expect(await validateMeta(runtime)).toEqual(
       ['Invalid app.yml: meta.availability must at least include "us" availability zone']);

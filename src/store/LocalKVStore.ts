@@ -22,7 +22,7 @@ function filterFields(result: any, fields?: string[]) {
  * @TODO implement the stub for local development purposes
  */
 export class LocalKVStore implements KVStore {
-  constructor(private store: LocalAsyncStoreBackend<KVHash>) {}
+  public constructor(private store: LocalAsyncStoreBackend<KVHash>) {}
 
   public reset() {
     this.store.reset();
@@ -64,7 +64,7 @@ export class LocalKVStore implements KVStore {
     return await this.store.exists(key);
   }
 
-  public async increment(key: string, field: string, amount: number = 1): Promise<number> {
+  public async increment(key: string, field: string, amount = 1): Promise<number> {
     return (await this.incrementMulti(key, {[field]: amount}))[key];
   }
 
@@ -291,7 +291,7 @@ export class LocalKVStore implements KVStore {
       for (const field of fields) {
         const value = current[field];
         if (value == null || Array.isArray(value)) {
-          const update = operation(value == null ? undefined : value as KVValue[], field);
+          const update = operation(value == null ? undefined : value , field);
           current[field] = update ? Array.from(update) : undefined;
         } else {
           throw new Error(`Cannot operate on non-array value at ${key}.${field}. Value is type ${typeof value}.`);

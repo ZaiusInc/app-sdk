@@ -7,7 +7,7 @@ export interface ChannelPreviewResponse {
   previews?: string[];
   displayOptions?: PreviewDisplayOptions;
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 /**
@@ -37,6 +37,7 @@ export class ChannelPreviewResult extends FormResult {
 
   /**
    * Add a single HTML preview
+   *
    * @param preview to add
    */
   public addPreview(preview: string): this {
@@ -46,6 +47,7 @@ export class ChannelPreviewResult extends FormResult {
 
   /**
    * Provide the complete set of HTML previews
+   *
    * @param previews to provide
    */
   public setPreviews(previews: string[]): this {
@@ -55,6 +57,7 @@ export class ChannelPreviewResult extends FormResult {
 
   /**
    * Set options to control how the preview is displayed
+   *
    * @param displayOptions to control the preview
    */
   public setDisplayOptions(displayOptions: PreviewDisplayOptions): this {
@@ -64,6 +67,7 @@ export class ChannelPreviewResult extends FormResult {
 
   /**
    * Add an error to display to the user for a particular form field
+   *
    * @param form the type of content form that the error applies to (settings or template)
    * @param section the section within the form that the error applies to
    * @param field the field within the section that the error applies to

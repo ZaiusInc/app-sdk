@@ -27,6 +27,7 @@ export type PatchUpdater<T = ValueHash> = (previous: T) => T;
 export interface BaseKVStore<T = ValueHash, R = true> {
   /**
    * Retrieve an object from the store given a key.
+   *
    * @async
    * @param key of the stored object
    * @param fields to retrieve from the stored object, or undefined to retrieve the full object
@@ -37,6 +38,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
 
   /**
    * Write an object to the store at a given key. Overwrites the entire object.
+   *
    * @async
    * @param key of the stored object
    * @param value complete hash to write
@@ -46,27 +48,31 @@ export interface BaseKVStore<T = ValueHash, R = true> {
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
+   *
    * @async
    * @param key of the stored object
    * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  patch<V extends T>(key: string, value: V): Promise<V>;
+  patch<V extends T>(key: string, value: V | PatchUpdater<V>): Promise<V>;
 
   /**
    * Update a stored object using a callback to make changes.
+   *
    * @async
    * @param key of the stored object
    * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
   patch<V extends T>(key: string, updater: PatchUpdater<V>): Promise<V>;
 
   /**
    * Delete an object or a single field from the store at a given key.
    * If fields is undefined, the entire object will be deleted.
+   *
    * @async
    * @param key of the stored object
    * @param fields to delete or undefined to delete all fields
@@ -76,6 +82,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
 
   /**
    * Check if an object exists at a given key.
+   *
    * @async
    * @param key of the stored object
    * @returns true if the object exists

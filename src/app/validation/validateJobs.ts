@@ -18,17 +18,17 @@ export async function validateJobs(runtime: Runtime): Promise<string[]> {
         errors.push(`Entry point not found for job: ${name}`);
       } else if (!(jobClass.prototype instanceof Job)) {
         errors.push(
-          `Job entry point does not extend App.Job: ${runtime.manifest.jobs![name].entry_point}`
+          `Job entry point does not extend App.Job: ${runtime.manifest.jobs[name].entry_point}`
         );
       } else {
         if (typeof (jobClass.prototype.prepare) !== 'function') {
           errors.push(
-            `Job entry point is missing the prepare method: ${runtime.manifest.jobs![name].entry_point}`
+            `Job entry point is missing the prepare method: ${runtime.manifest.jobs[name].entry_point}`
           );
         }
         if (typeof (jobClass.prototype.perform) !== 'function') {
           errors.push(
-            `Job entry point is missing the perform method: ${runtime.manifest.jobs![name].entry_point}`
+            `Job entry point is missing the perform method: ${runtime.manifest.jobs[name].entry_point}`
           );
         }
       }

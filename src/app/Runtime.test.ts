@@ -248,13 +248,13 @@ describe('Runtime', () => {
   });
 
   describe('getSchemaObjects', () => {
-    it('loads all yml files in the schema directory', async () => {
+    it('loads all yml files in the schema directory', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const origReadFileSync = fs.readFileSync;
       const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
       const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
 
-      const result = await runtime.getSchemaObjects();
+      const result = runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
         ['/tmp/foo/schema/events.yml', 'utf8'],
         ['/tmp/foo/schema/my_app_coupons.yml', 'utf8'],

@@ -12,15 +12,15 @@ describe('functions', () => {
     jest.resetAllMocks();
   });
 
-  it('uses the configured implementation for getAllEndpoints', () => {
+  it('uses the configured implementation for getAllEndpoints', async () => {
     initializeFunctionApi(mockFunctionApi);
-    functions.getEndpoints();
+    await functions.getEndpoints();
     expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
   });
 
-  it('uses the configured implementation for getGlobalEndpoints', () => {
+  it('uses the configured implementation for getGlobalEndpoints', async () => {
     initializeFunctionApi(mockFunctionApi);
-    functions.getGlobalEndpoints();
+    await functions.getGlobalEndpoints();
     expect(mockFunctionApi.getGlobalEndpoints).toHaveBeenCalled();
   });
 

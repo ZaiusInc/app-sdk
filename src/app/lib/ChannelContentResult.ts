@@ -5,7 +5,7 @@ import {FormResult, Intent} from './FormResult';
  */
 export interface ChannelContentResponse {
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 /**
@@ -14,6 +14,7 @@ export interface ChannelContentResponse {
 export class ChannelContentResult extends FormResult {
   /**
    * Add an error to display to the user for a particular form field.
+   *
    * @param form the type of content form that the error applies to (settings or template)
    * @param section the section within the form that the error applies to
    * @param field the field within the section that the error applies to

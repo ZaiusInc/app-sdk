@@ -1,13 +1,14 @@
 import {Transform, TransformCallback} from 'stream';
 
-declare const __NULL_VALUE_UNIQUE_KEY: unique symbol;
-export type NullValue = typeof __NULL_VALUE_UNIQUE_KEY & {};
+declare const NULL_VALUE_UNIQUE_KEY: unique symbol;
+export type NullValue = typeof NULL_VALUE_UNIQUE_KEY & never;
 export const nullValue: NullValue = Object.create(null) as never;
 
 export interface Options {
   /**
    * Specifies the number of lines at the beginning of a data file that the parser should skip over, prior to parsing
    * headers.
+   *
    * @default 0
    */
   readonly skipLines?: number;
@@ -15,6 +16,7 @@ export interface Options {
   /**
    * Maximum number of bytes per row. An error is thrown if a line exceeds this value.
    * The default value is on 8 peta byte.
+   *
    * @default Number.MAX_SAFE_INTEGER
    */
   readonly maxRowBytes?: number;
@@ -22,6 +24,7 @@ export interface Options {
   /**
    * If 'true', the parser will expect the data as arrays of values. Otherwise the data will be treated as regular
    * objects per line.
+   *
    * @default false
    */
   readonly tabularFormat?: boolean;
@@ -31,7 +34,7 @@ export interface Options {
    * option is provided, `JsonLinesParser` will use the first line in a JsonLines file as the header specification.
    * This option needs {@link tabularFormat} in 'true'.
    */
-  readonly headers?: ReadonlyArray<string> | boolean;
+  readonly headers?: readonly string[] | boolean;
 
   /**
    * If `true`, instructs the parser that the number of columns
@@ -55,15 +58,15 @@ class JsonLinesParser extends Transform {
     previousEnd: 0,
     rowLength: 0,
   };
-  private _prev?: Buffer;
+  private prev?: Buffer;
   private skipComments?: number;
   private skipLines = 0;
   private maxRowBytes = Number.MAX_SAFE_INTEGER;
-  private tabularFormat: boolean = false;
-  private headers?: ReadonlyArray<string>;
+  private tabularFormat = false;
+  private headers?: readonly string[];
   private strict = false;
 
-  constructor(opts: Options | ReadonlyArray<string> = {}) {
+  public constructor(opts: Options | readonly string[] = {}) {
     super({objectMode: true, highWaterMark: 16});
 
     if ('length' in opts) {
@@ -95,8 +98,8 @@ class JsonLinesParser extends Transform {
   }
 
   public _flush(cb: TransformCallback): void {
-    if (!this._prev) return cb();
-    this.parseLine(this._prev, this.state.previousEnd, this._prev.length + 1); // plus since online -1s
+    if (!this.prev) return cb();
+    this.parseLine(this.prev, this.state.previousEnd, this.prev.length + 1); // plus since online -1s
     cb();
   }
 
@@ -107,10 +110,10 @@ class JsonLinesParser extends Transform {
     let start = 0;
     let buffer = data;
 
-    if (this._prev) {
-      start = this._prev.length;
-      buffer = Buffer.concat([this._prev, data]);
-      this._prev = undefined;
+    if (this.prev) {
+      start = this.prev.length;
+      buffer = Buffer.concat([this.prev, data]);
+      this.prev = undefined;
     }
 
     const bufferLength = buffer.length;
@@ -136,12 +139,12 @@ class JsonLinesParser extends Transform {
     }
 
     if (bufferLength - this.state.previousEnd < data.length) {
-      this._prev = data;
+      this.prev = data;
       this.state.previousEnd -= (bufferLength - data.length);
       return cb();
     }
 
-    this._prev = buffer;
+    this.prev = buffer;
     cb();
   }
 
@@ -177,7 +180,7 @@ class JsonLinesParser extends Transform {
               }
             }
 
-            if (this.strict && row.length !== this.headers!.length) {
+            if (this.strict && row.length !== this.headers?.length) {
               const e = new RangeError('Row length does not match headers');
               this.emit('error', e);
             } else {
@@ -190,7 +193,7 @@ class JsonLinesParser extends Transform {
         } else {
           // Push directly the row as object
           if (row === null) {
-            this.push(nullValue as never);
+            this.push(nullValue );
           } else {
             this.push(row);
           }

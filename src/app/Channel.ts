@@ -17,6 +17,7 @@ export abstract class Channel {
   /**
    * Checks if the channel is ready to use. This should ensure that any required credentials and/or other configuration
    * exist and are valid. Reasonable caching should be utilized to prevent excessive requests to external resources.
+   *
    * @async
    * @returns true if the channel is ready to use
    */
@@ -27,6 +28,7 @@ export abstract class Channel {
    * input data. If targeting is always known ahead of time, this should be specified statically via `channel.targeting`
    * in `app.yml`. If targeting is based on selections made in the content settings form, this method must be
    * implemented and the value in `app.yml` must be set to `dynamic`.
+   *
    * @async
    * @param contentSettings data from the content settings form
    * @returns result of the operation
@@ -39,6 +41,7 @@ export abstract class Channel {
    * appropriate error messages should be provided using {@link ChannelContentResult.addError}. Any errors that are
    * not linked to a specific field should be provided using {@link ChannelContentResult.addToast}. If no errors of
    * either type are returned, the validation is considered successful, and the operation will be allowed to proceed.
+   *
    * @async
    * @param content the content with translated tempaltes
    * @param options additional options
@@ -60,6 +63,7 @@ export abstract class Channel {
    * be called with the same content and options. As such, once successful, it should be treated as an idempotent
    * operation at the content key level. So if the given key has already been processed and successfully stored, there
    * is no need to process and store it again.
+   *
    * @async
    * @param contentKey unique key for the content
    * @param content the content with translated templates
@@ -77,6 +81,7 @@ export abstract class Channel {
    * <p>
    * If implemented, this method will be called exactly once per content key involved in a campaign run. If any one of
    * these fails, the campaign run will fail.
+   *
    * @async
    * @param contentKey unique key of the content
    * @param tracking campaign tracking parameters
@@ -96,6 +101,7 @@ export abstract class Channel {
    * for that batch will be given the previous result for reference to enable proper recovery logic.
    * <p>
    * Once a batch succeeds, it will never be given again.
+   *
    * @async
    * @param contentKey unique key of the content
    * @param tracking campaign tracking parameters
@@ -115,6 +121,7 @@ export abstract class Channel {
   /**
    * Renders a batch of messages into HTML previews. Each preview must be a full HTML page containing a user-friendly
    * representation of the message as it would be delivered.
+   *
    * @async
    * @param content the content with translated templates
    * @param batch of recipients and substitutions
@@ -126,13 +133,16 @@ export abstract class Channel {
    * Renders an untranslated template (containing Liquid code rather than substitution identifiers) to HTML to be
    * used for thumbnail creation for users to browse templates for this channel. Thumbnails will be generated at
    * resolution of 600px by 600px with a 50% scale factor (actual size 300px by 300px).
+   *
    * @async
    * @param template the untranslated template
    * @returns result of the operation
    */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore TS6133: 'template' is declared but its value is never read.
-  public async templatePreview(template: CampaignContent['template']): Promise<ChannelTemplatePreviewResult> {
-    return {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public templatePreview(template: CampaignContent['template']): Promise<ChannelTemplatePreviewResult> {
+    return Promise.resolve({});
   }
 }
 
@@ -297,7 +307,7 @@ export interface ChannelDeliverResult {
    * An array of messages to display to the user.
    * This should only be set when testing delivery (i.e ChannelDeliverOptions.test is true).
    */
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 export interface ChannelTemplatePreviewResult {

@@ -7,19 +7,19 @@ const noop = () => {/**/};
  * A simple noop stub of the notifier api
  */
 export class LocalNotifier implements Notifier {
-  public async info(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
-    noop();
+  public info(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
+    return Promise.resolve(noop());
   }
 
-  public async success(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
-    noop();
+  public success(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
+    return Promise.resolve(noop());
   }
 
-  public async warn(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
-    noop();
+  public warn(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
+    return Promise.resolve(noop());
   }
 
-  public async error(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
-    noop();
+  public error(_activity: string, _title: string, _summary: string, _details?: string): Promise<void> {
+    return Promise.resolve(noop());
   }
 }

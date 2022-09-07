@@ -107,69 +107,77 @@ export function setLogContext(logContext: LogContext) {
 export interface ILogger {
   /**
    * Write something to the logs at the Debug level
+   *
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   debug(...args: any[]): void;
 
   /**
    * Write something to the logs at the Debug level
+   *
    * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   debug(visibility: LogVisibility, ...args: any[]): void;
 
   /**
    * Write something to the logs at the Info level
+   *
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other vaules are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other vaules are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   info(...args: any[]): void;
 
   /**
    * Write something to the logs at the Info level
+   *
    * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   info(visibility: LogVisibility, ...args: any[]): void;
 
   /**
    * Write something to the logs at the Warning level
+   *
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   warn(...args: any[]): void;
 
   /**
    * Write something to the logs at the Warning level
+   *
    * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   warn(visibility: LogVisibility, ...args: any[]): void;
 
   /**
    * Write something to the logs at the Error level
+   *
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   error(...args: any[]): void;
 
   /**
    * Write something to the logs at the Error level
+   *
    * @param visibility log visibility level (to override the default visibility)
    * @param args One or more values to log.
-   *   Objects are formatted using `util.inspect`, other values are converted to a string.
-   *   Multiple values are concatenated with a space between
+   * Objects are formatted using `util.inspect`, other values are converted to a string.
+   * Multiple values are concatenated with a space between
    */
   error(visibility: LogVisibility, ...args: any[]): void;
 }
@@ -186,7 +194,7 @@ export class Logger implements ILogger {
   private maxLineLength: number;
   private defaultVisibility: LogVisibility;
 
-  constructor(options: Partial<LoggerOptions> = {}) {
+  public constructor(options: Partial<LoggerOptions> = {}) {
     const level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,
@@ -278,7 +286,7 @@ export class Logger implements ILogger {
 /**
  * Logger instance to be used by Zaius apps.
  * Minimum log level can be configured by setting a environment variable, e.g.:
- *   LOG_LEVEL=warn
+ * ```  LOG_LEVEL=warn```
  * Accepted levels include debug, info, warn, error (or NEVER for silencing logs)
  */
 export const logger: ILogger = new Logger();

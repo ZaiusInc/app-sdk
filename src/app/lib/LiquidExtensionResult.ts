@@ -13,6 +13,7 @@ export interface LiquidExtensionResponse {
 export class LiquidExtensionResult {
   /**
    * Builds a success response.
+   *
    * @param output the resulting output (must be JSON-serializable)
    */
   public static success(output: any) {
@@ -21,6 +22,7 @@ export class LiquidExtensionResult {
 
   /**
    * Builds an error response.
+   *
    * @param message
    */
   public static error(message: string) {

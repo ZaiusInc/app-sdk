@@ -10,11 +10,13 @@ Runtime.initialize(path.resolve(process.cwd(), 'dist'), true).then(async (runtim
       console.error(chalk.red(`Validation failed:\n${errors.map((e) => ` * ${e}`).join('\n')}`));
       process.exit(1);
     } else {
-      console.log(chalk.green(`Looks good to me`));
+      console.log(chalk.green('Looks good to me'));
     }
   } catch (e: any) {
-    console.error(chalk.red(`Validation process failed: ${e.message}`));
+    const msg: string = e.message;
+    console.error(chalk.red(`Validation process failed: ${msg}`));
   }
 }).catch((e: any) => {
-  console.error(chalk.red(`Validation process failed: ${e.message}`));
+  const msg: string = e.message;
+  console.error(chalk.red(`Validation process failed: ${msg}`));
 });

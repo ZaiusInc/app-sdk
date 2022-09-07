@@ -25,11 +25,12 @@ export interface LiquidExtensionInput {
 export abstract class LiquidExtension {
   /**
    * Performs the liquid extension.
+   *
    * @async
    * @param context of the liquid call
    * @param input any input data provided by the liquid template
    * @return either successful output (via {@link LiquidExtensionResult.success}) or an error message
-   *         (via {@link LiquidExtensionResult.error})
+   * (via {@link LiquidExtensionResult.error})
    */
   public abstract perform(
     context: LiquidExtensionContext, input: LiquidExtensionInput

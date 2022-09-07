@@ -1,6 +1,7 @@
 export interface Notifier {
   /**
    * Create an informational notification.
+   *
    * @param activity The activity, must not be empty
    * @param title The title, must not be empty
    * @param summary The activity summary, must not be empty
@@ -10,6 +11,7 @@ export interface Notifier {
 
   /**
    * Create a success notification.
+   *
    * @param activity The activity, must not be empty
    * @param title The title, must not be empty
    * @param summary The activity summary, must not be empty
@@ -19,6 +21,7 @@ export interface Notifier {
 
   /**
    * Create a warning notification.
+   *
    * @param activity The activity, must not be empty
    * @param title The title, must not be empty
    * @param summary The activity summary, must not be empty
@@ -28,6 +31,7 @@ export interface Notifier {
 
   /**
    * Create an error notification.
+   *
    * @param activity The activity, must not be empty
    * @param title The title, must not be empty
    * @param summary The activity summary, must not be empty

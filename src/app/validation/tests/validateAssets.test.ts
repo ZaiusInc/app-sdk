@@ -139,14 +139,14 @@ describe('validateAssets', () => {
 
   it('fails when markdown files contain links to unknown headers', async () => {
     const missingHeaderLinks = appDir();
-    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[dne](#dne).`;
+    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = '[dne](#dne).';
     mockFs(missingHeaderLinks);
     await expectError('Link to unknown heading: `dne` in assets/directory/overview.md:1:1-1:12.');
   });
 
   it('fails when markdown files contain links to unknown files', async () => {
     const missingFileLinks = appDir();
-    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[missing](missing.js)`;
+    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = '[missing](missing.js)';
     mockFs(missingFileLinks);
     await expectError('Link to unknown file: `missing.js` in assets/directory/overview.md:1:1-1:22.');
   });

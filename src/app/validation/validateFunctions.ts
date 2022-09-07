@@ -14,7 +14,8 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
         fnClass = await runtime.getFunctionClass(name);
       } catch (e: any) {
         if (!(e instanceof FunctionClassNotFoundError)) {
-          errors.push(`Failed to load function class ${name}.  Error was: ${e.message}`);
+          const msg: string = e.message;
+          errors.push(`Failed to load function class ${name}.  Error was: ${msg}`);
           return errors;
         }
       }

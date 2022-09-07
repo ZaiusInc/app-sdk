@@ -3,15 +3,15 @@ import {ValueHash} from '../..';
 import {Job, JobStatus} from '../Job';
 
 class MyJob extends Job {
-  public async prepare(
+  public prepare(
     _params: ValueHash, _status?: JobStatus | undefined, _resuming?: boolean | undefined
   ): Promise<JobStatus> {
-    return {state: {}, complete: false};
+    return Promise.resolve({state: {}, complete: false});
   }
 
-  public async perform(status: JobStatus): Promise<JobStatus> {
+  public perform(status: JobStatus): Promise<JobStatus> {
     status.complete = true;
-    return status;
+    return Promise.resolve(status);
   }
 }
 
@@ -21,8 +21,9 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(3);
       expect(job.isInterruptible).toBe(false);
-      await job['performInterruptibleTask'](async () => {
+      await job['performInterruptibleTask'](() => {
         expect(job.isInterruptible).toBe(true);
+        return Promise.resolve();
       });
       expect(job.isInterruptible).toBe(false);
     });
@@ -31,8 +32,9 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
       job.isInterruptible = true;
-      await job['performInterruptibleTask'](async () => {
+      await job['performInterruptibleTask'](() => {
         expect(job.isInterruptible).toBe(true);
+        return Promise.resolve();
       });
       expect(job.isInterruptible).toBe(true);
     });
@@ -41,9 +43,10 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
       try {
-        await job['performInterruptibleTask'](async () => {
+        await job['performInterruptibleTask'](() => {
           expect(job.isInterruptible).toBe(true);
           throw new Error('error');
+          return Promise.resolve();
         });
       } catch (e) {
         expect(job.isInterruptible).toBe(false);
@@ -83,6 +86,7 @@ describe('Job', () => {
 
     it('sleeps for zero miliseconds if unspecified', async () => {
       const job = new MyJob({} as any);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const setTimeoutFn = jest.spyOn(global, 'setTimeout').mockImplementation((resolve: any) => resolve());
       await job['sleep']();
 
