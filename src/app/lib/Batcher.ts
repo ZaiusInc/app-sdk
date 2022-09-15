@@ -17,7 +17,6 @@ export class Batcher<T> {
 
   /**
    * Append data to the batch, and if the batch size reaches the limit, perform and await the desired operation
-   *
    * @param data the data needed by the operation. Of type T in new Batcher<T>((data: T) => Promise<void>)
    */
   public async append(data: T) {
