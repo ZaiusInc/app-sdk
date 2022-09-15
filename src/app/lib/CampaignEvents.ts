@@ -4,7 +4,7 @@ import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';
 
 export type CampaignAction = 'sent' | 'delivery' | 'open' | 'click' | 'engage' | 'disengage'
-| 'soft_bounce' | 'hard_bounce' | 'spam_report';
+  | 'soft_bounce' | 'hard_bounce' | 'spam_report';
 
 /**
  * A class to help batch and send campaign related events
@@ -59,16 +59,16 @@ export class CampaignEvents {
     await this.eventBatcher.append({
       identifiers: {
         [this.identifierField]: identifier
-      },
-      type: this.type,
-      action,
-      data: {
-        ts: ts instanceof Date ? ts.toISOString() : ts,
-        target_address: identifier,
-        ...this.tracking,
-        ...data
-      }
-    });
+       },
+       type: this.type,
+       action,
+       data: {
+         ts: ts instanceof Date ? ts.toISOString() : ts,
+         target_address: identifier,
+         ...this.tracking,
+         ...data
+       }
+     });
   }
 
   /**

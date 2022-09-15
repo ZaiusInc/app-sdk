@@ -28,11 +28,11 @@ export interface AppLiquidExtension {
 }
 
 export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
-| 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
-| 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
-| 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
-| 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
-| 'Subscriptions';
+  | 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
+  | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
+  | 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
+  | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
+  | 'Subscriptions';
 
 export enum ChannelType {
   Email = 'email',
