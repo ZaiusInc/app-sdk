@@ -8,7 +8,6 @@ export interface Options {
   /**
    * Specifies the number of lines at the beginning of a data file that the parser should skip over, prior to parsing
    * headers.
-   *
    * @default 0
    */
   readonly skipLines?: number;
@@ -16,7 +15,6 @@ export interface Options {
   /**
    * Maximum number of bytes per row. An error is thrown if a line exceeds this value.
    * The default value is on 8 peta byte.
-   *
    * @default Number.MAX_SAFE_INTEGER
    */
   readonly maxRowBytes?: number;
@@ -24,7 +22,6 @@ export interface Options {
   /**
    * If 'true', the parser will expect the data as arrays of values. Otherwise the data will be treated as regular
    * objects per line.
-   *
    * @default false
    */
   readonly tabularFormat?: boolean;

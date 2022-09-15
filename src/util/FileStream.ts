@@ -5,7 +5,6 @@ import {Transform, Stream} from 'stream';
 export interface FileRowProcessor<T> {
   /**
    * Process a row from a file.
-   *
    * @param row to process
    * @return true if it is safe to pause after this row, false otherwise
    */

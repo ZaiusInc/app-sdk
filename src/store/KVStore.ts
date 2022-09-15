@@ -50,7 +50,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Retrieve an object from the store given a key.
-   *
    * @async
    * @param key of the stored object
    * @param fields to retrieve from the stored object, or undefined to retrieve the full object
@@ -61,7 +60,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Write an object to the store at a given key. Overwrites the entire object.
-   *
    * @async
    * @param key of the stored object
    * @param value complete hash to write
@@ -72,7 +70,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Write a set of fields to an object in the store at a given key. Does not overwrite the entire object.
-   *
    * @async
    * @param key of the stored object
    * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
@@ -83,7 +80,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Update a stored object using a callback to make changes.
-   *
    * @async
    * @param key of the stored object
    * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
@@ -96,7 +92,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Delete an object or a single field from the store at a given key.
    * If fields is undefined, the entire object will be deleted.
-   *
    * @async
    * @param key of the stored object
    * @param fields to delete or undefined to delete all fields
@@ -106,7 +101,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
 
   /**
    * Check if an object exists at a given key.
-   *
    * @async
    * @param key of the stored object
    * @returns true if the object exists
@@ -121,7 +115,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically increment the value of a numeric field. If the object or field did not previously exist, the resulting
    * field will be set to the given amount. If the field does already exist but is not a number, this will result in
    * an error.
-   *
    * @async
    * @param key of the stored object
    * @param field to increment
@@ -134,7 +127,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically increment the values of multiple numeric fields. If the object or fields did not previously exist, the
    * resulting fields will be set to their respective given amount. If any of the fields does already exist but is not a
    * number, this will result in an error.
-   *
    * @async
    * @param key of the stored object
    * @param fieldAmounts hash of fields to amounts by which to increment (can be negative)
@@ -150,7 +142,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically retrieve and remove the *first* element from a list. If the object or field does not exist or is empty,
    * the result will be `undefined`. Calling this method on a non-existent object will not cause it to be created. If
    * the field exists but is not a list, this will result in an error.
-   *
    * @async
    * @param key of the stored object
    * @param field that holds the list
@@ -163,7 +154,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * object or fields do not exist or are empty, the result of each missing field will be an empty array. Calling this
    * method on a non-existent object will not cause it to be created. If any field exists but is not a list, this will
    * result in an error.
-   *
    * @async
    * @param key of the stored object
    * @param fieldCounts hash of fields to number of elements to retrieve and remove
@@ -174,7 +164,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Atomically insert an element at the *front* of a list. If the object or field does not exist, it will be created
    * with a list consisting of the given element. If the field exists but is not a list, this will result in an error.
-   *
    * @async
    * @param key of the stored object
    * @param field that holds the list
@@ -186,7 +175,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically insert the given arrays of elements at the *front* of the given lists. If the object or fields do not
    * exist, they will be created from the given arrays. If any field exists but is not a list, this will result in an
    * error.
-   *
    * @async
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to insert
@@ -196,7 +184,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Retrieve (without removing) the first element from a list. If the object or field does not exist, is empty, or is
    * not a list, the result will be `undefined`.
-   *
    * @async
    * @param key of the stored object
    * @param field that holds the list
@@ -207,7 +194,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Retrieve (without removing) *up to* the given number of elements from the *front* of the given lists. If the object
    * or fields do not exist, are empty, or are not lists, the result of each missing field will be an empty array.
-   *
    * @async
    * @param key of the stored object
    * @param fieldCounts hash of fields to number of elements to retrieve
@@ -218,7 +204,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Atomically append an element to the *end* of a list. If the object or field does not exist, it will be created
    * with a list consisting of the given element. If the field exists but is not a list, this will result in an error.
-   *
    * @async
    * @param key of the stored object
    * @param field that holds the list
@@ -230,7 +215,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically append the given arrays of elements to the *end* of the given lists. If the object or fields do not
    * exist, they will be created from the given arrays. If any field exists but is not a list, this will result in an
    * error.
-   *
    * @async
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to append
@@ -244,7 +228,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Atomically adds a value to a NumberSet. If the object or field does not exist, it will be created with a NumberSet
    * containing the given element. If the field exists but is not a NumberSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the NumberSet
    * @param value to add
@@ -256,18 +239,16 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically adds the given arrays of values to the given NumberSet fields. If the object or fields do not exist,
    * they will be created from the given arrays. If any field exists but is not a NumberSet, this will result in an
    * error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to add
    * @returns hash of fields to NumberSet containing only the values that were newly added (any values that already
-   * existed in the target NumberSet will not exist in the return value)
+   *          existed in the target NumberSet will not exist in the return value)
    */
   addNumberMulti(key: string, fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>>;
 
   /**
    * Atomically removes a value from a NumberSet. Calling this method on a non-existent object will not cause it to
    * be created. If the field exists but is not a NumberSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the NumberSet
    * @param value to remove
@@ -279,18 +260,16 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically removes the given arrays of values from the given NumberSet fields. Calling this method on a
    * non-existent object will not cause it to be created. If any field exists but is not a NumberSet, this will result
    * in an error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to remove
    * @returns hash of fields to NumberSet containing only the values that were removed (any values that did not exist in
-   * the target NumberSet will not exist in the return value)
+   *          the target NumberSet will not exist in the return value)
    */
   removeNumberMulti(key: string, fieldValues: MultiValue<number[]>): Promise<MultiValue<NumberSet>>;
 
   /**
    * Checks if a value exists in a NumberSet. Calling this method on a non-existent object will not cause it to be
    * created. If the field exists but is not a NumberSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the NumberSet
    * @param value to check
@@ -301,7 +280,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Checks if the given arrays of values exist in the given NumberSet fields. Calling this method on a non-existent
    * object will not cause it to be created. If any field exists but is not a NumberSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to check
    * @returns hash of fields to NumberSet containing only the values that exist in the target NumberSet
@@ -315,7 +293,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Atomically adds a value to a StringSet. If the object or field does not exist, it will be created with a StringSet
    * containing the given element. If the field exists but is not a StringSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the StringSet
    * @param value to add
@@ -327,18 +304,16 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically adds the given arrays of values to the given StringSet fields. If the object or fields do not exist,
    * they will be created from the given arrays. If any field exists but is not a StringSet, this will result in an
    * error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to add
    * @returns hash of fields to StringSet containing only the values that were newly added (any values that already
-   * existed in the target StringSet will not exist in the return value)
+   *          existed in the target StringSet will not exist in the return value)
    */
   addStringMulti(key: string, fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>>;
 
   /**
    * Atomically removes a value from a StringSet. Calling this method on a non-existent object will not cause it to
    * be created. If the field exists but is not a StringSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the StringSet
    * @param value to remove
@@ -350,18 +325,16 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * Atomically removes the given arrays of values from the given StringSet fields. Calling this method on a
    * non-existent object will not cause it to be created. If any field exists but is not a StringSet, this will result
    * in an error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to remove
    * @returns hash of fields to StringSet containing only the values that were removed (any values that did not exist in
-   * the target StringSet will not exist in the return value)
+   *          the target StringSet will not exist in the return value)
    */
   removeStringMulti(key: string, fieldValues: MultiValue<string[]>): Promise<MultiValue<StringSet>>;
 
   /**
    * Checks if a value exists in a StringSet. Calling this method on a non-existent object will not cause it to be
    * created. If the field exists but is not a StringSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param field that holds the StringSet
    * @param value to check
@@ -372,7 +345,6 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
   /**
    * Checks if the given arrays of values exist in the given StringSet fields. Calling this method on a non-existent
    * object will not cause it to be created. If any field exists but is not a StringSet, this will result in an error.
-   *
    * @param key of the stored object
    * @param fieldValues hash of fields to array of values to check
    * @returns hash of fields to StringSet containing only the values that exist in the target StringSet

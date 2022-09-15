@@ -18,7 +18,6 @@ export type JsonLineReadableStreamBuilder = FileReadableStreamBuilder;
 export class JsonLinesStream<T> extends FileStream<T, Options> {
   /**
    * Build a JsonLinesStream from an existing ReadableStream.
-   *
    * @param stream source stream for the JsonLines data
    * @param processor the row processor
    * @param options options to provide the JsonLinesParser {@link Options}
@@ -28,12 +27,11 @@ export class JsonLinesStream<T> extends FileStream<T, Options> {
     processor: FileRowProcessor<T>,
     options: Options = {}
   ): JsonLinesStream<T> {
-    return new JsonLinesStream(async () => Promise.resolve(stream), processor, options);
+    return new JsonLinesStream(async () => stream, processor, options);
   }
 
   /**
    * Build a JsonLinesStream that reads from a web resource.
-   *
    * @param url source url for the JsonLines data
    * @param processor the row processor
    * @param options options to provide the JsonLinesParser {@link Options}

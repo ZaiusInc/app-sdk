@@ -76,7 +76,6 @@ export class LocalAsyncStoreBackend<T> {
   /**
    * Normal KV patch is not atomic without CAS and potentially retries. This implementation
    * is specifically for operations that are atomic on the data store side, such as mutating a list.
-   *
    * @param key to update
    * @param updater callback to perform atomic update
    */

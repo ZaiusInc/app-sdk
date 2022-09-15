@@ -77,32 +77,32 @@ class ProperChannel extends Channel {
     super();
   }
 
-  public ready(): Promise<boolean> {
-    return Promise.resolve(true);
+  public async ready(): Promise<boolean> {
+    return true;
   }
 
-  public validate(_content: CampaignContent, _options: ChannelValidateOptions): Promise<ChannelContentResult> {
-    return Promise.resolve(new ChannelContentResult());
+  public async validate(_content: CampaignContent, _options: ChannelValidateOptions): Promise<ChannelContentResult> {
+    return new ChannelContentResult();
   }
 
-  public publish(
+  public async publish(
     _contentKey: string, _content: CampaignContent, _options: ChannelPublishOptions
   ): Promise<ChannelContentResult> {
-    return Promise.resolve(new ChannelContentResult());
+    return new ChannelContentResult();
   }
 
-  public deliver(
+  public async deliver(
     _contentKey: string,
     _tracking: CampaignTracking,
     _options: ChannelDeliverOptions,
     _batch: CampaignDelivery[],
     _previousResult?: ChannelDeliverResult
   ): Promise<ChannelDeliverResult> {
-    return Promise.resolve({success: true});
+    return {success: true};
   }
 
-  public preview(_content: CampaignContent, _batch: CampaignDelivery[]): Promise<ChannelPreviewResult> {
-    return Promise.resolve(new ChannelPreviewResult());
+  public async preview(_content: CampaignContent, _batch: CampaignDelivery[]): Promise<ChannelPreviewResult> {
+    return new ChannelPreviewResult();
   }
 }
 
@@ -111,14 +111,14 @@ class MoreProperChannel extends ProperChannel {
     super();
   }
 
-  public target(_contentSettings: FormData): Promise<ChannelTargetResult> {
-    return Promise.resolve(new ChannelTargetResult());
+  public async target(_contentSettings: FormData): Promise<ChannelTargetResult> {
+    return new ChannelTargetResult();
   }
 
-  public prepare(
+  public async prepare(
     _contentKey: string, _tracking: CampaignTracking, _options: ChannelPrepareOptions
   ): Promise<ChannelPrepareResult> {
-    return Promise.resolve({success: true});
+    return {success: true};
   }
 }
 

@@ -25,7 +25,6 @@ export class FunctionClassNotFoundError extends Error { }
 export class Runtime {
   /**
    * Initializes from a directory. Used during startup.
-   *
    * @param dirName the base directory of the app
    * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
    */
@@ -37,7 +36,6 @@ export class Runtime {
 
   /**
    * Initializes from a pre-validated JSON definition. Used during task execution.
-   *
    * @param serializedRuntime JSON-serialized runtime definition
    */
   public static fromJson(serializedRuntime: string) {

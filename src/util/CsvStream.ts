@@ -19,7 +19,6 @@ export type CsvReadableStreamBuilder = FileReadableStreamBuilder;
 export class CsvStream<T> extends FileStream<T, Options> {
   /**
    * Build a CsvStream from an existing ReadableStream.
-   *
    * @param stream source stream for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,
@@ -30,12 +29,11 @@ export class CsvStream<T> extends FileStream<T, Options> {
     processor: CsvRowProcessor<T>,
     options: Options = {}
   ): CsvStream<T> {
-    return new CsvStream(async () => Promise.resolve(stream), processor, options);
+    return new CsvStream(async () => stream, processor, options);
   }
 
   /**
    * Build a CsvStream that reads from a web resource.
-   *
    * @param url source url for the csv data
    * @param processor the row processor
    * @param options options to provide the underlying parser,

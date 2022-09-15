@@ -50,8 +50,8 @@ abstract class PartialBuzz extends LiquidExtension {
 }
 
 class ProperBuzz extends LiquidExtension {
-  public perform(): Promise<LiquidExtensionResult> {
-    return Promise.resolve(LiquidExtensionResult.success('buzz'));
+  public async perform(): Promise<LiquidExtensionResult> {
+    return LiquidExtensionResult.success('buzz');
   }
 }
 

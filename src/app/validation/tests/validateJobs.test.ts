@@ -35,11 +35,11 @@ const appManifest = deepFreeze({
 } as AppManifest);
 
 class NonExtendedBar {
-  public prepare(_status?: JobStatus): Promise<JobStatus> {
-    return Promise.resolve({complete: false, state: {}});
+  public async prepare(_status?: JobStatus): Promise<JobStatus> {
+    return {complete: false, state: {}};
   }
-  public perform(status: JobStatus): Promise<JobStatus> {
-    return Promise.resolve(status);
+  public async perform(status: JobStatus): Promise<JobStatus> {
+    return status;
   }
 }
 
@@ -50,11 +50,11 @@ class PartialBar extends Job {
 }
 
 class ProperBar extends Job {
-  public prepare(params: ValueHash, _status?: JobStatus, _resuming?: boolean): Promise<JobStatus> {
-    return Promise.resolve({complete: false, state: params});
+  public async prepare(params: ValueHash, _status?: JobStatus, _resuming?: boolean): Promise<JobStatus> {
+    return {complete: false, state: params};
   }
-  public perform(status: JobStatus): Promise<JobStatus> {
-    return Promise.resolve(status);
+  public async perform(status: JobStatus): Promise<JobStatus> {
+    return status;
   }
 }
 /* tslint:disable */

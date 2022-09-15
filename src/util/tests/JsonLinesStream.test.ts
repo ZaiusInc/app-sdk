@@ -22,18 +22,13 @@ class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
     return this.readRows;
   }
 
-  public process(row: Row): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.rows.push(row);
-      resolve(this.rows.length % 2 === 0);
-    });
+  public async process(row: Row): Promise<boolean> {
+    this.rows.push(row);
+    return this.rows.length % 2 === 0;
   }
 
   public async complete(): Promise<void> {
-    return new Promise((resolve) => {
-      this.completed = true;
-      resolve();
-    });
+    this.completed = true;
   }
 }
 

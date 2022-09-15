@@ -3,15 +3,15 @@ import {ValueHash} from '../..';
 import {Job, JobStatus} from '../Job';
 
 class MyJob extends Job {
-  public prepare(
+  public async prepare(
     _params: ValueHash, _status?: JobStatus | undefined, _resuming?: boolean | undefined
   ): Promise<JobStatus> {
-    return Promise.resolve({state: {}, complete: false});
+    return {state: {}, complete: false};
   }
 
-  public perform(status: JobStatus): Promise<JobStatus> {
+  public async perform(status: JobStatus): Promise<JobStatus> {
     status.complete = true;
-    return Promise.resolve(status);
+    return status;
   }
 }
 
@@ -21,9 +21,8 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(3);
       expect(job.isInterruptible).toBe(false);
-      await job['performInterruptibleTask'](() => {
+      await job['performInterruptibleTask'](async () => {
         expect(job.isInterruptible).toBe(true);
-        return Promise.resolve();
       });
       expect(job.isInterruptible).toBe(false);
     });
@@ -32,9 +31,8 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
       job.isInterruptible = true;
-      await job['performInterruptibleTask'](() => {
+      await job['performInterruptibleTask'](async () => {
         expect(job.isInterruptible).toBe(true);
-        return Promise.resolve();
       });
       expect(job.isInterruptible).toBe(true);
     });
@@ -43,10 +41,9 @@ describe('Job', () => {
       const job = new MyJob({} as any);
       expect.assertions(2);
       try {
-        await job['performInterruptibleTask'](() => {
+        await job['performInterruptibleTask'](async () => {
           expect(job.isInterruptible).toBe(true);
           throw new Error('error');
-          return Promise.resolve();
         });
       } catch (e) {
         expect(job.isInterruptible).toBe(false);

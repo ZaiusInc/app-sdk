@@ -61,8 +61,8 @@ class ProperFoo extends Function {
     super(request);
   }
 
-  public perform(): Promise<Response> {
-    return Promise.resolve(new Response());
+  public async perform(): Promise<Response> {
+    return new Response();
   }
 }
 
@@ -71,8 +71,8 @@ class ProperGlobalFoo extends GlobalFunction {
     super(request);
   }
 
-  public perform(): Promise<Response> {
-    return Promise.resolve(new Response());
+  public async perform(): Promise<Response> {
+    return new Response();
   }
 }
 

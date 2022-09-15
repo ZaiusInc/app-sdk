@@ -26,7 +26,6 @@ export class ChannelTargetResult extends FormResult {
 
   /**
    * Add a single targeting requirement
-   *
    * @param targeting requirement to add
    */
   public addTargeting(targeting: CampaignTargeting): this {
@@ -36,7 +35,6 @@ export class ChannelTargetResult extends FormResult {
 
   /**
    * Provide the complete set of targeting requirements
-   *
    * @param targeting requirements to provide
    */
   public setTargeting(targeting: CampaignTargeting[]): this {
@@ -46,7 +44,6 @@ export class ChannelTargetResult extends FormResult {
 
   /**
    * Add an error to display to the user for a particular form field (implicitly scoped to the content settings form)
-   *
    * @param section the section within the form that the error applies to
    * @param field the field within the section that the error applies to
    * @param error message to display to the user

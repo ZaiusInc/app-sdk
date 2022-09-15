@@ -50,32 +50,32 @@ class ProperLifecycle extends Lifecycle {
     super();
   }
 
-  public onInstall(): Promise<LifecycleResult> {
-    return Promise.resolve({success: true});
+  public async onInstall(): Promise<LifecycleResult> {
+    return {success: true};
   }
 
-  public onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
-    return Promise.resolve(new LifecycleSettingsResult());
+  public async onSettingsForm(_page: string, _action: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return new LifecycleSettingsResult();
   }
 
-  public onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return Promise.resolve({success: true});
+  public async onUpgrade(_fromVersion: string): Promise<LifecycleResult> {
+    return {success: true};
   }
 
-  public onFinalizeUpgrade(_fromVersion: string): Promise<LifecycleResult> {
-    return Promise.resolve({success: true});
+  public async onFinalizeUpgrade(_fromVersion: string): Promise<LifecycleResult> {
+    return {success: true};
   }
 
-  public onUninstall(): Promise<LifecycleResult> {
-    return Promise.resolve({success: true});
+  public async onUninstall(): Promise<LifecycleResult> {
+    return {success: true};
   }
 
-  public onAuthorizationRequest(_page: string, _formData: object): Promise<LifecycleSettingsResult> {
-    return Promise.resolve(new LifecycleSettingsResult());
+  public async onAuthorizationRequest(_page: string, _formData: object): Promise<LifecycleSettingsResult> {
+    return new LifecycleSettingsResult();
   }
 
-  public onAuthorizationGrant(_request: Request): Promise<AuthorizationGrantResult> {
-    return Promise.resolve(new AuthorizationGrantResult('oauth'));
+  public async onAuthorizationGrant(_request: Request): Promise<AuthorizationGrantResult> {
+    return new AuthorizationGrantResult('oauth');
   }
 }
 

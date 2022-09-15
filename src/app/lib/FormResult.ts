@@ -7,7 +7,6 @@ export abstract class FormResult {
   /**
    * Display a toast to user, such as, "Successfully authenticated with <Integration>" or
    * "Authentication failed, please check your credentials and try again."
-   *
    * @param intent one of the supported intents that will affect how the toast is displayed
    * @param message to display in the toast
    */

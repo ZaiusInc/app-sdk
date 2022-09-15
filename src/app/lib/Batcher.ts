@@ -2,7 +2,6 @@ export type BatchOperation<T> = (batch: T[]) => Promise<any>;
 
 /**
  * A class to aid in batching operations, such as sending requests to Zaius APIs.
- *
  * @usage ```
  * const eventBatcher = new Batcher(z.event);
  * ...
