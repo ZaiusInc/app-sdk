@@ -126,7 +126,6 @@ export abstract class Channel {
    * Renders an untranslated template (containing Liquid code rather than substitution identifiers) to HTML to be
    * used for thumbnail creation for users to browse templates for this channel. Thumbnails will be generated at
    * resolution of 600px by 600px with a 50% scale factor (actual size 300px by 300px).
-   *
    * @async
    * @param template the untranslated template
    * @returns result of the operation
