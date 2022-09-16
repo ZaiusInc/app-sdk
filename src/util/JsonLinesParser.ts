@@ -63,15 +63,8 @@ class JsonLinesParser extends Transform {
   private headers?: readonly string[];
   private strict = false;
 
-  public constructor(opts: Options | readonly string[] = {}) {
+  public constructor(opts: Options = {}) {
     super({objectMode: true, highWaterMark: 16});
-
-    if ('length' in opts) {
-      opts = {
-        tabularFormat: true,
-        headers: opts
-      } as Options;
-    }
 
     if (opts.tabularFormat) {
       this.tabularFormat = true;
