@@ -13,10 +13,8 @@ Runtime.initialize(path.resolve(process.cwd(), 'dist'), true).then(async (runtim
       console.log(chalk.green('Looks good to me'));
     }
   } catch (e: any) {
-    const msg: string = e.message;
-    console.error(chalk.red(`Validation process failed: ${msg}`));
+    console.error(chalk.red(`Validation process failed: ${e.message}`));
   }
 }).catch((e: any) => {
-  const msg: string = e.message;
-  console.error(chalk.red(`Validation process failed: ${msg}`));
+  console.error(chalk.red(`Validation process failed: ${e.message}`));
 });

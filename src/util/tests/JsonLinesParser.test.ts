@@ -15,6 +15,19 @@ const expectedObjects = [{
   col2: 789,
   col3: false
 }];
+const expectedObjectsWithoutHeaders = [{
+  0: 'val1',
+  1: 123,
+  2: true
+}, {
+  0: 'val4',
+  1: 456,
+  2: true
+}, {
+  0: 'val7',
+  1: 789,
+  2: false
+}];
 
 describe('JsonLinesParser', () => {
 
@@ -35,6 +48,37 @@ describe('JsonLinesParser', () => {
     arraysFormat.push('["val7",789,false]\n');
     arraysFormat.push(null);
     expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true})))).toEqual(expectedObjects);
+  });
+
+  it('Process stream with arrays format without headers', async () => {
+    const arraysFormat = new Stream.Readable();
+    arraysFormat.push('["val1",123,true]\n');
+    arraysFormat.push('["val4",456,true]\n');
+    arraysFormat.push('["val7",789,false]\n');
+    arraysFormat.push(null);
+    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: false}))))
+      .toEqual(expectedObjectsWithoutHeaders);
+  });
+
+  it('Process stream with arrays format with declared headers', async () => {
+    const arraysFormat = new Stream.Readable();
+    arraysFormat.push('["val1",123,true]\n');
+    arraysFormat.push('["val4",456,true]\n');
+    arraysFormat.push('["val7",789,false]\n');
+    arraysFormat.push(null);
+    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: ['col1', 'col2', 'col3']}))))
+      .toEqual(expectedObjects);
+  });
+
+  it('Process stream with arrays format - strict mode', async () => {
+    const arraysFormat = new Stream.Readable();
+    arraysFormat.push('["col1","col2","col3"]\n');
+    arraysFormat.push('["val1",123,true]\n');
+    arraysFormat.push('["val4",456,true]\n');
+    arraysFormat.push('["val7",789,false]\n');
+    arraysFormat.push(null);
+    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, strict: true}))))
+      .toEqual(expectedObjects);
   });
 
   it('Process stream with mixed objects format', async () => {

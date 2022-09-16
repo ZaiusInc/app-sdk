@@ -25,5 +25,25 @@ describe('activityLog', () => {
       await notifications.error('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.error).toHaveBeenCalled();
     });
+
+    it('validates input - do not notify for invalid input', async () => {
+      const mockNotifier: Notifier = {
+        info: jest.fn(),
+        success: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      };
+
+      setNotifier(mockNotifier);
+
+      await notifications.info(' ', 'title', 'summary', 'detail');
+      expect(mockNotifier.info).not.toHaveBeenCalled();
+
+      await notifications.success('activity', ' ', 'summary', 'detail');
+      expect(mockNotifier.success).not.toHaveBeenCalled();
+
+      await notifications.warn('activity', 'title', ' ', 'detail');
+      expect(mockNotifier.warn).not.toHaveBeenCalled();
+    });
   });
 });

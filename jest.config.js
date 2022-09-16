@@ -25,6 +25,8 @@ module.exports = {
     '!src/jobs/LocalJobApi.ts',
     '!src/jobs/JobNotFoundError.ts',
     '!src/notifications/LocalNotifier.ts',
+    '!src/app/validation/runValidation.ts',
+    '!src/globals.d.ts'
   ],
   coverageThreshold: {
     global: {
