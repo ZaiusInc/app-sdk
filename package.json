@@ -31,7 +31,7 @@
     "node": ">=18.0"
   },
   "dependencies": {
-    "@zaiusinc/app-forms-schema": "1.0.0",
+    "@zaiusinc/app-forms-schema": "^1.0.0",
     "ajv": "^8.11.0",
     "csv-parser": "^3.0.0",
     "deep-freeze": "^0.0.1",
@@ -58,7 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/eslint-plugin-tslint": "^5.35.1",
     "@zaiusinc/eslint-config-presets": "^1.0.0",
-    "@zaiusinc/node-sdk": "^1.0.0-dev.1",
+    "@zaiusinc/node-sdk": "^1.0.0",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^22.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -80,6 +80,6 @@
     "typescript-json-schema": "^0.54.0"
   },
   "peerDependencies": {
-    "@zaiusinc/node-sdk": "^1.0.0-dev.1"
+    "@zaiusinc/node-sdk": "^1.0.0"
   }
 }

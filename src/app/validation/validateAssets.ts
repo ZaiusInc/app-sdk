@@ -41,7 +41,7 @@ class AssetValidator {
   public async validate(): Promise<string[]> {
     this.validateAllAssetsExist();
     await this.validateMarkdownFiles();
-    this.validateForms();
+    await this.validateForms();
     return this.errors;
   }
 
@@ -76,7 +76,7 @@ class AssetValidator {
     }
   }
 
-  private validateForms(): void {
+  private async validateForms(): Promise<void> {
     let files = ['forms/settings.yml'];
     if (this.manifest.channel) {
       files = files.concat(CHANNEL_FORMS);
@@ -84,8 +84,8 @@ class AssetValidator {
     for (const file of files) {
       const filePath = path.join(this.baseDir, file);
       if (fs.existsSync(filePath)) {
-        (validateFormDefinition(jsYaml.load(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
-          .forEach((message) => this.errors.push(`Invalid ${file}: ${message}`));
+        (await validateFormDefinition(jsYaml.load(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
+          .forEach((message: any) => this.errors.push(`Invalid ${file}: ${message}`));
       }
     }
   }
