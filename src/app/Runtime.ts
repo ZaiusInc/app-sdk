@@ -126,7 +126,7 @@ export class Runtime {
     ) ;
 
     if (!skipJsonValidation) {
-      const ajv: Ajv = new Ajv();
+      const ajv: Ajv = new Ajv({allowUnionTypes: true});
       if (!ajv.validate(manifestSchema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }

@@ -22,7 +22,7 @@ import {validateOutboundDomains} from './validateOutboundDomains';
 export async function validateApp(runtime: Runtime, baseObjectNames?: string[]): Promise<string[]> {
   let errors: string[] = [];
 
-  const ajv = new Ajv({allErrors: true});
+  const ajv = new Ajv({allErrors: true, allowUnionTypes: true});
   if (!ajv.validate(manifestSchema, runtime.manifest)) {
     ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {

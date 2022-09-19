@@ -949,10 +949,10 @@
     "@typescript-eslint/types" "5.37.0"
     eslint-visitor-keys "^3.3.0"
 
-"@zaiusinc/app-forms-schema@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@zaiusinc/app-forms-schema/-/app-forms-schema-1.0.0.tgz#43fc1d24c8acacdd4fde15b44a822c57d70c08fe"
-  integrity sha512-sZU0ISntXUv7JuKOgHNNOMe+WQ/2N+SkwaJSLx5U6ky72/YEeMQndiGUOo/71kqc5dc61qqz6jzs/EyNTXSLxg==
+"@zaiusinc/app-forms-schema@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@zaiusinc/app-forms-schema/-/app-forms-schema-1.0.1.tgz#1efce4ee6c703d4190c63e9729d5d0d7551981c6"
+  integrity sha512-ti7/2K1qH7UeNQyQgPdkEjqsN2Ew0LrSGTlq4yMfSsAEVxqn19yq9Bfrk8gfcQdNXAIK27XxyL/WFHspEltkGg==
   dependencies:
     ajv "^8.11.0"
 

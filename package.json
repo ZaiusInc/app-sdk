@@ -31,7 +31,7 @@
     "node": ">=18.0"
   },
   "dependencies": {
-    "@zaiusinc/app-forms-schema": "^1.0.0",
+    "@zaiusinc/app-forms-schema": "^1.0.1",
     "ajv": "^8.11.0",
     "csv-parser": "^3.0.0",
     "deep-freeze": "^0.0.1",
