@@ -10,7 +10,7 @@ import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
  * @TODO implement the stub for local development purposes
  */
 export class LocalStore implements BaseKVStore<ValueHash, true> {
-  constructor(private store: LocalAsyncStoreBackend<ValueHash>) {}
+  public constructor(private store: LocalAsyncStoreBackend<ValueHash>) {}
 
   public reset() {
     this.store.reset();
@@ -33,9 +33,7 @@ export class LocalStore implements BaseKVStore<ValueHash, true> {
     if (typeof value === 'function') {
       return await this.patchWithRetry(key, value) as T;
     } else {
-      return await this.patchWithRetry(key, (previous) => {
-        return Object.assign(previous, value);
-      });
+      return await this.patchWithRetry(key, (previous) => Object.assign(previous, value));
     }
   }
 

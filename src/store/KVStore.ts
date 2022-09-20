@@ -86,7 +86,7 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  // tslint:disable-next-line:unified-signatures
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
   patch<T extends KVHash>(key: string, updater: KVPatchUpdater<T>): Promise<T>;
 
   /**

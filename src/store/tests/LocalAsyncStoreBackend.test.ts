@@ -7,7 +7,7 @@ import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
  */
 describe('LocalAsyncStoreBackend', () => {
   let store: LocalAsyncStoreBackend<any>;
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.spyOn(LocalAsyncStoreBackend.prototype, 'epoch' as any).mockReturnValue(1585273000);
     store = new LocalAsyncStoreBackend(0, {foo: {cas: 1, expires: 1585273000 + 500, value: {bar: 'bar'}}});
   });
@@ -174,7 +174,7 @@ describe('LocalAsyncStoreBackend', () => {
       expect(store['hasChanges']).toBeTruthy();
 
       // ensure we wait for our onChange timer to complete, by scheduling a timer after to complete the test
-      return new Promise((resolve) => {
+      return new Promise<void>((resolve) => {
         setTimeout(() => {
           expect(changeHandler).toHaveBeenCalledWith({foo: {cas: 0, expires: undefined, value: {bar: 'bar'}}});
           expect(store['hasChanges']).toBeFalsy();

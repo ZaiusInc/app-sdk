@@ -12,7 +12,7 @@ export type BatchOperation<T> = (batch: T[]) => Promise<any>;
  */
 export class Batcher<T> {
   private batch: T[] = [];
-  constructor(private operation: BatchOperation<T>, private limit = 100) {
+  public constructor(private operation: BatchOperation<T>, private limit = 100) {
   }
 
   /**

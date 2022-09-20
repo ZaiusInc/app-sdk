@@ -4,7 +4,7 @@ import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';
 
 export type CampaignAction = 'sent' | 'delivery' | 'open' | 'click' | 'engage' | 'disengage'
-  | 'soft_bounce' | 'hard_bounce' | 'spam_report';
+| 'soft_bounce' | 'hard_bounce' | 'spam_report';
 
 /**
  * A class to help batch and send campaign related events
@@ -25,7 +25,7 @@ export class CampaignEvents {
    * @param identifierField the name of the identifier field used to target the user.
    * The identifier value provided to a campaign event must be for this identifier field name.
    */
-  constructor(
+  public constructor(
     private identifierField: string,
     public tracking: Partial<CampaignTracking>,
     type?: string
@@ -59,16 +59,16 @@ export class CampaignEvents {
     await this.eventBatcher.append({
       identifiers: {
         [this.identifierField]: identifier
-       },
-       type: this.type,
-       action,
-       data: {
-         ts: ts instanceof Date ? ts.toISOString() : ts,
-         target_address: identifier,
-         ...this.tracking,
-         ...data
-       }
-     });
+      },
+      type: this.type,
+      action,
+      data: {
+        ts: ts instanceof Date ? ts.toISOString() : ts,
+        target_address: identifier,
+        ...this.tracking,
+        ...data
+      }
+    });
   }
 
   /**

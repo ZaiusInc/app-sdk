@@ -1,5 +1,5 @@
-/* tslint:disable:max-classes-per-file */
-import {Ajv} from 'ajv';
+/* eslint-disable max-classes-per-file */
+import Ajv from 'ajv';
 import {readFileSync} from 'fs';
 import * as jsYaml from 'js-yaml';
 import {join} from 'path';
@@ -11,7 +11,7 @@ import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects} from './types/SchemaObject';
+import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 
@@ -28,7 +28,7 @@ export class Runtime {
    * @param dirName the base directory of the app
    * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
    */
-  public static async initialize(dirName: string, skipJsonValidation: boolean = false) {
+  public static async initialize(dirName: string, skipJsonValidation = false) {
     const runtime = new Runtime();
     await runtime.initialize(dirName, skipJsonValidation);
     return runtime;
@@ -56,7 +56,7 @@ export class Runtime {
     return this.dirName;
   }
 
-  // tslint:disable-next-line:ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;
     if (!functions || !functions[name]) {
@@ -100,7 +100,7 @@ export class Runtime {
     const files = glob.sync('schema/*.yml', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.safeLoad(readFileSync(join(this.dirName, file), 'utf8'));
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
       }
     }
     return schemaObjects;
@@ -121,12 +121,12 @@ export class Runtime {
   private async initialize(dirName: string, skipJsonValidation: boolean) {
     this.dirName = dirName;
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
-    const manifest = (await import('js-yaml')).safeLoad(
+    const manifest = (await import('js-yaml')).load(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
-    ) as unknown;
+    ) ;
 
     if (!skipJsonValidation) {
-      const ajv: Ajv = new (require('ajv') as any)();
+      const ajv: Ajv = new Ajv({allowUnionTypes: true});
       if (!ajv.validate(manifestSchema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }

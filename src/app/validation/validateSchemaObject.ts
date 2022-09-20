@@ -93,7 +93,7 @@ class SchemaObjectValidator {
     if (!name.match(SCHEMA_NAME_FORMAT)) {
       this.errors.push(
         `Invalid ${this.file}: ${ref} must start with a letter, contain only lowercase alpha-numeric and ` +
-          `underscore, and be between 2 and 64 characters long (${SCHEMA_NAME_FORMAT})`
+          `underscore, and be between 2 and 64 characters long (${SCHEMA_NAME_FORMAT.toString()})`
       );
     }
   }

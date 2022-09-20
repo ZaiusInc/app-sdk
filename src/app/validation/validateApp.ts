@@ -1,5 +1,5 @@
 import {ErrorObject} from 'ajv';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import {Runtime} from '../Runtime';
 import * as manifestSchema from '../types/AppManifest.schema.json';
 import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
@@ -22,9 +22,9 @@ import {validateOutboundDomains} from './validateOutboundDomains';
 export async function validateApp(runtime: Runtime, baseObjectNames?: string[]): Promise<string[]> {
   let errors: string[] = [];
 
-  const ajv = new Ajv({allErrors: true});
+  const ajv = new Ajv({allErrors: true, allowUnionTypes: true});
   if (!ajv.validate(manifestSchema, runtime.manifest)) {
-    ajv.errors!.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
+    ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {
     errors = errors.concat(await validateMeta(runtime))
       .concat(validateEnvironment(runtime))
@@ -41,7 +41,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   for (const file of Object.keys(schemaObjects)) {
     const schemaObject = schemaObjects[file];
     if (!ajv.validate(schemaObjectSchema, schemaObject)) {
-      ajv.errors!.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+      ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
     } else {
       errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
     }
@@ -51,6 +51,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
 }
 
 function formatAjvError(file: string, e: ErrorObject): string {
-  const adjustedDataPath = e.dataPath.length > 0 ? e.dataPath.substring(1).replace(/\['([^']+)']/, '.$1') + ' ' : '';
-  return `Invalid ${file}: ${adjustedDataPath}${e.message!.replace(/\bshould\b/, 'must')}`;
+  const adjustedDataPath =
+    e.instancePath.length > 0 ? e.instancePath.substring(1).replace(/\['([^']+)']/, '.$1') + ' ' : '';
+  return `Invalid ${file}: ${adjustedDataPath}${e.message?.replace(/\bshould\b/, 'must') ?? ''}`;
 }

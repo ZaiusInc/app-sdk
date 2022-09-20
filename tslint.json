@@ -1,4 +1,0 @@
-{
-  "extends": "@zaiusinc/tslint-presets/node.json",
-  "rules": {}
-}

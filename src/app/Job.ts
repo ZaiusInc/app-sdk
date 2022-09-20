@@ -56,6 +56,7 @@ export abstract class Job {
    * Initializes a job to be run
    * @param invocation details of the job invocation
    */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: 6138 declared but never read
   public constructor(protected invocation: JobInvocation) {
   }
@@ -68,7 +69,7 @@ export abstract class Job {
    * @param status provided ONLY if the job was interrupted and should continue from the last known state
    * @param resuming if the job was interrupted, resuming will be set to true when it is resumed
    */
-  public abstract async prepare(params: ValueHash, status?: JobStatus, resuming?: boolean): Promise<JobStatus>;
+  public abstract prepare(params: ValueHash, status?: JobStatus, resuming?: boolean): Promise<JobStatus>;
 
   /**
    * Performs a unit of work. Jobs should perform a small unit of work and then return the current state.
@@ -77,7 +78,7 @@ export abstract class Job {
    * @param status last known job state and status
    * @returns The current JobStatus/state that can be used to perform the next iteration or resume a job if interrupted.
    */
-  public abstract async perform(status: JobStatus): Promise<JobStatus>;
+  public abstract perform(status: JobStatus): Promise<JobStatus>;
 
   /**
    * Wrapper for interruptible tasks, such as waiting for a long api call or a timeout loop waiting for a result.

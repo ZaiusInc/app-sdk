@@ -34,7 +34,7 @@ export abstract class FileStream<T, O> {
   private resume?: () => void;
   private fastforwardMarker?: string;
 
-  constructor(
+  public constructor(
     private streamBuilder: FileReadableStreamBuilder,
     private rowProcessor: FileRowProcessor<T>,
     private parser: (args: O) => Transform,
@@ -68,7 +68,7 @@ export abstract class FileStream<T, O> {
       if (this.resume) {
         this.resume();
       } else {
-        this.readStream!.resume();
+        this.readStream?.resume();
       }
     });
   }

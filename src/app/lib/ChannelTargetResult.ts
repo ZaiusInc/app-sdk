@@ -7,7 +7,7 @@ import {FormResult, Intent} from './FormResult';
 export interface ChannelTargetResponse {
   targeting?: CampaignTargeting[];
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 /**

@@ -55,7 +55,7 @@ export class CsvStream<T> extends FileStream<T, Options> {
     return new CsvStream(builder, processor, options);
   }
 
-  constructor(
+  public constructor(
     streamBuilder: CsvReadableStreamBuilder,
     rowProcessor: CsvRowProcessor<T>,
     options: Options = {}

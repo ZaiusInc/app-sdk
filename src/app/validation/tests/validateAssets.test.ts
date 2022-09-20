@@ -139,14 +139,14 @@ describe('validateAssets', () => {
 
   it('fails when markdown files contain links to unknown headers', async () => {
     const missingHeaderLinks = appDir();
-    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[dne](#dne).`;
+    missingHeaderLinks['path/to/app/dir']['assets']['directory']['overview.md'] = '[dne](#dne).';
     mockFs(missingHeaderLinks);
     await expectError('Link to unknown heading: `dne` in assets/directory/overview.md:1:1-1:12.');
   });
 
   it('fails when markdown files contain links to unknown files', async () => {
     const missingFileLinks = appDir();
-    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = `[missing](missing.js)`;
+    missingFileLinks['path/to/app/dir']['assets']['directory']['overview.md'] = '[missing](missing.js)';
     mockFs(missingFileLinks);
     await expectError('Link to unknown file: `missing.js` in assets/directory/overview.md:1:1-1:22.');
   });
@@ -156,8 +156,8 @@ describe('validateAssets', () => {
     badForm['path/to/app/dir']['forms']['settings.yml'] = 'something: wrong';
     mockFs(badForm);
     await expectError([
-      'Invalid forms/settings.yml: must NOT have additional properties',
-      "Invalid forms/settings.yml: must have required property 'sections'"
+      "Invalid forms/settings.yml: must have required property 'sections'",
+      'Invalid forms/settings.yml: must NOT have additional properties'
     ]);
   });
 
@@ -188,8 +188,8 @@ describe('validateAssets', () => {
       badForms['path/to/app/dir']['forms']['content-template.yml'] = 'sections:\n  - elements:\n    - type: text';
       mockFs(badForms);
       await expectError([
-        'Invalid forms/content-settings.yml: must NOT have additional properties',
         "Invalid forms/content-settings.yml: must have required property 'sections'",
+        'Invalid forms/content-settings.yml: must NOT have additional properties',
         "Invalid forms/content-template.yml: sections[0] must have required property 'key'",
         "Invalid forms/content-template.yml: sections[0] must have required property 'label'",
         "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'help'",

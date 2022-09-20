@@ -62,6 +62,7 @@ export interface BaseKVStore<T = ValueHash, R = true> {
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
   patch<V extends T>(key: string, updater: PatchUpdater<V>): Promise<V>;
 
   /**

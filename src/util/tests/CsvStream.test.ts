@@ -12,7 +12,7 @@ interface Row {
 }
 
 class TestCsvRowProcessor implements CsvRowProcessor<Row> {
-  constructor(private completed = false, private readRows: Row[] = []) { }
+  public constructor(private completed = false, private readRows: Row[] = []) { }
 
   public get isCompleted() {
     return this.completed;
@@ -74,7 +74,7 @@ describe('CsvStream', () => {
     readable.push(null);
     const options: Options = {
       mapHeaders: ({ header}) => header.toLowerCase(),
-      mapValues: ({ value }) => value.toLowerCase()
+      mapValues: ({ value }) => (value as string).toLowerCase()
     };
 
     const processor = new TestCsvRowProcessor();

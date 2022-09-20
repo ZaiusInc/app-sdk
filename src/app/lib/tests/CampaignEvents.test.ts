@@ -38,7 +38,7 @@ describe('CampaignEvents', () => {
       expect(z.event).toHaveBeenCalledWith([expect.objectContaining({type: 'exmpl'})]);
     });
 
-    it('throws an error if type is not provided', async () => {
+    it('throws an error if type is not provided', () => {
       setContext({manifest: {channel: {type: undefined}}} as any);
       expect(() => new CampaignEvents('test_id', CAMPAIGN_TRACKING)).toThrowError('Type is required');
     });

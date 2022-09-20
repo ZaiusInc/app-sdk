@@ -186,7 +186,7 @@ export class Logger implements ILogger {
   private maxLineLength: number;
   private defaultVisibility: LogVisibility;
 
-  constructor(options: Partial<LoggerOptions> = {}) {
+  public constructor(options: Partial<LoggerOptions> = {}) {
     const level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,

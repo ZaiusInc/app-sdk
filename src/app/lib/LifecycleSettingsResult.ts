@@ -5,7 +5,7 @@ import {FormResult, Intent} from './FormResult';
  */
 export interface LifecycleSettingsResponse {
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
   redirect?: string;
   redirectMode?: 'url' | 'settings';
 }

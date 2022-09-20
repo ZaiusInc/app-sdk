@@ -7,7 +7,7 @@ export interface ChannelPreviewResponse {
   previews?: string[];
   displayOptions?: PreviewDisplayOptions;
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 /**

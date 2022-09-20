@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {LiquidExtensionResult} from '../../lib';
@@ -39,7 +40,7 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
+
 class NonExtendedBuzz {
   // Nothing
 }
@@ -53,7 +54,6 @@ class ProperBuzz extends LiquidExtension {
     return LiquidExtensionResult.success('buzz');
   }
 }
-/* tslint:disable */
 
 describe('validateLiquidExtensions', () => {
   it('succeeds with a proper definition', async () => {

@@ -2,7 +2,7 @@ export type Intent = 'info' | 'success' | 'warning' | 'danger';
 
 export abstract class FormResult {
   protected errors: {[field: string]: string[]} = {};
-  protected toasts: Array<{intent: Intent, message: string}> = [];
+  protected toasts: Array<{intent: Intent; message: string}> = [];
 
   /**
    * Display a toast to user, such as, "Successfully authenticated with <Integration>" or

@@ -5,7 +5,7 @@ import {FormResult, Intent} from './FormResult';
  */
 export interface ChannelContentResponse {
   errors?: {[ref: string]: string[]};
-  toasts?: Array<{intent: Intent, message: string}>;
+  toasts?: Array<{intent: Intent; message: string}>;
 }
 
 /**

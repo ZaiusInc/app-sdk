@@ -191,7 +191,8 @@
                                         "boolean"
                                     ]
                                 }
-                            ]
+                            ],
+                            "description": "A value type that is safe to write to any storage option"
                         },
                         "type": "array"
                     },

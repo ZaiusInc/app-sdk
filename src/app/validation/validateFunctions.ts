@@ -12,9 +12,10 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       let fnClass = null;
       try {
         fnClass = await runtime.getFunctionClass(name);
-      } catch (e) {
+      } catch (e: any) {
         if (!(e instanceof FunctionClassNotFoundError)) {
-          errors.push(`Failed to load function class ${name}.  Error was: ${e.message}`);
+          const msg: string = e.message;
+          errors.push(`Failed to load function class ${name}.  Error was: ${msg}`);
           return errors;
         }
       }

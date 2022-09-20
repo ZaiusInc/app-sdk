@@ -70,15 +70,15 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
           }
         }
         for (let i = 0; i < (delivery.rate_limits || []).length; i++) {
-          const limit = delivery.rate_limits![i];
-          if (limit.count < 1) {
+          const limit = delivery.rate_limits?.[i];
+          if (limit && limit.count < 1) {
             errors.push(`channel.delivery.rate_limit[${i}].count must be > 0`);
-          } else if (limit.count !== Math.floor(limit.count)) {
+          } else if (limit && limit.count !== Math.floor(limit.count)) {
             errors.push(`channel.delivery.rate_limit[${i}].count must be an integer`);
           }
-          if (limit.period < 1) {
+          if (limit && limit.period < 1) {
             errors.push(`channel.delivery.rate_limit[${i}].period must be > 0 if specifying a number of seconds`);
-          } else if (limit.period !== Math.floor(limit.period)) {
+          } else if (limit && limit.period !== Math.floor(limit.period)) {
             errors.push(`channel.delivery.rate_limit[${i}].period must be an integer`);
           }
         }

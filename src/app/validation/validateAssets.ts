@@ -3,8 +3,10 @@ import * as fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';
 import * as remark from 'remark';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as links from 'remark-validate-links';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as vfile from 'to-vfile';
 import {VFile} from 'vfile';
@@ -12,6 +14,7 @@ import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import glob = require('glob');
+import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
   'assets/directory/overview.md',
@@ -57,9 +60,9 @@ class AssetValidator {
   private async validateMarkdownFiles(): Promise<void> {
     try {
       const vfiles: VFile[] = await Promise.all(
-        glob.sync(`${this.baseDir}/assets/**/*.md`).map((file) => {
-          return remark().use(links, {repository: false}).process(vfile.readSync(file));
-        })
+        glob.sync(`${this.baseDir}/assets/**/*.md`)
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          .map((file) => remark().use(links, {repository: false}).process(vfile.readSync(file)))
       );
 
       vfiles.forEach((file) => {
@@ -81,8 +84,8 @@ class AssetValidator {
     for (const file of files) {
       const filePath = path.join(this.baseDir, file);
       if (fs.existsSync(filePath)) {
-        (await validateFormDefinition(jsYaml.safeLoad(fs.readFileSync(filePath, 'utf8'))))
-          .forEach((message) => this.errors.push(`Invalid ${file}: ${message}`));
+        (await validateFormDefinition(jsYaml.load(fs.readFileSync(filePath, 'utf8')) as Schema.Form))
+          .forEach((message: any) => this.errors.push(`Invalid ${file}: ${message}`));
       }
     }
   }

@@ -52,7 +52,7 @@ export class JsonLinesStream<T> extends FileStream<T, Options> {
     return new JsonLinesStream(builder, processor, options);
   }
 
-  constructor(
+  public constructor(
     streamBuilder: JsonLineReadableStreamBuilder,
     rowProcessor: FileRowProcessor<T>,
     options: Options = {}

@@ -83,6 +83,7 @@ describe('Job', () => {
 
     it('sleeps for zero miliseconds if unspecified', async () => {
       const job = new MyJob({} as any);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const setTimeoutFn = jest.spyOn(global, 'setTimeout').mockImplementation((resolve: any) => resolve());
       await job['sleep']();
 

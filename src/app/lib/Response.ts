@@ -1,11 +1,11 @@
 import {Headers} from './Headers';
 
 export class Response {
-  public status: number = 0;
+  public status = 0;
   public headers: Headers = new Headers();
   private bodyData?: Uint8Array;
 
-  constructor(status?: number, bodyJSON?: any, headers?: Headers) {
+  public constructor(status?: number, bodyJSON?: any, headers?: Headers) {
     if (status !== undefined) {
       this.status = status;
     }

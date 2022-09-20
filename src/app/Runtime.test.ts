@@ -1,4 +1,4 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import * as deepFreeze from 'deep-freeze';
 import * as fs from 'fs';
 import 'jest';
@@ -100,7 +100,7 @@ describe('Runtime', () => {
 
   describe('initialize', () => {
     it('loads and validates the manifest', async () => {
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
       const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(true);
 
       const runtime = await Runtime.initialize('/tmp/foo');
@@ -117,12 +117,12 @@ describe('Runtime', () => {
     });
 
     it('throws an error when the manifest is invalid', async () => {
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
       const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(false);
 
       try {
         await Runtime.initialize('/tmp/foo');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/Invalid app.yml manifest/);
       }
 
@@ -165,7 +165,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getFunctionClass('bar');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No function named bar/);
       }
     });
@@ -189,7 +189,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getJobClass('foo');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No job named foo/);
       }
     });
@@ -213,7 +213,7 @@ describe('Runtime', () => {
 
       try {
         await runtime.getLiquidExtensionClass('bar');
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toMatch(/^No liquid extension named bar/);
       }
     });
@@ -248,13 +248,13 @@ describe('Runtime', () => {
   });
 
   describe('getSchemaObjects', () => {
-    it('loads all yml files in the schema directory', async () => {
+    it('loads all yml files in the schema directory', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const origReadFileSync = fs.readFileSync;
       const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
-      const yamlLoadFn = jest.spyOn(jsYaml, 'safeLoad').mockImplementation((data) => JSON.parse(data));
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
 
-      const result = await runtime.getSchemaObjects();
+      const result = runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
         ['/tmp/foo/schema/events.yml', 'utf8'],
         ['/tmp/foo/schema/my_app_coupons.yml', 'utf8'],

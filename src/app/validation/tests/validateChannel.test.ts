@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {FormData} from '@zaiusinc/app-forms-schema';
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
@@ -61,7 +62,6 @@ const manifestWithoutTargeting = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
 class NonExtendedChannel {
   // Nothing
 }
@@ -121,7 +121,6 @@ class MoreProperChannel extends ProperChannel {
     return {success: true};
   }
 }
-/* tslint:enable */
 
 describe('validateChannel', () => {
   it('succeeds with a proper static-targeting definition', async () => {
@@ -276,7 +275,7 @@ describe('validateChannel', () => {
       'channel.delivery.concurrent_batches must be an integer',
     ]);
 
-    Object.assign(runtime.manifest.channel?.delivery, {
+    Object.assign<any, any>(runtime.manifest.channel?.delivery, {
       batch_size: -1,
       concurrent_batches: -1
     });
@@ -286,7 +285,7 @@ describe('validateChannel', () => {
       'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
     ]);
 
-    Object.assign(runtime.manifest.channel?.delivery, {
+    Object.assign<any, any>(runtime.manifest.channel?.delivery, {
       batch_size: 10000,
       concurrent_batches: 1001
     });

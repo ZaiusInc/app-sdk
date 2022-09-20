@@ -3,7 +3,7 @@ import {notifications, Notifier, setNotifier} from '..';
 
 describe('activityLog', () => {
   describe('initialize', () => {
-    it('replaces the local notifier with the provided notifier', () => {
+    it('replaces the local notifier with the provided notifier', async () => {
       const mockNotifier: Notifier = {
         info: jest.fn(),
         success: jest.fn(),
@@ -13,17 +13,37 @@ describe('activityLog', () => {
 
       setNotifier(mockNotifier);
 
-      notifications.info('activity', 'title', 'summary', 'detail');
+      await notifications.info('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.info).toHaveBeenCalled();
 
-      notifications.success('activity', 'title', 'summary', 'detail');
+      await notifications.success('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.success).toHaveBeenCalled();
 
-      notifications.warn('activity', 'title', 'summary', 'detail');
+      await notifications.warn('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.warn).toHaveBeenCalled();
 
-      notifications.error('activity', 'title', 'summary', 'detail');
+      await notifications.error('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.error).toHaveBeenCalled();
+    });
+
+    it('validates input - do not notify for invalid input', async () => {
+      const mockNotifier: Notifier = {
+        info: jest.fn(),
+        success: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+      };
+
+      setNotifier(mockNotifier);
+
+      await notifications.info(' ', 'title', 'summary', 'detail');
+      expect(mockNotifier.info).not.toHaveBeenCalled();
+
+      await notifications.success('activity', ' ', 'summary', 'detail');
+      expect(mockNotifier.success).not.toHaveBeenCalled();
+
+      await notifications.warn('activity', 'title', ' ', 'detail');
+      expect(mockNotifier.warn).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {LifecycleSettingsResult, Request} from '../../lib';
@@ -34,7 +35,6 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
 class NonExtendedLifecycle {
   // Nothing
 }
@@ -78,7 +78,6 @@ class ProperLifecycle extends Lifecycle {
     return new AuthorizationGrantResult('oauth');
   }
 }
-/* tslint:enable */
 
 describe('validateLifecycle', () => {
   it('succeeds with a proper definition', async () => {

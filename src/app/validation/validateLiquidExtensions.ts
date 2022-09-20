@@ -18,12 +18,12 @@ export async function validateLiquidExtensions(runtime: Runtime): Promise<string
       } else if (!(extClass.prototype instanceof LiquidExtension)) {
         errors.push(
           'Liquid Extension entry point does not extend App.LiquidExtension: ' +
-            runtime.manifest.liquid_extensions![name].entry_point
+            runtime.manifest.liquid_extensions[name].entry_point
         );
       } else if (typeof (extClass.prototype.perform) !== 'function') {
         errors.push(
           'Liquid Extension entry point is missing the perform method: ' +
-            runtime.manifest.liquid_extensions![name].entry_point
+            runtime.manifest.liquid_extensions[name].entry_point
         );
       }
     }

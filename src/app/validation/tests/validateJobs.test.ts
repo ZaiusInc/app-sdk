@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import * as deepFreeze from 'deep-freeze';
 import 'jest';
 import {ValueHash} from '../../../store';
@@ -33,7 +34,6 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-/* tslint:disable */
 class NonExtendedBar {
   public async prepare(_status?: JobStatus): Promise<JobStatus> {
     return {complete: false, state: {}};
@@ -43,6 +43,7 @@ class NonExtendedBar {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 class PartialBar extends Job {
   // Nothing
