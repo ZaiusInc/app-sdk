@@ -89,6 +89,13 @@
             ],
             "type": "object"
         },
+        "AppRuntime": {
+            "enum": [
+                "node12",
+                "node18"
+            ],
+            "type": "string"
+        },
         "CampaignTargeting": {
             "additionalProperties": false,
             "description": "Defines the targeting requirements for a channel.",
@@ -439,10 +446,7 @@
             "type": "array"
         },
         "runtime": {
-            "enum": [
-                "node12"
-            ],
-            "type": "string"
+            "$ref": "#/definitions/AppRuntime"
         }
     },
     "required": [

@@ -34,6 +34,8 @@ export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture'
 | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
 | 'Subscriptions';
 
+export type Runtime = 'node12' | 'node18';
+
 export enum ChannelType {
   Email = 'email',
   AppPush = 'app_push',
@@ -117,7 +119,7 @@ export interface AppManifest {
     categories: AppCategory[];
     availability: string[];
   };
-  runtime: 'node12';
+  runtime: Runtime;
   environment?: string[];
   functions?: {
     [name: string]: AppFunction;

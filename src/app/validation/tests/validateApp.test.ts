@@ -39,7 +39,7 @@ const appManifest = deepFreeze({
     categories: ['Commerce Platform'],
     availability: ['all']
   },
-  runtime: 'node12',
+  runtime: 'node18',
   environment: ['APP_ENV_FOO'],
   functions: {
     foo: {
