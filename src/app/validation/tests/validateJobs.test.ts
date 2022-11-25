@@ -90,15 +90,89 @@ describe('validateJobs', () => {
     getJobClass.mockRestore();
   });
 
-  it('detects partial job entry point', async () => {
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockReturnValue(PartialBar as any);
+  describe('valid cron expressions', () => {
 
-    expect(await validateJobs(runtime)).toEqual([
-      'Job entry point is missing the prepare method: Bar',
-      'Job entry point is missing the perform method: Bar'
-    ]);
+    async function validateCronExpresion(expression: string, expectedErrors: string[]) {
+      const manifest = {...appManifest, jobs: {
+        bar: {
+          entry_point: 'Bar',
+          cron: expression
+        }
+      }};
+      const runtime = Runtime.fromJson(JSON.stringify({'appManifest': manifest, dirName: '/tmp/foo'}));
+      const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockReturnValue(ProperBar as any);
 
-    getJobClass.mockRestore();
+      expect(await validateJobs(runtime)).toEqual(expectedErrors);
+
+      getJobClass.mockRestore();
+    }
+
+    it('cron expression - at midnight every night', async () => {
+      await validateCronExpresion('0 0 0 ? * *', []);
+    });
+
+    it('cron expression - every hour', async () => {
+      await validateCronExpresion('0 0 * * * ?', []);
+    });
+
+    it('cron expression - at 10:15 AM every day', async () => {
+      await validateCronExpresion('0 15 10 ? * *', []);
+    });
+
+    it('cron expression - at 10:15 AM every day during the year 2005', async () => {
+      await validateCronExpresion('0 15 10 * * ? 2005', []);
+    });
+
+    it('cron expression - every minute starting at 2:00 PM and ending at 2:59 PM, every day', async () => {
+      await validateCronExpresion('0 * 14 * * ?', []);
+    });
+
+    it('cron expression - every 5 minutes starting at 2:00 PM and ending at 2:55 PM, every day', async () => {
+      await validateCronExpresion('0 0/5 14 * * ?', []);
+    });
+
+    it('cron expression - every 5 minutes from 2:00PM to 2:55 PM AND from 6:00 PM to 6:55 PM, every day', async () => {
+      await validateCronExpresion('0 0/5 14,18 * * ?', []);
+    });
+
+    it('cron expression - at 2:10 PM and at 2:44 PM every Wednesday in the month of March', async () => {
+      await validateCronExpresion('0 10,44 14 ? 3 WED', []);
+    });
+
+    it('cron expression - at 10:15 AM every Monday, Tuesday, Wednesday, Thursday and Friday', async () => {
+      await validateCronExpresion('0 15 10 ? * MON-FRI', []);
+    });
+
+    it('cron expression - at 10:15 AM on the 15th day of every month', async () => {
+      await validateCronExpresion('0 15 10 15 * ?', []);
+    });
+
+    it('cron expression - at 10:15 AM on the last day of every month', async () => {
+      await validateCronExpresion('0 15 10 L * ?', []);
+    });
+
+    it('not a cron expression at all', async () => {
+      await validateCronExpresion('invalid-cron-expression', [
+        'Invalid CRON expression: Bar'
+      ]);
+    });
+
+    it('invalid cron expression - too many positions', async () => {
+      await validateCronExpresion('0 0 * * * ? ?', [
+        'Invalid CRON expression: Bar'
+      ]);
+    });
+
+    it('invalid cron expression - not enough positions', async () => {
+      await validateCronExpresion('0 0 * * *', [
+        'Invalid CRON expression: Bar'
+      ]);
+    });
+
+    it('invalid cron expression - hour outside of range', async () => {
+      await validateCronExpresion('0 15 25 ? * *', [
+        'Invalid CRON expression: Bar'
+      ]);
+    });
   });
 });

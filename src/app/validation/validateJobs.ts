@@ -1,6 +1,7 @@
 import {logger} from '../../logging';
 import {Job} from '../Job';
 import {Runtime} from '../Runtime';
+import * as cronValidator from 'cron-expression-validator';
 
 export async function validateJobs(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -29,6 +30,15 @@ export async function validateJobs(runtime: Runtime): Promise<string[]> {
         if (typeof (jobClass.prototype.perform) !== 'function') {
           errors.push(
             `Job entry point is missing the perform method: ${runtime.manifest.jobs[name].entry_point}`
+          );
+        }
+      }
+
+      const job = runtime.manifest.jobs[name];
+      if (job) {
+        if (job.cron && !cronValidator.isValidCronExpression(job.cron)) {
+          errors.push(
+            `Invalid CRON expression: ${job.entry_point}`
           );
         }
       }
