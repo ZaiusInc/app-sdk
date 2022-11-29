@@ -1,21 +1,21 @@
 # App SDK
-The App SDK includes helpers and interfaces for apps running on the Zaius Integration Platform (Zip).
+The App SDK includes helpers and interfaces for apps running on the Optimizely Connect Platform (OCP).
 
 ## Documentation
-Developer documentation can be found in the [Zaius Developer Docs](https://docs.developers.zaius.com/zip/).
+Developer documentation can be found in the [OCP Developer Docs](https://docs.developers.optimizely.com/digital-experience-platform/v1.5.0-optimizely-data-platform/docs/optimizely-connect-platform).
 
 See the generated [Technical Documentation](https://app-sdk.docs.developers.zaius.com/latest/) for details on every method and interface.
 
 ## Getting Started
 
-From the Zaius CLI, generate a new app with `zaius app init`. This will
+From the Opti CLI, generate a new app with `opti app init`. This will
 scaffold your app and install the dependencies, including this SDK.
 
 ## The Basics
 
-Zip Apps are built on the Node platforom supporting the modern conveniences of Node 12 and Typescript. Following the best practices with Typescript will ensure more stable integrations with fewer bugs.
+OCP Apps are built on the Node platforom supporting the modern conveniences of Node 18 and Typescript. Following the best practices with Typescript will ensure more stable integrations with fewer bugs.
 
-Zip Apps are required to follow conventions outlined in the developer docs. They are composed of:
+OCP Apps are required to follow conventions outlined in the developer docs. They are composed of:
 * .env - environment secrets that are published securely with an app
 * app.yml - A description of an app and it's abilities and requirements
 * forms/ - Yaml based forms that generate UIs for customer interactions
@@ -28,4 +28,4 @@ Zip Apps are required to follow conventions outlined in the developer docs. They
 
 Apps are run in an isolated environment and to avoid data leaking/polution across accounts, each process of an App will only handle a single request at a time. However 10s to 100s of processes could be running simultaneously so you must take care to avoid race conditions when interacting with external storage and APIs.
 
-See the [Zaius Developer Docs](https://docs.developers.zaius.com/zip/) for code examples and other details.
+See the [OCP Developer Docs](https://docs.developers.optimizely.com/digital-experience-platform/v1.5.0-optimizely-data-platform/docs/optimizely-connect-platform) for code examples and other details.

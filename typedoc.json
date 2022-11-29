@@ -1,6 +1,6 @@
 {
   "out": "./docs/",
-  "name": "Zaius App SDK",
+  "name": "OCP App SDK",
   "mode": "file",
   "module": "commonjs",
   "target": "ES6",
