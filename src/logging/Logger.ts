@@ -102,7 +102,7 @@ export function setLogContext(logContext: LogContext) {
 }
 
 /**
- * Zaius Logger interface
+ * OCP Logger interface
  */
 export interface ILogger {
   /**
@@ -276,7 +276,7 @@ export class Logger implements ILogger {
 }
 
 /**
- * Logger instance to be used by Zaius apps.
+ * Logger instance to be used by OCP apps.
  * Minimum log level can be configured by setting a environment variable, e.g.:
  *   LOG_LEVEL=warn
  * Accepted levels include debug, info, warn, error (or NEVER for silencing logs)

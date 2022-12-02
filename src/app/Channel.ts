@@ -168,7 +168,7 @@ export interface CampaignContent {
    */
   settings: Schema.FormData;
   /**
-   * Potentially dynamic data from the content template form. Any string fields that contained Zaius Liquid have been
+   * Potentially dynamic data from the content template form. Any string fields that contained ODP Liquid have been
    * translated into a simple substitution template where substitution sources are of the form `%%name%%`.
    */
   template: Schema.FormData;
