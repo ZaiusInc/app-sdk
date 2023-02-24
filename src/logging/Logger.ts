@@ -87,9 +87,6 @@ const INSPECT_OPTIONS = {
   color: false
 };
 
-// tslint:disable-next-line:only-arrow-functions
-const noop = function() { /**/};
-
 let context: LogContext;
 
 /**
@@ -101,7 +98,7 @@ export function setLogContext(logContext: LogContext) {
   context = logContext;
 }
 
-let level: LogLevel;
+let level: LogLevel = LogLevel.Info;
 
 /**
  * @hidden
@@ -198,28 +195,16 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    const levelLevel = options.level || DEFAULT_LOG_LEVEL;
+    level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,
       MAX_LINE_LENGTH
     );
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
-    if (levelLevel > LogLevel.Debug) {
-      this.debug = noop;
-    }
-    if (levelLevel > LogLevel.Info) {
-      this.info = noop;
-    }
-    if (levelLevel > LogLevel.Warn) {
-      this.warn = noop;
-    }
-    if (levelLevel > LogLevel.Error) {
-      this.error = noop;
-    }
   }
 
   private shouldLog(logLevel: LogLevel) {
-    return level == null || logLevel >= level;
+    return logLevel >= level;
   }
 
   public debug(...args: any[]) {
