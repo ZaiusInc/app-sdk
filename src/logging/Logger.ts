@@ -198,32 +198,32 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    const level = options.level || DEFAULT_LOG_LEVEL;
+    const levelLevel = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,
       MAX_LINE_LENGTH
     );
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
-    if (level > LogLevel.Debug) {
+    if (levelLevel > LogLevel.Debug) {
       this.debug = noop;
     }
-    if (level > LogLevel.Info) {
+    if (levelLevel > LogLevel.Info) {
       this.info = noop;
     }
-    if (level > LogLevel.Warn) {
+    if (levelLevel > LogLevel.Warn) {
       this.warn = noop;
     }
-    if (level > LogLevel.Error) {
+    if (levelLevel > LogLevel.Error) {
       this.error = noop;
     }
   }
 
-  private shouldLog(logLevel: LogLevel){
-    return level == null || logLevel >= level
+  private shouldLog(logLevel: LogLevel) {
+    return level == null || logLevel >= level;
   }
 
   public debug(...args: any[]) {
-    if(this.shouldLog(LogLevel.Debug)){
+    if (this.shouldLog(LogLevel.Debug)) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -233,7 +233,7 @@ export class Logger implements ILogger {
   }
 
   public info(...args: any[]) {
-    if(this.shouldLog(LogLevel.Info)){
+    if (this.shouldLog(LogLevel.Info)) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -243,7 +243,7 @@ export class Logger implements ILogger {
   }
 
   public warn(...args: any[]) {
-    if(this.shouldLog(LogLevel.Warn)){
+    if (this.shouldLog(LogLevel.Warn)) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -253,7 +253,7 @@ export class Logger implements ILogger {
   }
 
   public error(...args: any[]) {
-    if(this.shouldLog(LogLevel.Error)){
+    if (this.shouldLog(LogLevel.Error)) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -262,7 +262,7 @@ export class Logger implements ILogger {
     }
   }
 
-  private log(level: LogLevel, visibility: LogVisibility, ...args: any[]) {
+  private log(levelLevel: LogLevel, visibility: LogVisibility, ...args: any[]) {
     const time = new Date().toISOString();
 
     let stacktrace: string | undefined;
@@ -280,9 +280,9 @@ export class Logger implements ILogger {
       }
     }
 
-    (level === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
+    (levelLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
-      level: LOG_LEVELS[level],
+      level: LOG_LEVELS[levelLevel],
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
