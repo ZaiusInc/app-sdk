@@ -101,6 +101,17 @@ export function setLogContext(logContext: LogContext) {
   context = logContext;
 }
 
+let level: LogLevel;
+
+/**
+ * @hidden
+ * Set automatically when an app starts up
+ * @param logLevel configuration for runtime
+ */
+export function setLogLevel(logLevel: LogLevel) {
+  level = logLevel;
+}
+
 /**
  * OCP Logger interface
  */
@@ -207,35 +218,47 @@ export class Logger implements ILogger {
     }
   }
 
+  private shouldLog(logLevel: LogLevel){
+    return level == null || logLevel >= level
+  }
+
   public debug(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Debug, this.defaultVisibility, ...args);
+    if(this.shouldLog(LogLevel.Debug)){
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Debug, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public info(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Info, this.defaultVisibility, ...args);
+    if(this.shouldLog(LogLevel.Info)){
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Info, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public warn(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Warn, this.defaultVisibility, ...args);
+    if(this.shouldLog(LogLevel.Warn)){
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Warn, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public error(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Error, this.defaultVisibility, ...args);
+    if(this.shouldLog(LogLevel.Error)){
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Error, this.defaultVisibility, ...args);
+      }
     }
   }
 
