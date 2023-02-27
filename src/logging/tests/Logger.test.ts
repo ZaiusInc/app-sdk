@@ -9,7 +9,7 @@ describe('Logger', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    setLogLevel(LogLevel.Debug);
+    setLogLevel(LogLevel.Info);
   });
 
   afterAll(() => {
@@ -19,13 +19,13 @@ describe('Logger', () => {
   describe('constructor', () => {
     it('defaults to developer visibility', () => {
       const logFn = jest.spyOn(logger as any, 'log');
-      logger.debug('debug');
-      expect(logFn).toHaveBeenCalledWith(LogLevel.Debug, LogVisibility.Developer, 'debug');
+      logger.info('info');
+      expect(logFn).toHaveBeenCalledWith(LogLevel.Info, LogVisibility.Developer, 'info');
       logFn.mockRestore();
     });
 
     it('sets the default visibility', () => {
-      new Logger({level: LogLevel.Debug, defaultVisibility: LogVisibility.Zaius}).debug('debug');
+      new Logger({level: LogLevel.Info, defaultVisibility: LogVisibility.Zaius}).info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
 
@@ -38,7 +38,7 @@ describe('Logger', () => {
         entry_point: 'job:foo',
         job_id: '123-456'
       });
-      logger.debug('debug');
+      logger.info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
         context: {
           app_id: 'sample',
@@ -67,11 +67,13 @@ describe('Logger', () => {
     });
 
     it('sets the log level to debug on the log', () => {
+      setLogLevel(LogLevel.Debug);
       logger.debug('level check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({level: 'debug'}));
     });
 
     it('respects visibility', () => {
+      setLogLevel(LogLevel.Debug);
       logger.debug(LogVisibility.Zaius, 'check check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
@@ -234,8 +236,8 @@ describe('Logger', () => {
 
   describe('override default log level', () => {
     it('logs to stdout only logs with level >= overriden log level ', () => {
-      setLogLevel(LogLevel.Warn);
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
+      setLogLevel(LogLevel.Warn);
       logger.debug('debug');
       logger.info('info');
       logger.warn('warn');
@@ -247,8 +249,8 @@ describe('Logger', () => {
     });
 
     it('does nothing if the overriden log level < overriden log level', () => {
-      setLogLevel(LogLevel.Warn);
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
+      setLogLevel(LogLevel.Warn);
       logger.debug('debug');
       logger.info('info');
       expect(process.stdout.write).not.toHaveBeenCalled();

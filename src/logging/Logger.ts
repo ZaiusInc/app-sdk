@@ -105,8 +105,8 @@ let level: LogLevel = LogLevel.Info;
  * Set automatically when an app starts up
  * @param logLevel configuration for runtime
  */
-export function setLogLevel(logLevel: LogLevel) {
-  level = logLevel;
+export function setLogLevel(logLevel?: LogLevel) {
+  level = logLevel ? logLevel : DEFAULT_LOG_LEVEL;
 }
 
 /**
@@ -183,7 +183,7 @@ export interface ILogger {
 }
 
 const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
-const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
+const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'info'] || LogLevel.Info;
 const DEFAULT_VISIBILITY = LogVisibility.Developer;
 
 /**
