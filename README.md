@@ -13,7 +13,7 @@ scaffold your app and install the dependencies, including this SDK.
 
 ## The Basics
 
-OCP Apps are built on the Node platforom supporting the modern conveniences of Node 18 and Typescript. Following the best practices with Typescript will ensure more stable integrations with fewer bugs.
+OCP Apps are built on the Node platform supporting the modern conveniences of Node 18 and Typescript. Following the best practices with Typescript will ensure more stable integrations with fewer bugs.
 
 OCP Apps are required to follow conventions outlined in the developer docs. They are composed of:
 * .env - environment secrets that are published securely with an app

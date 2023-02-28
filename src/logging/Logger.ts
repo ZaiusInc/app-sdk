@@ -74,7 +74,7 @@ const LOG_LEVELS = {
   [LogLevel.NEVER]: 'NEVER',
 };
 
-const LOG_LEVEL_FROM_ENV: {[key: string]: LogLevel} = {
+const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
   debug: LogLevel.Debug,
   info: LogLevel.Info,
   warn: LogLevel.Warn,
@@ -87,9 +87,6 @@ const INSPECT_OPTIONS = {
   color: false
 };
 
-// tslint:disable-next-line:only-arrow-functions
-const noop = function() { /**/};
-
 let context: LogContext;
 
 /**
@@ -99,6 +96,17 @@ let context: LogContext;
  */
 export function setLogContext(logContext: LogContext) {
   context = logContext;
+}
+
+let level: LogLevel;
+
+/**
+ * @hidden
+ * Set the current LogLevel
+ * @param logLevel to apply, null value will set the level to the default
+ */
+export function setLogLevel(logLevel: LogLevel) {
+  level = logLevel || DEFAULT_LOG_LEVEL;
 }
 
 /**
@@ -174,9 +182,9 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
-const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
-const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
+const DEFAULT_LOG_LEVEL = LOG_LEVELS_BY_STRING[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
 const DEFAULT_VISIBILITY = LogVisibility.Developer;
+const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
 
 /**
  * @hidden
@@ -187,59 +195,55 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    const level = options.level || DEFAULT_LOG_LEVEL;
+    level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,
       MAX_LINE_LENGTH
     );
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
-    if (level > LogLevel.Debug) {
-      this.debug = noop;
-    }
-    if (level > LogLevel.Info) {
-      this.info = noop;
-    }
-    if (level > LogLevel.Warn) {
-      this.warn = noop;
-    }
-    if (level > LogLevel.Error) {
-      this.error = noop;
-    }
   }
 
   public debug(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Debug, this.defaultVisibility, ...args);
+    if (level <= LogLevel.Debug) {
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Debug, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public info(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Info, this.defaultVisibility, ...args);
+    if (level <= LogLevel.Info) {
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Info, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public warn(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Warn, this.defaultVisibility, ...args);
+    if (level <= LogLevel.Warn) {
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Warn, this.defaultVisibility, ...args);
+      }
     }
   }
 
   public error(...args: any[]) {
-    if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
-      this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
-    } else {
-      this.log(LogLevel.Error, this.defaultVisibility, ...args);
+    if (level <= LogLevel.Error) {
+      if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
+        this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
+      } else {
+        this.log(LogLevel.Error, this.defaultVisibility, ...args);
+      }
     }
   }
 
-  private log(level: LogLevel, visibility: LogVisibility, ...args: any[]) {
+  private log(logLevel: LogLevel, visibility: LogVisibility, ...args: any[]) {
     const time = new Date().toISOString();
 
     let stacktrace: string | undefined;
@@ -257,9 +261,9 @@ export class Logger implements ILogger {
       }
     }
 
-    (level === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
+    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
-      level: LOG_LEVELS[level],
+      level: LOG_LEVELS[logLevel],
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,

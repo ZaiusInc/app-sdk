@@ -1,5 +1,5 @@
 import 'jest';
-import {Logger, logger, LogLevel, LogVisibility, setLogContext} from '../Logger';
+import {Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
 
 describe('Logger', () => {
   beforeAll(() => {
@@ -9,6 +9,7 @@ describe('Logger', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    setLogLevel(LogLevel.Info);
   });
 
   afterAll(() => {
@@ -18,13 +19,13 @@ describe('Logger', () => {
   describe('constructor', () => {
     it('defaults to developer visibility', () => {
       const logFn = jest.spyOn(logger as any, 'log');
-      logger.debug('debug');
-      expect(logFn).toHaveBeenCalledWith(LogLevel.Debug, LogVisibility.Developer, 'debug');
+      logger.info('info');
+      expect(logFn).toHaveBeenCalledWith(LogLevel.Info, LogVisibility.Developer, 'info');
       logFn.mockRestore();
     });
 
     it('sets the default visibility', () => {
-      new Logger({level: LogLevel.Debug, defaultVisibility: LogVisibility.Zaius}).debug('debug');
+      new Logger({level: LogLevel.Info, defaultVisibility: LogVisibility.Zaius}).info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
 
@@ -37,7 +38,7 @@ describe('Logger', () => {
         entry_point: 'job:foo',
         job_id: '123-456'
       });
-      logger.debug('debug');
+      logger.info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
         context: {
           app_id: 'sample',
@@ -66,11 +67,13 @@ describe('Logger', () => {
     });
 
     it('sets the log level to debug on the log', () => {
+      setLogLevel(LogLevel.Debug);
       logger.debug('level check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({level: 'debug'}));
     });
 
     it('respects visibility', () => {
+      setLogLevel(LogLevel.Debug);
       logger.debug(LogVisibility.Zaius, 'check check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
@@ -228,6 +231,29 @@ describe('Logger', () => {
       expect(process.stdout.write).toHaveBeenCalledWith(
         expect.jsonContaining({message: expected})
       );
+    });
+  });
+
+  describe('override default log level', () => {
+    it('logs to stdout only logs with level >= overriden log level ', () => {
+      jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
+      setLogLevel(LogLevel.Warn);
+      logger.debug('debug');
+      logger.info('info');
+      logger.warn('warn');
+      logger.error('error');
+      expect(process.stdout.write).toHaveBeenCalledTimes(1);
+      expect(process.stdout.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'warn'}));
+      expect(process.stderr.write).toHaveBeenCalledTimes(1);
+      expect(process.stderr.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'error'}));
+    });
+
+    it('does nothing if the overridden log level < overridden log level', () => {
+      jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
+      setLogLevel(LogLevel.Warn);
+      logger.debug('debug');
+      logger.info('info');
+      expect(process.stdout.write).not.toHaveBeenCalled();
     });
   });
 });
