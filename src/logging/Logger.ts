@@ -103,10 +103,10 @@ let level: LogLevel;
 /**
  * @hidden
  * Set the current LogLevel
- * @param logLevel to apply, null value will set the level to the default
+ * @param logLevel to set
  */
 export function setLogLevel(logLevel: LogLevel) {
-  level = logLevel || DEFAULT_LOG_LEVEL;
+  level = logLevel;
 }
 
 /**
@@ -182,7 +182,7 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
-const DEFAULT_LOG_LEVEL = LOG_LEVELS_BY_STRING[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
+export const DEFAULT_LOG_LEVEL = LOG_LEVELS_BY_STRING[process.env.LOG_LEVEL || 'debug'] || LogLevel.Debug;
 const DEFAULT_VISIBILITY = LogVisibility.Developer;
 const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
 
