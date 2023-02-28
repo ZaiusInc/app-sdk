@@ -248,7 +248,7 @@ describe('Logger', () => {
       expect(process.stderr.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'error'}));
     });
 
-    it('does nothing if the overriden log level < overriden log level', () => {
+    it('does nothing if the overridden log level < overridden log level', () => {
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       setLogLevel(LogLevel.Warn);
       logger.debug('debug');

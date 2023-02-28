@@ -74,7 +74,7 @@ const LOG_LEVELS = {
   [LogLevel.NEVER]: 'NEVER',
 };
 
-const LOG_LEVEL_FROM_ENV: {[key: string]: LogLevel} = {
+const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
   debug: LogLevel.Debug,
   info: LogLevel.Info,
   warn: LogLevel.Warn,
@@ -98,15 +98,15 @@ export function setLogContext(logContext: LogContext) {
   context = logContext;
 }
 
-let level: LogLevel = LogLevel.Info;
+let level: LogLevel;
 
 /**
  * @hidden
- * Set automatically when an app starts up
- * @param logLevel configuration for runtime
+ * Set the current LogLevel
+ * @param logLevel to apply, null value will set the level to the default
  */
-export function setLogLevel(logLevel?: LogLevel) {
-  level = logLevel ? logLevel : DEFAULT_LOG_LEVEL;
+export function setLogLevel(logLevel: LogLevel) {
+  level = logLevel || DEFAULT_LOG_LEVEL;
 }
 
 /**
@@ -182,9 +182,9 @@ export interface ILogger {
   error(visibility: LogVisibility, ...args: any[]): void;
 }
 
-const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
-const DEFAULT_LOG_LEVEL = LOG_LEVEL_FROM_ENV[process.env.LOG_LEVEL || 'info'] || LogLevel.Info;
+const DEFAULT_LOG_LEVEL = LOG_LEVELS_BY_STRING[process.env.LOG_LEVEL || 'info'] || LogLevel.Debug;
 const DEFAULT_VISIBILITY = LogVisibility.Developer;
+const MAX_LINE_LENGTH = parseInt(process.env.LOG_MAX_MESSAGE_LENGTH || '4096', 10);
 
 /**
  * @hidden
@@ -243,7 +243,7 @@ export class Logger implements ILogger {
     }
   }
 
-  private log(levelLevel: LogLevel, visibility: LogVisibility, ...args: any[]) {
+  private log(logLevel: LogLevel, visibility: LogVisibility, ...args: any[]) {
     const time = new Date().toISOString();
 
     let stacktrace: string | undefined;
@@ -261,9 +261,9 @@ export class Logger implements ILogger {
       }
     }
 
-    (levelLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
+    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
       time,
-      level: LOG_LEVELS[levelLevel],
+      level: LOG_LEVELS[logLevel],
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
