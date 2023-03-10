@@ -61,12 +61,7 @@ export interface LoggerOptions {
   level: LogLevel;
 }
 
-const visibilityValues = new Set([
-  LogVisibility.Zaius,
-  LogVisibility.Developer
-]);
-
-const LOG_LEVELS = {
+export const LOG_LEVELS = {
   [LogLevel.Debug]: 'debug',
   [LogLevel.Info]: 'info',
   [LogLevel.Warn]: 'warn',
@@ -74,13 +69,18 @@ const LOG_LEVELS = {
   [LogLevel.NEVER]: 'NEVER',
 };
 
-const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
+export const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
   debug: LogLevel.Debug,
   info: LogLevel.Info,
   warn: LogLevel.Warn,
   error: LogLevel.Error,
   NEVER: LogLevel.NEVER
 };
+
+const visibilityValues = new Set([
+  LogVisibility.Zaius,
+  LogVisibility.Developer
+]);
 
 const INSPECT_OPTIONS = {
   depth: 5,
