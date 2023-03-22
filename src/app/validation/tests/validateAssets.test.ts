@@ -44,9 +44,6 @@ function appDir(): any {
         'directory': {
           'overview.md': '## Overview'
         },
-        'docs': {
-          'index.md': '## Index'
-        },
         'icon.svg': '0110',
         'logo.svg': '0101'
       },
@@ -107,13 +104,6 @@ describe('validateAssets', () => {
     delete missingAssets['path/to/app/dir']['assets']['directory']['overview.md'];
     mockFs(missingAssets);
     await expectError('Required file assets/directory/overview.md is missing.');
-  });
-
-  it('fails when assets/docs/index.md does not exist', async () => {
-    const missingAssets = appDir();
-    delete missingAssets['path/to/app/dir']['assets']['docs']['index.md'];
-    mockFs(missingAssets);
-    await expectError('Required file assets/docs/index.md is missing.');
   });
 
   it('fails when forms/settings.yml does not exist', async () => {
