@@ -18,7 +18,6 @@ import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
   'assets/directory/overview.md',
-  'assets/docs/index.md',
   'assets/icon.svg',
   'assets/logo.svg',
   'forms/settings.yml'
