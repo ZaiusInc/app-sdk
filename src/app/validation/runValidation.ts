@@ -14,7 +14,9 @@ Runtime.initialize(path.resolve(process.cwd(), 'dist'), true).then(async (runtim
     }
   } catch (e: any) {
     console.error(chalk.red(`Validation process failed: ${e.message}`));
+    process.exit(1);
   }
 }).catch((e: any) => {
   console.error(chalk.red(`Validation process failed: ${e.message}`));
+  process.exit(1);
 });
