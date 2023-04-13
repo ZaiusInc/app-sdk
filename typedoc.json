@@ -1,11 +1,12 @@
 {
   "out": "./docs/",
   "name": "OCP App SDK",
-  "mode": "file",
-  "module": "commonjs",
-  "target": "ES6",
-  "theme": "./doc-theme",
-  "stripInternal": true,
-  "excludeNotExported": false,
-  "excludePrivate": true
+  "theme": "markdown",
+  "excludePrivate": true,
+  "enableFrontmatter": true,
+  "frontmatterGlobals": {
+    "category": "6437e038292d78002e72fb5d",
+    "hidden": true
+  },
+  "symbolsWithOwnFile": "none"
 }
