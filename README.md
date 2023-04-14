@@ -2,9 +2,9 @@
 The App SDK includes helpers and interfaces for apps running on the Optimizely Connect Platform (OCP).
 
 ## Documentation
-Developer documentation can be found in the [OCP Developer Docs](https://docs.developers.optimizely.com/digital-experience-platform/v1.5.0-optimizely-data-platform/docs/ocp-welcome).
+Developer documentation can be found in the [OCP Developer Docs](https://optimizely-parent.readme.io/optimizely-connect-platform/docs).
 
-See the generated [Technical Documentation](https://app-sdk.docs.developers.zaius.com/latest/) for details on every method and interface.
+See the generated [Technical Documentation](https://optimizely-parent.readme.io/optimizely-connect-platform/docs/app-sdk-api-reference-overview) for details on every method and interface.
 
 ## Getting Started
 
@@ -28,4 +28,4 @@ OCP Apps are required to follow conventions outlined in the developer docs. They
 
 Apps are run in an isolated environment and to avoid data leaking/polution across accounts, each process of an App will only handle a single request at a time. However 10s to 100s of processes could be running simultaneously so you must take care to avoid race conditions when interacting with external storage and APIs.
 
-See the [OCP Developer Docs](https://docs.developers.optimizely.com/digital-experience-platform/v1.5.0-optimizely-data-platform/docs/ocp-welcome) for code examples and other details.
+See the [OCP Developer Docs](https://optimizely-parent.readme.io/optimizely-connect-platform/docs) for code examples and other details.

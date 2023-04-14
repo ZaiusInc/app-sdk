@@ -25,8 +25,8 @@
     "lint": "npx eslint 'src/**/*.ts'",
     "test": "jest -i",
     "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SchemaObject.ts SchemaObject > ./src/app/types/SchemaObject.schema.json",
-    "typedoc-help": "typedoc --help",
-    "generate-docs": "typedoc --plugin typedoc-plugin-markdown ./src/index.ts"
+    "prepare-readme-export": "node scripts/prepare_readme_export.js",
+    "generate-docs": "typedoc --plugin typedoc-plugin-markdown ./src/index.ts && yarn prepare-readme-export"
   },
   "engines": {
     "node": ">=18.0"
@@ -74,6 +74,7 @@
     "mock-fs": "^5.1.4",
     "nock": "^13.2.9",
     "prettier": "^2.8.7",
+    "slugify": "^1.6.6",
     "ts-jest": "^28.0.8",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",

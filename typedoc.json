@@ -5,8 +5,7 @@
   "excludePrivate": true,
   "enableFrontmatter": true,
   "frontmatterGlobals": {
-    "category": "6437e038292d78002e72fb5d",
-    "hidden": true
-  },
-  "symbolsWithOwnFile": "none"
+    "category": "6439220d942a8500247de824",
+    "hidden": false
+  }
 }
