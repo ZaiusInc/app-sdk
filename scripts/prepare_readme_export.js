@@ -3,7 +3,7 @@ fs = require('fs');
 
 function getFrontMatterProperty(file, property) {
     let content = fs.readFileSync(file, 'utf8')
-    const re = new RegExp(`${property}: "?([^"$]+)"?.*`, "g");
+    const re = new RegExp(`${property}: "?([^"$\n]+)("|$)`, "gm");
 
     return re.exec(content)[1];
 }
@@ -70,7 +70,6 @@ function mergeReadmeAndModules() {
     let toc = fs.readFileSync('./docs/modules.md', 'utf8')
     fs.rmSync('./docs/modules.md');
 
-    // remove from multi-line string up to the line that contains the string "##"
     toc = toc.replace(/.*## Index/s, '');
 
     let readme = fs.readFileSync('./docs/README.md', 'utf8') + "\n## Index" + toc;
