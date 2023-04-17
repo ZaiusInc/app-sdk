@@ -77,7 +77,6 @@ function mergeReadmeAndModules() {
 }
 
 mergeReadmeAndModules();
-addFrontMatterProperty('./docs/README.md', `order: 10`);
 removeFrontMatterProperty('./docs/README.md', 'title');
 addFrontMatterProperty('./docs/README.md', 'title: "Overview"');
 let overviewSlug = slugify(`app-sdk API reference overview`, {lower: true, strict: true});
@@ -96,6 +95,15 @@ addFrontMatterProperty(formFile, 'title: "namespace: Form"');
 
 let formDocSlug = slugify(`app-sdk API reference namespace form`, {lower: true, strict: true});
 addFrontMatterProperty(formFile, `slug: "${formDocSlug}"`);
+
+addFrontMatterProperty('./docs/README.md', `order: 10`);
+addFrontMatterProperty('./docs/classes.md', `order: 20`);
+addFrontMatterProperty('./docs/enums.md', `order: 30`);
+addFrontMatterProperty('./docs/functions.md', `order: 40`);
+addFrontMatterProperty('./docs/interfaces.md', `order: 50`);
+addFrontMatterProperty('./docs/types.md', `order: 60`);
+addFrontMatterProperty('./docs/variables.md', `order: 70`);
+addFrontMatterProperty('./docs/Form/Form.md', `order: 80`);
 
 fs.readdirSync('./docs/Form/functions/', { withFileTypes: true })
     .forEach(f => {
