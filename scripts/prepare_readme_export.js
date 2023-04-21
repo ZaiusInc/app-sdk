@@ -40,7 +40,7 @@ function removeFrontMatterProperty(file, property) {
 
 function createFolderAndMoveDocs(folderName, title) {
     let files = fs.readdirSync('./docs/' + folderName, { withFileTypes: true });
-    let parentDocSlug = slugify(`app-sdk API reference ${title}`, {lower: true});
+    let parentDocSlug = slugify(`app-sdk API reference ${title}`, {lower: true, strict: true});
 
     let header = `---
 title: "${title}"
@@ -68,14 +68,16 @@ hidden: ${hidden}
     );
 
     // add slug parameter to frontmatter in every file in folder
+    let order = 100;
     files.filter(f => f.isFile()).forEach(f => {
         let file = './docs/' + folderName + "/" + f.name;
 
         let childTitle = getFrontMatterProperty(file, 'title')
-        let slug = slugify(`app-sdk API reference ${title} ${childTitle}`, {lower: true})
+        let slug = slugify(`app-sdk API reference ${title} ${childTitle}`, {lower: true, strict: true})
 
         addFrontMatterProperty(file, `slug: "${slug}"`);
         addFrontMatterProperty(file, `parentDocSlug: "${parentDocSlug}"`);
+        addFrontMatterProperty(file, `order: ${order++}`);
     });
 }
 
