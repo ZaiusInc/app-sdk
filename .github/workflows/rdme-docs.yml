@@ -14,13 +14,13 @@ jobs:
   rdme-docs:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repo 📚
+        uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: 'yarn'
-
-      - name: Check out repo 📚
-        uses: actions/checkout@v3
 
       - name: Generates docs 🚀
         uses: readmeio/rdme@v8
