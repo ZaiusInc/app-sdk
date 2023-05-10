@@ -23,14 +23,10 @@ jobs:
           cache: 'yarn'
 
       - name: Install
-        uses: readmeio/rdme@v8
-        with:
-          rdme: yarn
+        run: yarn
 
       - name: Generates docs 🚀
-        uses: readmeio/rdme@v8
-        with:
-          rdme: yarn generate-docs
+        run: yarn generate-docs
 
       - name: Run `docs` command 🚀
         uses: readmeio/rdme@v8
