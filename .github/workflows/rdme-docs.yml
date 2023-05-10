@@ -22,10 +22,15 @@ jobs:
           node-version: 18.x
           cache: 'yarn'
 
+      - name: Install
+        uses: readmeio/rdme@v8
+        with:
+          rdme: yarn
+
       - name: Generates docs 🚀
         uses: readmeio/rdme@v8
         with:
-          rdme: yarn && yarn generate-docs --key=${{ secrets.README_API_KEY }}
+          rdme: yarn generate-docs
 
       - name: Run `docs` command 🚀
         uses: readmeio/rdme@v8
