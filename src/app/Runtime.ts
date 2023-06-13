@@ -97,7 +97,7 @@ export class Runtime {
 
   public getSchemaObjects(): SchemaObjects {
     const schemaObjects: SchemaObjects = {};
-    const files = glob.sync('schema/*.yml', {cwd: this.dirName});
+    const files = glob.sync('schema/*.{yml,yaml}', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
         schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
