@@ -62,7 +62,7 @@ const schemaObjects = deepFreeze({
       }]
     }]
   },
-  'schema/my_app_coupons.yml': {
+  'schema/my_app_coupons.yaml': {
     name: 'my_app_coupons',
     display_name: 'My App Coupons',
     fields: [{
@@ -87,7 +87,7 @@ describe('Runtime', () => {
         'app.yml': JSON.stringify(appManifest),
         'schema': {
           'events.yml': JSON.stringify(schemaObjects['schema/events.yml']),
-          'my_app_coupons.yml': JSON.stringify(schemaObjects['schema/my_app_coupons.yml']),
+          'my_app_coupons.yaml': JSON.stringify(schemaObjects['schema/my_app_coupons.yaml']),
           'something_else.yml.txt': 'something else'
         }
       }
@@ -248,7 +248,7 @@ describe('Runtime', () => {
   });
 
   describe('getSchemaObjects', () => {
-    it('loads all yml files in the schema directory', () => {
+    it('loads all .yml and .yaml files in the schema directory', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const origReadFileSync = fs.readFileSync;
       const readFileSyncFn = jest.spyOn(fs, 'readFileSync').mockImplementation(origReadFileSync);
@@ -257,7 +257,7 @@ describe('Runtime', () => {
       const result = runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
         ['/tmp/foo/schema/events.yml', 'utf8'],
-        ['/tmp/foo/schema/my_app_coupons.yml', 'utf8'],
+        ['/tmp/foo/schema/my_app_coupons.yaml', 'utf8']
       ]);
       expect(result).toEqual(schemaObjects);
 

@@ -29,7 +29,9 @@ class SchemaObjectValidator {
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.schemaObject.name) {
+    if (path.basename(this.file, '.yml') !== this.schemaObject.name
+          && path.basename(this.file, '.yaml') !== this.schemaObject.name
+    ) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 
