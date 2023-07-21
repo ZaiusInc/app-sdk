@@ -4389,10 +4389,10 @@ typed-array-length@^1.0.4:
     for-each "^0.3.3"
     is-typed-array "^1.1.9"
 
-typedoc-plugin-markdown@^4.0.0-next.4:
-  version "4.0.0-next.17"
-  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-4.0.0-next.17.tgz#c6224fddc48fe5e6706366a27461b19c1ef12e3c"
-  integrity sha512-hzIoOt81PTkO50m+QJAo4B4tnsmp5sfv7kQfPOx/ZKRLODoa3buQzo2k6/sHGahUeKIyzHtqoiEFzB6Bl4nHQQ==
+typedoc-plugin-markdown@=4.0.0-next.4:
+  version "4.0.0-next.4"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-4.0.0-next.4.tgz#b10bd76c20feb8bdcea0f803153c819468981bc0"
+  integrity sha512-FrxB8McLbYLcmkfcqNdxOLRQnBw3vdTGprHiZxPmP0tgtXmPZI7Wrcc+gv/b3+jLZ+lD8E8MKwA8zvn4glmFvw==
 
 typedoc@^0.24.0:
   version "0.24.8"
