@@ -10,7 +10,7 @@ export interface SchemaObject {
 
 export interface SchemaField {
   name: string;
-  type: 'string' | 'number' | 'timestamp' | 'boolean';
+  type: 'string' | 'number' | 'timestamp' | 'boolean' | 'vector';
   display_name: string;
   description: string;
   primary?: boolean;
