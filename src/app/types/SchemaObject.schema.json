@@ -22,7 +22,8 @@
                         "boolean",
                         "number",
                         "string",
-                        "timestamp"
+                        "timestamp",
+                        "vector"
                     ],
                     "type": "string"
                 }
