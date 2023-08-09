@@ -1,5 +1,5 @@
 import 'jest';
-import { initializeQueue, queue } from '../queue';
+import { initializeQueue, queue } from '../queues';
 
 describe('queues', () => {
   const mockQueueBackend = {

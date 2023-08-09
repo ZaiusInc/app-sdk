@@ -1,3 +1,3 @@
-export * from './BaseQueue';
+export * from './Queue';
 export * from './LocalQueue';
-export * from './queue';
+export * from './queues';

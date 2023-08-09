@@ -1,7 +1,7 @@
 import { logger } from '../logging';
-import { BaseQueue } from './BaseQueue';
+import { Queue } from './Queue';
 
-export class LocalQueue implements BaseQueue {
+export class LocalQueue implements Queue {
   public async send(queueName: string, message: string, group?: string) {
     logger.debug(`Sending message to queue: ${queueName}, group: ${group}, message: ${message}`);
   }
