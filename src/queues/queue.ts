@@ -1,4 +1,6 @@
+export type JSONEncodable = string | number | boolean | null | JSONEncodable[] | { [key: string]: JSONEncodable };
+
 export interface Queue {
-  send(queueName: string, message: string, group?: string): Promise<void>;
-  sendBatch(queueName: string, messages: string[], group?: string): Promise<void>;
+  send<T extends JSONEncodable>(queueName: string, message: T, group?: string): Promise<void>;
+  sendBatch<T extends JSONEncodable>(queueName: string, messages: T[], group?: string): Promise<void>;
 }
