@@ -100,6 +100,10 @@ describe('validateJobs', () => {
       getJobClass.mockRestore();
     }
 
+    it('cron expression - at every minute', async () => {
+      await validateCronExpression('0 * * ? * *');
+    });
+
     it('cron expression - at midnight every night', async () => {
       await validateCronExpression('0 0 0 ? * *');
     });
