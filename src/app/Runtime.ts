@@ -69,13 +69,13 @@ export class Runtime {
   }
 
   public async getConsumerClass<T extends Consumer>(name: string): Promise<new () => T> {
-    const consumers = this.manifest.consumers;
+    const consumers = this.manifest.queues;
     if (!consumers || !consumers[name]) {
       throw new Error(`No consumer named ${name} defined in manifest`);
     }
 
     const cn = consumers[name];
-    return (await this.import(join(this.dirName, 'consumers', cn.entry_point)))[cn.entry_point];
+    return (await this.import(join(this.dirName, 'consumers', cn.consumer)))[cn.consumer];
   }
 
   public async getLifecycleClass<T extends Lifecycle>(): Promise<new () => T> {

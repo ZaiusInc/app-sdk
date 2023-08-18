@@ -29,9 +29,9 @@ const appManifest = deepFreeze({
       description: 'gets foo'
     }
   },
-  consumers: {
+  queues: {
     loo: {
-      entry_point: 'Loo',
+      consumer: 'Loo',
       description: 'gets loo'
     }
   },

@@ -828,9 +828,9 @@
   integrity sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==
 
 "@types/node@^16.9.2":
-  version "16.18.40"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.40.tgz#968d64746d20cac747a18ca982c0f1fe518c031c"
-  integrity sha512-+yno3ItTEwGxXiS/75Q/aHaa5srkpnJaH+kdkTVJ3DtJEwv92itpKbxU+FjPoh2m/5G9zmUQfrL4A4C13c+iGA==
+  version "16.18.41"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.41.tgz#61b14360fd3f7444b326ac3207c83005371e3f8a"
+  integrity sha512-YZJjn+Aaw0xihnpdImxI22jqGbp0DCgTFKRycygjGx/Y27NnWFJa5FJ7P+MRT3u07dogEeMVh70pWpbIQollTA==
 
 "@types/node@^18.7.13":
   version "18.17.5"
@@ -1622,9 +1622,9 @@ dynamic-dedupe@^0.3.0:
     xtend "^4.0.0"
 
 electron-to-chromium@^1.4.477:
-  version "1.4.492"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.492.tgz#83fed8beb64ec60578069e15dddd17b13a77ca56"
-  integrity sha512-36K9b/6skMVwAIEsC7GiQ8I8N3soCALVSHqWHzNDtGemAcI9Xu8hP02cywWM0A794rTHm0b0zHPeLJHtgFVamQ==
+  version "1.4.495"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.495.tgz#d72d2eddc05d07c538275a00f2619b113848bff6"
+  integrity sha512-mwknuemBZnoOCths4GtpU/SDuVMp3uQHKa2UNJT9/aVD6WVRjGpXOxRGX7lm6ILIenTdGXPSTCTDaWos5tEU8Q==
 
 email-validator@^2.0.4:
   version "2.0.4"
@@ -1694,15 +1694,19 @@ es-abstract@^1.19.0, es-abstract@^1.20.4, es-abstract@^1.21.2, es-abstract@^1.21
     which-typed-array "^1.1.10"
 
 es-iterator-helpers@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/es-iterator-helpers/-/es-iterator-helpers-1.0.12.tgz#272f7270f270f4d63dd8aa718228ffa901fd086e"
-  integrity sha512-T6Ldv67RYULYtZ1k1omngDTVQSTVNX/ZSjDiwlw0PMokhy8kq2LFElleaEjpvlSaXh9ugJ4zrBgbQ7L+Bjdm3Q==
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/es-iterator-helpers/-/es-iterator-helpers-1.0.13.tgz#72101046ffc19baf9996adc70e6177a26e6e8084"
+  integrity sha512-LK3VGwzvaPWobO8xzXXGRUOGw8Dcjyfk62CsY/wfHN75CwsJPbuypOYJxK6g5RyEL8YDjIWcl6jgd8foO6mmrA==
   dependencies:
     asynciterator.prototype "^1.0.0"
+    call-bind "^1.0.2"
+    define-properties "^1.2.0"
     es-abstract "^1.21.3"
     es-set-tostringtag "^2.0.1"
     function-bind "^1.1.1"
+    get-intrinsic "^1.2.1"
     globalthis "^1.0.3"
+    has-property-descriptors "^1.0.0"
     has-proto "^1.0.1"
     has-symbols "^1.0.3"
     internal-slot "^1.0.5"
@@ -3458,9 +3462,9 @@ natural-compare@^1.4.0:
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
 nock@^13.2.9:
-  version "13.3.2"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-13.3.2.tgz#bfa6be92d37f744b1b758ea89b1105cdaf5c8b3f"
-  integrity sha512-CwbljitiWJhF1gL83NbanhoKs1l23TDlRioNraPTZrzZIEooPemrHRj5m0FZCPkB1ecdYCSWWGcHysJgX/ngnQ==
+  version "13.3.3"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-13.3.3.tgz#179759c07d3f88ad3e794ace885629c1adfd3fe7"
+  integrity sha512-z+KUlILy9SK/RjpeXDiDUEAq4T94ADPHE3qaRkf66mpEhzc/ytOMm3Bwdrbq6k1tMWkbdujiKim3G2tfQARuJw==
   dependencies:
     debug "^4.1.0"
     json-stringify-safe "^5.0.1"

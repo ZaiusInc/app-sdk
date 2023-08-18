@@ -15,11 +15,11 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
-export interface AppConsumer {
-  entry_point: string;
+export interface AppQueue {
+  consumer: string;
   description: string;
-  max_batch_size?: number;
-  max_batch_timeout?: number;
+  batch_size?: number;
+  batch_timeout?: number;
   queue_type?: 'standard' | 'fifo';
 }
 
@@ -135,8 +135,8 @@ export interface AppManifest {
   jobs?: {
     [name: string]: AppJob;
   };
-  consumers?: {
-    [name: string]: AppConsumer;
+  queues?: {
+    [name: string]: AppQueue;
   };
   liquid_extensions?: {
     [name: string]: AppLiquidExtension;

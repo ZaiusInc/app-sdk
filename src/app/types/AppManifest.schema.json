@@ -2,35 +2,6 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "AppConsumer": {
-            "additionalProperties": false,
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "entry_point": {
-                    "type": "string"
-                },
-                "max_batch_size": {
-                    "type": "number"
-                },
-                "max_batch_timeout": {
-                    "type": "number"
-                },
-                "queue_type": {
-                    "enum": [
-                        "fifo",
-                        "standard"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "description",
-                "entry_point"
-            ],
-            "type": "object"
-        },
         "AppFunction": {
             "additionalProperties": false,
             "properties": {
@@ -115,6 +86,35 @@
             "required": [
                 "description",
                 "entry_point"
+            ],
+            "type": "object"
+        },
+        "AppQueue": {
+            "additionalProperties": false,
+            "properties": {
+                "batch_size": {
+                    "type": "number"
+                },
+                "batch_timeout": {
+                    "type": "number"
+                },
+                "consumer": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "queue_type": {
+                    "enum": [
+                        "fifo",
+                        "standard"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "consumer",
+                "description"
             ],
             "type": "object"
         },
@@ -368,12 +368,6 @@
             ],
             "type": "object"
         },
-        "consumers": {
-            "additionalProperties": {
-                "$ref": "#/definitions/AppConsumer"
-            },
-            "type": "object"
-        },
         "environment": {
             "items": {
                 "type": "string"
@@ -479,6 +473,12 @@
                 "type": "string"
             },
             "type": "array"
+        },
+        "queues": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppQueue"
+            },
+            "type": "object"
         },
         "runtime": {
             "$ref": "#/definitions/AppRuntime"
