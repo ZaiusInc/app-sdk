@@ -14,10 +14,10 @@ export const initializeQueue = (newQueue: Queue) => {
  * Exposes the queue API
  */
 export const queue: Queue = {
-  send<T extends JSONEncodable>(queueName: string, message: T, group?: string) {
-    return queueBackend.send(queueName, message, group);
+  send<T extends JSONEncodable>(queueName: string, message: T) {
+    return queueBackend.send(queueName, message);
   },
-  sendBatch<T extends JSONEncodable>(queueName: string, messages: T[], group?: string) {
-    return queueBackend.sendBatch(queueName, messages, group);
+  sendBatch<T extends JSONEncodable>(queueName: string, messages: T[]) {
+    return queueBackend.sendBatch(queueName, messages);
   }
 };
