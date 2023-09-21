@@ -12,7 +12,7 @@ export interface Queue {
    * @param queueName Name of the queue, as defined in app.yml
    * @param message JSON-seralizable message to send
    */
-  send<T extends JSONEncodable>(queueName: string, message: T,): Promise<void>;
+  send<T extends JSONEncodable>(queueName: string, message: T): Promise<void>;
 
   /**
    * Sends a batch of messages to a queue.
