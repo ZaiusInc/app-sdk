@@ -7,11 +7,11 @@ import { JSONEncodable, Queue } from './Queue';
  * Only logs inputs for now.
  */
 export class LocalQueue implements Queue {
-  public async send<T extends JSONEncodable>(queueName: string, message: T, group?: string) {
-    logger.debug(`Sending message to queue: ${queueName}, group: ${group}, message: ${JSON.stringify(message)}`);
+  public async send<T extends JSONEncodable>(queueName: string, message: T) {
+    logger.debug(`Sending message to queue: ${queueName}, message: ${JSON.stringify(message)}`);
   }
 
-  public async sendBatch<T extends JSONEncodable>(queueName: string, messages: T[], group?: string) {
-    logger.debug(`Sending message to queue: ${queueName}, group: ${group}, messages: ${JSON.stringify(messages)}`);
+  public async sendBatch<T extends JSONEncodable>(queueName: string, messages: T[]) {
+    logger.debug(`Sending message to queue: ${queueName}, messages: ${JSON.stringify(messages)}`);
   }
 }

@@ -11,15 +11,13 @@ export interface Queue {
    * Send a single message to a queue.
    * @param queueName Name of the queue, as defined in app.yml
    * @param message JSON-seralizable message to send
-   * @param group Optional group id of the message (for FIFO queues only)
    */
-  send<T extends JSONEncodable>(queueName: string, message: T, group?: string): Promise<void>;
+  send<T extends JSONEncodable>(queueName: string, message: T): Promise<void>;
 
   /**
    * Sends a batch of messages to a queue.
    * @param queueName Name of the queue, as defined in app.yml
    * @param messages List of JSON-seralizable messages to send
-   * @param group Optional group id of all messages (for FIFO queues only)
    */
-  sendBatch<T extends JSONEncodable>(queueName: string, messages: T[], group?: string): Promise<void>;
+  sendBatch<T extends JSONEncodable>(queueName: string, messages: T[]): Promise<void>;
 }
