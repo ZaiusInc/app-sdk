@@ -153,6 +153,17 @@ function fixLinks(folder) {
                     }
                 } while (m);
 
+                // for unclear reason some links are generated broken
+                let fixRe = /\]\((Baseapp-sdk-api-reference-)/g;
+                let fixM;
+                do {
+                    fixM = fixRe.exec(content);
+                    if (fixM) {
+                        console.log(`Replacing '](Baseapp-sdk-api-reference-' with '](app-sdk-api-reference-'`);
+                        content = content.replaceAll('](Baseapp-sdk-api-reference-', '](app-sdk-api-reference-');
+                    }
+                } while (fixM);
+
                 fs.writeFileSync(`${folder}/${f.name}`, content);
             }
         });
