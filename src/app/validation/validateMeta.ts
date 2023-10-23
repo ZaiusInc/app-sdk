@@ -55,14 +55,13 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
     errors.push('Invalid app.yml: meta.availability must contain at least one availability zone');
   } else if (availability) {
     if (availability.includes('all') && availability.length > 1) {
-      errors.push('Invalid app.yml: meta.availability should only contain "all" without other availability zones');
+      errors.push(
+        'Invalid app.yml: meta.availability should not contain any other availability zones ' +
+          'if it contains "all" availability zones'
+      );
     }
 
     if (!availability.includes('all')) {
-      if (!availability.includes('us')) {
-        errors.push('Invalid app.yml: meta.availability must at least include "us" availability zone');
-      }
-
       const shards = await Rivendell.shards();
       const invalid = availability.filter((zone) => !shards.includes(zone));
 
