@@ -145,7 +145,8 @@ describe('validateMeta', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(await validateMeta(runtime)).toEqual(
-      ['Invalid app.yml: meta.availability should only contain "all" without other availability zones']);
+      ['Invalid app.yml: meta.availability should not contain any other availability zones ' +
+        'if it contains "all" availability zones']);
   });
 
   it('detects invalid shards', async () => {
@@ -157,12 +158,12 @@ describe('validateMeta', () => {
       ['Invalid app.yml: meta.availability should only contain valid availability zones (us,bar) found: fuz']);
   });
 
-  it('detects if "us" shard is not included', async () => {
-    const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['foo', 'bar']}};
+  it('allows only none-primary shards', async () => {
+    const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['au', 'eu']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'foo', 'bar']);
+    jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'au', 'eu']);
 
     expect(await validateMeta(runtime)).toEqual(
-      ['Invalid app.yml: meta.availability must at least include "us" availability zone']);
+      []);
   });
 });
