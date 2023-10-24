@@ -158,7 +158,7 @@ describe('validateMeta', () => {
       ['Invalid app.yml: meta.availability should only contain valid availability zones (us,bar) found: fuz']);
   });
 
-  it('allows only none-primary shards', async () => {
+  it('allows only non-primary shards', async () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['au', 'eu']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
     jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'au', 'eu']);
