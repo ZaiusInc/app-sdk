@@ -2,16 +2,43 @@ const {defaults} = require('jest-config');
 
 process.env.ZAIUS_ENV = 'test';
 
+const esModules = [
+  'remark',
+  'remark-',
+  'mdast-util-.*',
+  'micromark',
+  'decode-named-character-reference',
+  'character-entities',
+  'unist-util-stringify-position',
+  'zwitch',
+  'longest-streak',
+  'unist-util-.*',
+  'unified',
+  'bail',
+  'devlop',
+  'is-plain-obj',
+  'trough',
+  'vfile',
+  'extend'
+].join('|');
+
 module.exports = {
+  preset: "ts-jest/presets/js-with-ts",
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.[j|t]sx?$": "ts-jest",
+    "node_modules/remark/.+\\.(j|t)sx?$": "ts-jest"
+  },
+  transformIgnorePatterns: [
+    `node_modules/(?!${esModules})`
+  ],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+      isolatedModules: true,
+    },
   },
   testRegex: "\\.test\\.tsx?$",
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/example*', '/.yalc/'],
-  moduleFileExtensions: [
-    ...defaults.moduleFileExtensions,
-    "ts"
-  ],
   setupFilesAfterEnv: ['./src/test/setup.ts'],
   verbose: true,
   // note: jobApi.ts is presently only interfaces. see: https://github.com/kulshekhar/ts-jest/issues/378

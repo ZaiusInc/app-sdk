@@ -2,18 +2,14 @@ import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation
 import * as fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';
-import * as remark from 'remark';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as links from 'remark-validate-links';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import { remark } from 'remark';
+import remarkValidateLinks from 'remark-validate-links';
 import * as vfile from 'to-vfile';
 import {VFile} from 'vfile';
 import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
-import glob = require('glob');
+import { glob } from 'glob'
 import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
@@ -60,8 +56,7 @@ class AssetValidator {
     try {
       const vfiles: VFile[] = await Promise.all(
         glob.sync(`${this.baseDir}/assets/**/*.md`)
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          .map((file) => remark().use(links, {repository: false}).process(vfile.readSync(file)))
+          .map((file) => remark().use(remarkValidateLinks, {repository: false}).process(vfile.readSync(file)))
       );
 
       vfiles.forEach((file) => {
