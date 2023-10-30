@@ -18,9 +18,8 @@ export interface AppJob {
 export interface AppConsumer {
   entry_point: string;
   description: string;
-  max_batch_size?: number;
-  max_batch_timeout?: number;
-  queue_type?: 'standard' | 'fifo';
+  batch_size?: number;
+  batch_timeout?: number;
 }
 
 export interface AppLiquidExtension {

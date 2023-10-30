@@ -5,23 +5,16 @@
         "AppConsumer": {
             "additionalProperties": false,
             "properties": {
+                "batch_size": {
+                    "type": "number"
+                },
+                "batch_timeout": {
+                    "type": "number"
+                },
                 "description": {
                     "type": "string"
                 },
                 "entry_point": {
-                    "type": "string"
-                },
-                "max_batch_size": {
-                    "type": "number"
-                },
-                "max_batch_timeout": {
-                    "type": "number"
-                },
-                "queue_type": {
-                    "enum": [
-                        "fifo",
-                        "standard"
-                    ],
                     "type": "string"
                 }
             },
