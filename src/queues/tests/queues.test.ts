@@ -13,13 +13,13 @@ describe('queues', () => {
 
   it('uses the configured backed for send', async () => {
     initializeQueue(mockQueueBackend);
-    await queue.send('name', 'message');
-    expect(mockQueueBackend.send).toHaveBeenCalledWith('name', 'message');
+    await queue.send('name', 'message', 'deduplicationId');
+    expect(mockQueueBackend.send).toHaveBeenCalledWith('name', 'message', 'deduplicationId');
   });
 
   it('uses the configured backed for sendBatch', async () => {
     initializeQueue(mockQueueBackend);
-    await queue.sendBatch('name', ['message']);
-    expect(mockQueueBackend.sendBatch).toHaveBeenCalledWith('name', ['message']);
+    await queue.sendBatch('name', ['message'], 'deduplicationId');
+    expect(mockQueueBackend.sendBatch).toHaveBeenCalledWith('name', ['message'], 'deduplicationId');
   });
 });
