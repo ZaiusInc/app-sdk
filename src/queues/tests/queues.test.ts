@@ -15,12 +15,12 @@ describe('queues', () => {
   it('uses the configured backed for send', async () => {
     initializeQueue(mockQueueBackend);
     await queue.send('name', new QueueMessage('message'));
-    expect(mockQueueBackend.send).toHaveBeenCalledWith('name', 'message', 'deduplicationId');
+    expect(mockQueueBackend.send).toHaveBeenCalledWith('name', 'message');
   });
 
   it('uses the configured backed for sendBatch', async () => {
     initializeQueue(mockQueueBackend);
     await queue.sendBatch('name', [new QueueMessage('message')]);
-    expect(mockQueueBackend.sendBatch).toHaveBeenCalledWith('name', ['message'], 'deduplicationId');
+    expect(mockQueueBackend.sendBatch).toHaveBeenCalledWith('name', [new QueueMessage('message')]);
   });
 });
