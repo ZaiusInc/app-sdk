@@ -7,6 +7,7 @@ export type JSONEncodable = string | number | boolean | null | JSONEncodable[] |
  * Queue message
  * @param message JSON-seralizable message to send
  * @param deduplicationId deduplication id is applicable for fifo queues and ignored for standard queues.
+ * Messages sent with identical message content are considered as duplicates if deduplication id is omitted.
  * If a message with a particular deduplicationId is sent successfully,
  * any messages sent with the same deduplicationId are accepted successfully but aren't delivered
  * during the 5-minute interval.
