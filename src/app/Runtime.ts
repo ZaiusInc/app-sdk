@@ -15,6 +15,7 @@ import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 import {Consumer} from './Consumer';
+import { JSONEncodable } from '../queues';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -68,7 +69,7 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'functions', fn.entry_point)))[fn.entry_point];
   }
 
-  public async getConsumerClass<T extends Consumer>(name: string): Promise<new () => T> {
+  public async getConsumerClass<T extends Consumer<JSONEncodable>>(name: string): Promise<new () => T> {
     const consumers = this.manifest.consumers;
     if (!consumers || !consumers[name]) {
       throw new Error(`No consumer named ${name} defined in manifest`);

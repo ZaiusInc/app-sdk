@@ -1,28 +1,16 @@
 /* eslint max-classes-per-file: "off" */
 import { ConsumerResult } from './types/ConsumerResult';
+import { JSONEncodable } from '../queues';
 
-export class Batch {
-  public constructor(private messages: Message[]) {
-  }
-
-  public getMessages(): Message[] {
-    return this.messages;
-  }
+export interface Batch<T extends JSONEncodable> {
+  messages: Array<Message<T>>;
 }
 
-export class Message {
-  private payload: object;
-
-  public constructor(payload: object) {
-    this.payload = payload;
-  }
-
-  public getPayload(): object {
-    return this.payload;
-  }
+export interface Message<T extends JSONEncodable> {
+  payload: T;
 }
 
-export abstract class Consumer {
+export abstract class Consumer<T extends JSONEncodable> {
   /**
    * Processes a batch of messages. Consumers should process a batch of messages and return a result containing
    * the success or failure of batch.
@@ -31,5 +19,5 @@ export abstract class Consumer {
    * @param batch The batch of messages to process.
    * @returns The result of the batch processing.
    */
-  public abstract perform(batch: Batch): Promise<ConsumerResult>;
+  public abstract perform(batch: Batch<T>): Promise<ConsumerResult>;
 }
