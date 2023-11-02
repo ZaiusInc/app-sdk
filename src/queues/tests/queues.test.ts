@@ -1,5 +1,6 @@
 import 'jest';
 import { initializeQueue, queue } from '../queues';
+import { QueueMessage } from '../Queue';
 
 describe('queues', () => {
   const mockQueueBackend = {
@@ -13,13 +14,13 @@ describe('queues', () => {
 
   it('uses the configured backed for send', async () => {
     initializeQueue(mockQueueBackend);
-    await queue.send('name', 'message', 'deduplicationId');
+    await queue.send('name', new QueueMessage('message'));
     expect(mockQueueBackend.send).toHaveBeenCalledWith('name', 'message', 'deduplicationId');
   });
 
   it('uses the configured backed for sendBatch', async () => {
     initializeQueue(mockQueueBackend);
-    await queue.sendBatch('name', ['message'], 'deduplicationId');
+    await queue.sendBatch('name', [new QueueMessage('message')]);
     expect(mockQueueBackend.sendBatch).toHaveBeenCalledWith('name', ['message'], 'deduplicationId');
   });
 });

@@ -1,5 +1,5 @@
 import { logger } from '../logging';
-import { JSONEncodable, Queue } from './Queue';
+import { JSONEncodable, Queue, QueueMessage } from './Queue';
 
 /**
  * @hidden
@@ -7,17 +7,15 @@ import { JSONEncodable, Queue } from './Queue';
  * Only logs inputs for now.
  */
 export class LocalQueue implements Queue {
-  public async send<T extends JSONEncodable>(queueName: string, message: T, deduplicationId?: string) {
+  public async send<T extends JSONEncodable>(queueName: string, queueMessage: QueueMessage<T>) {
     logger.debug(
       `Sending message to queue: ${queueName}, 
-      message: ${JSON.stringify(message)}, 
-      deduplicationId: ${deduplicationId}`);
+      message: ${JSON.stringify(queueMessage)}`);
   }
 
-  public async sendBatch<T extends JSONEncodable>(queueName: string, messages: T[], deduplicationId?: string) {
+  public async sendBatch<T extends JSONEncodable>(queueName: string, queueMessages: Array<QueueMessage<T>>) {
     logger.debug(
       `Sending message to queue: ${queueName}, 
-      essages: ${JSON.stringify(messages)}, 
-      deduplicationId: ${deduplicationId}`);
+      essages: ${JSON.stringify(queueMessages)}`);
   }
 }
