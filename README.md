@@ -24,3 +24,17 @@ OCP apps are required to follow conventions outlined in the developer docs. They
 * _src/schema_ – Custom fields and relations users are required to install with an app.
 
 Apps are run in an isolated environment and to avoid data leaking/pollution across accounts, each process of an app only handles a single request at a time. However, there can be hundreds of processes running simultaneously, so avoid race conditions when interacting with external storage and APIs.
+
+## Version history
+
+0.x.x - node12 runtime (legacy)
+
+1.0.x - modernization of dependencies and supporting node18
+
+1.1.x - node18 as the default runtime
+
+1.2.x - WARN as the default log level in production and support for overriding default log level
+
+1.3.x - OCP queues (discontinued)
+
+1.4.x - OCP queues related code removed

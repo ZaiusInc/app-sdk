@@ -15,13 +15,6 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
-export interface AppConsumer {
-  entry_point: string;
-  description: string;
-  batch_size?: number;
-  batch_timeout?: number;
-}
-
 export interface AppLiquidExtension {
   entry_point: string;
   description: string;
@@ -133,9 +126,6 @@ export interface AppManifest {
   };
   jobs?: {
     [name: string]: AppJob;
-  };
-  consumers?: {
-    [name: string]: AppConsumer;
   };
   liquid_extensions?: {
     [name: string]: AppLiquidExtension;

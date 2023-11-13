@@ -2,28 +2,6 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "AppConsumer": {
-            "additionalProperties": false,
-            "properties": {
-                "batch_size": {
-                    "type": "number"
-                },
-                "batch_timeout": {
-                    "type": "number"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "entry_point": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "description",
-                "entry_point"
-            ],
-            "type": "object"
-        },
         "AppFunction": {
             "additionalProperties": false,
             "properties": {
@@ -359,12 +337,6 @@
                 "targeting",
                 "type"
             ],
-            "type": "object"
-        },
-        "consumers": {
-            "additionalProperties": {
-                "$ref": "#/definitions/AppConsumer"
-            },
             "type": "object"
         },
         "environment": {
