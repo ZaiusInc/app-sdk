@@ -1,6 +1,8 @@
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
+import { AppFunction } from '../types';
+import * as jp from 'jsonpath';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -28,8 +30,30 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       } else if (typeof fnClass.prototype.perform !== 'function') {
         errors.push(`Function entry point is missing the perform method: ${fnDefinition.entry_point}`);
       }
+      const installationResolutionErrors = await validateInstallationResolution(fnDefinition);
+      if (installationResolutionErrors.length) {
+        errors.push(...installationResolutionErrors);
+      }
     }
   }
 
   return errors;
+}
+
+async function validateInstallationResolution(definition: AppFunction): Promise<string[]> {
+  if (definition.global && definition.installation_resolution) {
+    return ['Global functions cannot define a installation_resolution'];
+  }
+
+  if (definition.installation_resolution) {
+    const {type, key} = definition.installation_resolution;
+    if (type === 'JSON_BODY_FIELD') {
+      try {
+        jp.parse(key);
+      } catch (e: any) {
+        return [`Invalid JSON path expression: ${e.message}`];
+      }
+    }
+  }
+  return [];
 }
