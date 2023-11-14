@@ -154,4 +154,34 @@ describe('validateFunctions', () => {
 
     getFunctionClass.mockRestore();
   });
+
+  it('detects global function defining a installation resolution', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    runtime.manifest.functions!.global_foo.installation_resolution = {type: 'HEADER', key: 'foo'};
+    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime))
+      .toEqual(['Global functions cannot define a installation_resolution']);
+    getFunctionClass.mockRestore();
+  });
+
+  it('detects a invalid JSONPath expression', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    runtime.manifest.functions!.foo.installation_resolution = {
+      type: 'JSON_BODY_FIELD', key: '/test/foo'
+    };
+    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime))
+      .toEqual([
+        'Invalid JSON path expression: Lexical error on line 1. Unrecognized text.\n' +
+        '/test/foo\n' +
+        '^'
+      ]);
+    getFunctionClass.mockRestore();
+  });
 });
