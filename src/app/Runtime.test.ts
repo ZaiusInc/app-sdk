@@ -29,12 +29,6 @@ const appManifest = deepFreeze({
       description: 'gets foo'
     }
   },
-  consumers: {
-    loo: {
-      entry_point: 'Loo',
-      description: 'gets loo'
-    }
-  },
   jobs: {
     bar: {
       entry_point: 'Bar',
@@ -173,30 +167,6 @@ describe('Runtime', () => {
         await runtime.getFunctionClass('bar');
       } catch (e: any) {
         expect(e.message).toMatch(/^No function named bar/);
-      }
-    });
-  });
-
-  describe('getConsumerClass', () => {
-    it('loads the specified module', async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/loo'}));
-      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Loo: 'Loo'});
-
-      const loo = await runtime.getConsumerClass('loo');
-
-      expect(importFn).toHaveBeenCalledWith('/tmp/loo/consumers/Loo');
-      expect(loo).toEqual('Loo');
-
-      importFn.mockRestore();
-    });
-
-    it("throws an error the consumer isn't in the manifest", async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/loo'}));
-
-      try {
-        await runtime.getConsumerClass('bar');
-      } catch (e: any) {
-        expect(e.message).toMatch('No consumer named bar defined in manifest');
       }
     });
   });

@@ -6,6 +6,10 @@ export interface AppFunction {
   entry_point: string;
   description: string;
   global?: boolean;
+  installation_resolution?: {
+    type: 'GUID' | 'HEADER' | 'QUERY_PARAM' | 'JSON_BODY_FIELD';
+    key: string;
+  };
 }
 
 export interface AppJob {
@@ -13,13 +17,6 @@ export interface AppJob {
   description: string;
   cron?: string;
   parameters?: ValueHash;
-}
-
-export interface AppConsumer {
-  entry_point: string;
-  description: string;
-  batch_size?: number;
-  batch_timeout?: number;
 }
 
 export interface AppLiquidExtension {
@@ -133,9 +130,6 @@ export interface AppManifest {
   };
   jobs?: {
     [name: string]: AppJob;
-  };
-  consumers?: {
-    [name: string]: AppConsumer;
   };
   liquid_extensions?: {
     [name: string]: AppLiquidExtension;
