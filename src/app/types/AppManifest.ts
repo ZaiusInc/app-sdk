@@ -6,6 +6,10 @@ export interface AppFunction {
   entry_point: string;
   description: string;
   global?: boolean;
+  installation_resolution?: {
+    type: 'GUID' | 'HEADER' | 'QUERY_PARAM' | 'JSON_BODY_FIELD';
+    key: string;
+  };
 }
 
 export interface AppJob {

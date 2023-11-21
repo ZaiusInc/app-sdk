@@ -35,6 +35,28 @@
                 },
                 "global": {
                     "type": "boolean"
+                },
+                "installation_resolution": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "key": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "enum": [
+                                "GUID",
+                                "HEADER",
+                                "JSON_BODY_FIELD",
+                                "QUERY_PARAM"
+                            ],
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "key",
+                        "type"
+                    ],
+                    "type": "object"
                 }
             },
             "required": [
