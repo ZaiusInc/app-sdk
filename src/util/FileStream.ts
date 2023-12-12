@@ -76,7 +76,11 @@ export abstract class FileStream<T, O> {
   private async createPipe() {
     let pipeline = this.readStream = await this.streamBuilder();
     const rowProcessor = this.rowProcessor;
-    pipeline = pipeline.pipe(this.parser(this.options)).pipe(new Stream.Transform({
+    const transform = this.parser(this.options);
+    transform.on('error', (error) => {
+      this.onError(error);
+    });
+    pipeline = pipeline.pipe(transform).pipe(new Stream.Transform({
       writableObjectMode: true,
       transform: (row, _, callback) => {
         // if we're fastforwarding in order to resume
@@ -111,8 +115,9 @@ export abstract class FileStream<T, O> {
       if (error) {
         this.onError(error);
       } else {
-        await this.rowProcessor.complete();
-        this.onPause(null);
+        await this.rowProcessor.complete()
+          .then(() => this.onPause(null))
+          .catch((e) => this.onError(e));
       }
     });
 
