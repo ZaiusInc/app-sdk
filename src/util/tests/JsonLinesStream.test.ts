@@ -1,3 +1,4 @@
+/* eslint max-classes-per-file: "off" */
 import 'jest';
 import {JsonLinesStream} from '../JsonLinesStream';
 import * as nock from 'nock';
@@ -33,6 +34,12 @@ class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
   }
 }
 
+class FailingJsonLinesRowProcessor extends TestJsonLinesRowProcessor {
+  public override async complete(): Promise<void> {
+    throw new Error('complete failed');
+  }
+}
+
 describe('JsonLinesStream', () => {
   const processAndVerify = async (stream: JsonLinesStream<Row>, processor: TestJsonLinesRowProcessor) => {
     await stream.processSome();
@@ -43,6 +50,15 @@ describe('JsonLinesStream', () => {
       col2: 'val2',
       col3: 'val3'
     });
+  };
+
+  const processAndVerifyError = async (
+    stream: JsonLinesStream<Row>,
+    processor: TestJsonLinesRowProcessor,
+    error: string
+  ) => {
+    await expect(() => stream.processSome()).rejects.toThrowError(error);
+    expect(processor.isCompleted).toBe(false);
   };
 
   it('builds instances processes from a stream - tabular format', async () => {
@@ -162,5 +178,47 @@ describe('JsonLinesStream', () => {
       col2: 'val5',
       col3: 'val6'
     });
+  });
+
+  it('should throw error for broken stream', async () => {
+    nock('https://zaius.app.sdk')
+      .get('/csv')
+      .replyWithError('streaming error');
+
+    const processor = new TestJsonLinesRowProcessor();
+    await processAndVerifyError(
+      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor, {tabularFormat: true}),
+      processor,
+      'streaming error'
+    );
+  });
+
+  it('should throw error for invalid format', async () => {
+    const readable = new Stream.Readable();
+    readable.push('["col1","col2","col3"]\n');
+    readable.push('["val1","val2","val3"]\n');
+    readable.push('["val4","val5","val6"');
+    readable.push(null);
+
+
+    const processor = new TestJsonLinesRowProcessor();
+    await processAndVerifyError(
+      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
+      processor,
+      'Unexpected end of JSON input'
+    );
+  });
+
+  it('should throw error when complete method fails', async () => {
+    const readable = new Stream.Readable();
+    readable.push('["col1","col2","col3"]\n');
+    readable.push(null);
+
+    const processor = new FailingJsonLinesRowProcessor();
+    await processAndVerifyError(
+      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
+      processor,
+      'complete failed'
+    );
   });
 });
