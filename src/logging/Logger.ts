@@ -281,7 +281,7 @@ export class Logger implements ILogger {
 
 /**
  * Logger instance to be used by OCP apps.
- * Minimum log level can be configured by using `ocp app set-log-level`, e.g.:
+ * Minimum log level can be configured by using `ocp app set-log-level` command, e.g.:
  *  `ocp app set-log-level my_app@1.0.0 error`
  *  `ocp app set-log-level my_app@1.0.0 info`
  * To get the current log level of an app, use the command `ocp app get-log-level` command, e.g.:
