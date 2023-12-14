@@ -284,7 +284,7 @@ export class Logger implements ILogger {
  * Minimum log level can be configured by using `ocp app set-log-level`, e.g.:
  *  `ocp app set-log-level my_app@1.0.0 error`
  *  `ocp app set-log-level my_app@1.0.0 info`
- * To get the current log level of an app, use the command `ocp app get-log-level`, e.g.:
+ * To get the current log level of an app, use the command `ocp app get-log-level` command, e.g.:
  *  `ocp app get-log-level my_app@1.0.0 --trackerId=1234`
  * Accepted levels include debug, info, warn, error
  */
