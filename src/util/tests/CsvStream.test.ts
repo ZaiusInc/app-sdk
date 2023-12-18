@@ -34,9 +34,21 @@ class TestCsvRowProcessor implements CsvRowProcessor<Row> {
   }
 }
 
-class FailingCsvLinesRowProcessor extends TestCsvRowProcessor {
+class FailingCompleteCsvLinesRowProcessor extends TestCsvRowProcessor {
   public override async complete(): Promise<void> {
     throw new Error('complete failed');
+  }
+}
+
+class FailingProcessJsonLinesRowProcessor extends TestCsvRowProcessor {
+  private failed = false;
+  public override async process(_: Row): Promise<boolean> {
+    if (!this.failed) {
+      this.failed = true;
+      throw new Error('process failed');
+    }
+
+    return super.process(_);
   }
 }
 
@@ -161,45 +173,37 @@ describe('CsvStream', () => {
     });
   });
 
-  it('should throw error for broken stream', async () => {
-    nock('https://zaius.app.sdk')
-      .get('/csv')
-      .replyWithError('streaming error');
-
-    const processor = new TestCsvRowProcessor();
-    await processAndVerifyError(
-      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor, {tabularFormat: true}),
-      processor,
-      'streaming error'
-    );
-  });
-
-  it('should throw error for invalid format', async () => {
-    const readable = new Stream.Readable();
-    readable.push('["col1","col2","col3"]\n');
-    readable.push('["val1","val2","val3"]\n');
-    readable.push('["val4","val5","val6"');
-    readable.push(null);
-
-
-    const processor = new TestCsvRowProcessor();
-    await processAndVerifyError(
-      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
-      processor,
-      'Unexpected end of JSON input'
-    );
-  });
-
   it('should throw error when complete method fails', async () => {
     const readable = new Stream.Readable();
-    readable.push('["col1","col2","col3"]\n');
+    readable.push('col1,col2,col3\n');
     readable.push(null);
 
-    const processor = new FailingCsvLinesRowProcessor();
+    const processor = new FailingCompleteCsvLinesRowProcessor();
     await processAndVerifyError(
-      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
+      CsvStream.fromStream(readable, processor),
       processor,
       'complete failed'
+    );
+  });
+
+  it('should throw error when process method fails and allow further processing', async () => {
+    const readable = new Stream.Readable();
+    readable.push('col1,col2,col3\n');
+    readable.push('fail1,fail2,fail3\n');
+    readable.push('val1,val2,val3\n');
+    readable.push(null);
+
+    const processor = new FailingProcessJsonLinesRowProcessor();
+    const stream = CsvStream.fromStream(readable, processor);
+
+    await processAndVerifyError(
+      stream,
+      processor,
+      'process failed'
+    );
+    await processAndVerify(
+      stream,
+      processor
     );
   });
 });

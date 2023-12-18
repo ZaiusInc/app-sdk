@@ -103,6 +103,7 @@ export abstract class FileStream<T, O> {
             }
           }).catch((error) => {
             logger.error(error, 'on row:', row);
+            this.resume = callback;
             this.onError(error);
           });
         }

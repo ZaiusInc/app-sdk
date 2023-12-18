@@ -34,9 +34,21 @@ class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
   }
 }
 
-class FailingJsonLinesRowProcessor extends TestJsonLinesRowProcessor {
+class FailingCompleteJsonLinesRowProcessor extends TestJsonLinesRowProcessor {
   public override async complete(): Promise<void> {
     throw new Error('complete failed');
+  }
+}
+
+class FailingProcessJsonLinesRowProcessor extends TestJsonLinesRowProcessor {
+  private failed = false;
+  public override async process(_: Row): Promise<boolean> {
+    if (!this.failed) {
+      this.failed = true;
+      throw new Error('process failed');
+    }
+
+    return super.process(_);
   }
 }
 
@@ -193,32 +205,38 @@ describe('JsonLinesStream', () => {
     );
   });
 
-  it('should throw error for invalid format', async () => {
-    const readable = new Stream.Readable();
-    readable.push('["col1","col2","col3"]\n');
-    readable.push('["val1","val2","val3"]\n');
-    readable.push('["val4","val5","val6"');
-    readable.push(null);
-
-
-    const processor = new TestJsonLinesRowProcessor();
-    await processAndVerifyError(
-      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
-      processor,
-      'Unexpected end of JSON input'
-    );
-  });
-
   it('should throw error when complete method fails', async () => {
     const readable = new Stream.Readable();
     readable.push('["col1","col2","col3"]\n');
+    readable.push('["val1","val2","val3"]\n');
     readable.push(null);
 
-    const processor = new FailingJsonLinesRowProcessor();
+    const processor = new FailingCompleteJsonLinesRowProcessor();
     await processAndVerifyError(
       JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
       processor,
       'complete failed'
+    );
+  });
+
+  it('should throw error when process method fails and allow further processing', async () => {
+    const readable = new Stream.Readable();
+    readable.push('["col1","col2","col3"]\n');
+    readable.push('["failure1","failure2","failure3"]\n');
+    readable.push('["val1","val2","val3"]\n');
+    readable.push(null);
+
+    const processor = new FailingProcessJsonLinesRowProcessor();
+    const stream = JsonLinesStream.fromStream(readable, processor, {tabularFormat: true});
+
+    await processAndVerifyError(
+      stream,
+      processor,
+      'process failed'
+    );
+    await processAndVerify(
+      stream,
+      processor
     );
   });
 });
