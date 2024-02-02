@@ -7,13 +7,15 @@ export async function validateLifecycle(runtime: Runtime): Promise<string[]> {
 
   // Make sure the lifecycle exists and is implemented
   let lcClass = null;
+  let errorMessage: string | null = null;
   try {
     lcClass = await runtime.getLifecycleClass();
-  } catch (e) {
+  } catch (e: any) {
+    errorMessage = e;
     logger.error(e);
   }
   if (!lcClass) {
-    errors.push('Lifecycle implementation not found');
+    errors.push(`Error loading Lifecycle implementation. ${errorMessage}`);
   } else if (!(lcClass.prototype instanceof Lifecycle)) {
     errors.push('Lifecycle implementation does not extend App.Lifecycle');
   } else {

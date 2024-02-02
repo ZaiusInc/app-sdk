@@ -10,13 +10,15 @@ export async function validateJobs(runtime: Runtime): Promise<string[]> {
   if (runtime.manifest.jobs) {
     for (const name of Object.keys(runtime.manifest.jobs)) {
       let jobClass = null;
+      let errorMessage: string | null = null;
       try {
         jobClass = await runtime.getJobClass(name);
-      } catch (e) {
+      } catch (e: any) {
+        errorMessage = e;
         logger.error(e);
       }
       if (!jobClass) {
-        errors.push(`Entry point not found for job: ${name}`);
+        errors.push(`Error loading entry point ${name}. ${errorMessage}`);
       } else if (!(jobClass.prototype instanceof Job)) {
         errors.push(
           `Job entry point does not extend App.Job: ${runtime.manifest.jobs[name].entry_point}`

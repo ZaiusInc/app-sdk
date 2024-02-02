@@ -12,6 +12,7 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
     for (const name of Object.keys(runtime.manifest.functions)) {
       const fnDefinition = runtime.manifest.functions[name];
       let fnClass = null;
+      let errorMessage: string | null = null;
       try {
         fnClass = await runtime.getFunctionClass(name);
       } catch (e: any) {
@@ -20,9 +21,10 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
           errors.push(`Failed to load function class ${name}.  Error was: ${msg}`);
           return errors;
         }
+        errorMessage = e.toString();
       }
       if (!fnClass) {
-        errors.push(`Entry point not found for function: ${name}`);
+        errors.push(`Error loading function class ${name}. ${errorMessage}`);
       } else if (!fnDefinition.global && !(fnClass.prototype instanceof Function)) {
         errors.push(`Function entry point does not extend App.Function: ${fnDefinition.entry_point}`);
       } else if (fnDefinition.global && !(fnClass.prototype instanceof GlobalFunction)) {

@@ -97,7 +97,7 @@ describe('validateLifecycle', () => {
     const getLifecycleClass = jest.spyOn(Runtime.prototype, 'getLifecycleClass')
       .mockRejectedValue(new Error('not found'));
 
-    expect(await validateLifecycle(runtime)).toEqual(['Lifecycle implementation not found']);
+    expect(await validateLifecycle(runtime)).toEqual(['Error loading Lifecycle implementation. Error: not found']);
 
     getLifecycleClass.mockRestore();
   });

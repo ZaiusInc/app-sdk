@@ -69,7 +69,7 @@ describe('validateJobs', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockRejectedValue(new Error('not found'));
 
-    expect(await validateJobs(runtime)).toEqual(['Entry point not found for job: bar']);
+    expect(await validateJobs(runtime)).toEqual(['Error loading entry point bar. Error: not found']);
 
     getJobClass.mockRestore();
   });

@@ -8,13 +8,15 @@ export async function validateLiquidExtensions(runtime: Runtime): Promise<string
   if (runtime.manifest.liquid_extensions) {
     for (const name of Object.keys(runtime.manifest.liquid_extensions)) {
       let extClass = null;
+      let errorMessage: string | null = null;
       try {
         extClass = await runtime.getLiquidExtensionClass(name);
-      } catch (e) {
-        // Failed to load
+      } catch (e: any) {
+        errorMessage = e;
+        console.log(e);
       }
       if (!extClass) {
-        errors.push(`Entry point not found for liquid extension: ${name}`);
+        errors.push(`Error loading entry point for liquid extension ${name}. ${errorMessage}`);
       } else if (!(extClass.prototype instanceof LiquidExtension)) {
         errors.push(
           'Liquid Extension entry point does not extend App.LiquidExtension: ' +

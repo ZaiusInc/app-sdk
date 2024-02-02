@@ -15,13 +15,15 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
 
     // Make sure the channel exists and is implemented
     let channelClass = null;
+    let errorMessage: string | null = null;
     try {
       channelClass = await runtime.getChannelClass();
-    } catch (e) {
+    } catch (e: any) {
+      errorMessage = e;
       logger.error(e);
     }
     if (!channelClass) {
-      errors.push('Channel implementation not found');
+      errors.push(`Error loading Channel implementation. ${errorMessage}`);
     } else if (!(channelClass.prototype instanceof Channel)) {
       errors.push('Channel implementation does not extend App.Channel');
     } else {

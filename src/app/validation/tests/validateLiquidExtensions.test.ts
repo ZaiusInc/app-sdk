@@ -74,7 +74,9 @@ describe('validateLiquidExtensions', () => {
     const getLiquidExtensionClass = jest.spyOn(Runtime.prototype, 'getLiquidExtensionClass')
       .mockRejectedValue(new Error('not found'));
 
-    expect(await validateLiquidExtensions(runtime)).toEqual(['Entry point not found for liquid extension: buzz']);
+    expect(await validateLiquidExtensions(runtime)).toEqual(
+      ['Error loading entry point for liquid extension buzz. Error: not found']
+    );
 
     getLiquidExtensionClass.mockRestore();
   });
