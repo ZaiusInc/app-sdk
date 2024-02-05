@@ -97,7 +97,10 @@ describe('validateFunctions', () => {
       .mockRejectedValue(new FunctionClassNotFoundError('not found'));
 
     expect(await validateFunctions(runtime))
-      .toEqual(['Entry point not found for function: foo', 'Entry point not found for function: global_foo']);
+      .toEqual([
+        'Error loading function class foo. Error: not found',
+        'Error loading function class global_foo. Error: not found']
+      );
 
     getFunctionClass.mockRestore();
   });

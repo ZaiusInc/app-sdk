@@ -176,7 +176,7 @@ describe('validateChannel', () => {
     const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
       .mockRejectedValue(new Error('not found'));
 
-    expect(await validateChannel(runtime)).toEqual(['Channel implementation not found']);
+    expect(await validateChannel(runtime)).toEqual(['Error loading Channel implementation. Error: not found']);
 
     getChannelClass.mockRestore();
   });
