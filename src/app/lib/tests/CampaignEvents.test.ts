@@ -1,6 +1,5 @@
 import {z} from '@zaiusinc/node-sdk';
 import 'jest';
-import {setContext} from '../../AppContext';
 import {CampaignEvents} from '../CampaignEvents';
 
 jest.mock('@zaiusinc/node-sdk');
@@ -18,7 +17,9 @@ const CAMPAIGN_TRACKING = Object.freeze({
 describe('CampaignEvents', () => {
   let campaignEvents!: CampaignEvents;
   beforeEach(() => {
-    setContext({manifest: {channel: {type: 'example'}}} as any);
+    global.ocpRuntime = {
+      appContext: {manifest: {channel: {type: 'example'}}} as any
+    } as any;
     campaignEvents = new CampaignEvents('test_id', CAMPAIGN_TRACKING);
     jest.spyOn(z.identifier, 'updateReachability').mockResolvedValue({} as any);
     jest.spyOn(z.identifier, 'updateConsent').mockResolvedValue({} as any);
@@ -39,7 +40,9 @@ describe('CampaignEvents', () => {
     });
 
     it('throws an error if type is not provided', () => {
-      setContext({manifest: {channel: {type: undefined}}} as any);
+      global.ocpRuntime = {
+        appContext: {manifest: {channel: {type: undefined}}} as any
+      } as any;
       expect(() => new CampaignEvents('test_id', CAMPAIGN_TRACKING)).toThrowError('Type is required');
     });
   });

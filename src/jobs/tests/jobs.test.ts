@@ -1,5 +1,6 @@
 import 'jest';
-import {initializeJobApi, jobs} from '../jobs';
+import {jobs} from '../jobs';
+import {LocalJobApi} from '../LocalJobApi';
 
 describe('jobs', () => {
   const mockJobApi = {
@@ -9,24 +10,37 @@ describe('jobs', () => {
   };
   const mockJobId = '8157c520-b0a3-47c7-a8a6-b09d3ca24b78';
 
+  beforeEach(() => {
+    global.ocpRuntime = {
+      jobApi: mockJobApi
+    } as any;
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
   });
 
+  it('uses local job Api if not configured', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    global.ocpRuntime = null;
+    const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
+
+    expect(() => jobs.trigger('foot', {})).toThrow();
+    expect(getEndpointsFn).toHaveBeenCalled();
+  });
+
   it('uses the configured implementation for trigger', async () => {
-    initializeJobApi(mockJobApi);
     await jobs.trigger('foo', {});
     expect(mockJobApi.trigger).toHaveBeenCalled();
   });
 
   it('uses the configured implementation for getJobDetail', async () => {
-    initializeJobApi(mockJobApi);
     await jobs.getDetail(mockJobId);
     expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
   });
 
   it('uses the configured implementation for getStatus', async () => {
-    initializeJobApi(mockJobApi);
     await jobs.getStatus(mockJobId);
     expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
   });

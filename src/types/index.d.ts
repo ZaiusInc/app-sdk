@@ -1,0 +1,24 @@
+import {BaseKVStore, KVStore} from '../store';
+import {AppContext} from '../app';
+import {FunctionApi} from '../functions';
+import {JobApi} from '../jobs';
+import {LogContext} from '../logging';
+import {Notifier} from '../notifications';
+
+export interface OCPRuntime {
+  appContext: AppContext;
+  settingsStore: BaseKVStore;
+  secretsStore: BaseKVStore;
+  kvStore: KVStore;
+  sharedKvStore: KVStore;
+  functionApi: FunctionApi;
+  jobApi: JobApi;
+  logLevel: LogLevel;
+  logContext: LogContext;
+  notifier: Notifier;
+}
+
+declare global {
+  /* eslint-disable no-var */
+  var ocpRuntime: OCPRuntime;
+}

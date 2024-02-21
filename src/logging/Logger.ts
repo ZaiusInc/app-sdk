@@ -58,7 +58,6 @@ export interface LogContext {
 export interface LoggerOptions {
   maxLineLength: number;
   defaultVisibility: LogVisibility;
-  level: LogLevel;
 }
 
 export const LOG_LEVELS = {
@@ -86,28 +85,6 @@ const INSPECT_OPTIONS = {
   depth: 5,
   color: false
 };
-
-let context: LogContext;
-
-/**
- * @hidden
- * Set automatically when an app starts up
- * @param logContext configuration for runtime
- */
-export function setLogContext(logContext: LogContext) {
-  context = logContext;
-}
-
-let level: LogLevel;
-
-/**
- * @hidden
- * Set the current LogLevel
- * @param logLevel to set
- */
-export function setLogLevel(logLevel: LogLevel) {
-  level = logLevel;
-}
 
 /**
  * OCP Logger interface
@@ -195,7 +172,6 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    level = options.level || DEFAULT_LOG_LEVEL;
     this.maxLineLength = Math.min(
       options.maxLineLength || MAX_LINE_LENGTH,
       MAX_LINE_LENGTH
@@ -203,8 +179,12 @@ export class Logger implements ILogger {
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
   }
 
+  private getLogLevel(): LogLevel {
+    return global.ocpRuntime?.logLevel ||  DEFAULT_LOG_LEVEL;
+  }
+
   public debug(...args: any[]) {
-    if (level <= LogLevel.Debug) {
+    if (this.getLogLevel() <= LogLevel.Debug) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Debug, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -214,7 +194,7 @@ export class Logger implements ILogger {
   }
 
   public info(...args: any[]) {
-    if (level <= LogLevel.Info) {
+    if (this.getLogLevel() <= LogLevel.Info) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Info, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -224,7 +204,7 @@ export class Logger implements ILogger {
   }
 
   public warn(...args: any[]) {
-    if (level <= LogLevel.Warn) {
+    if (this.getLogLevel() <= LogLevel.Warn) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Warn, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -234,7 +214,7 @@ export class Logger implements ILogger {
   }
 
   public error(...args: any[]) {
-    if (level <= LogLevel.Error) {
+    if (this.getLogLevel() <= LogLevel.Error) {
       if (typeof args[0] === 'string' && visibilityValues.has(args[0] as LogVisibility)) {
         this.log(LogLevel.Error, args[0] as LogVisibility, ...args.slice(1));
       } else {
@@ -267,7 +247,7 @@ export class Logger implements ILogger {
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
-      context
+      context: global.ocpRuntime?.logContext,
     } as LogMessage) + '\n');
   }
 

@@ -1,7 +1,6 @@
 import 'jest';
-import {BaseKVStore, initializeStores, LocalKVStore, storage} from '..';
+import {BaseKVStore, LocalKVStore, storage} from '..';
 import {LocalStore} from '../LocalStore';
-import {resetLocalKvStore, resetLocalSecretsStore, resetLocalSettingsStore, resetLocalStores} from '../storage';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -13,45 +12,36 @@ describe('storage', () => {
     expect(storage.secrets).toBeInstanceOf(LocalStore);
     expect(storage.settings).toBeInstanceOf(LocalStore);
     expect(storage.kvStore).toBeInstanceOf(LocalKVStore);
+    expect(storage.sharedKvStore).toBeInstanceOf(LocalKVStore);
   });
 
-  describe('resetLocalStores', () => {
-    it('resets local stores', async () => {
-      await storage.secrets.put('foo', {foo: 'foo'});
-      await storage.settings.put('foo', {foo: 'foo'});
-      await storage.kvStore.put('foo', {foo: 'foo'});
-
-      resetLocalStores();
-
-      expect(await storage.secrets.get('foo')).toEqual({});
-      expect(await storage.settings.get('foo')).toEqual({});
-      expect(await storage.kvStore.get('foo')).toEqual({});
-    });
-  });
-
-  describe('initializeStores', () => {
-    it('replaces the local stores with the provided stores', () => {
-      initializeStores({
+  describe('stores configuration', () => {
+    it('uses stores provided in OCP runtime global variable', () => {
+      global.ocpRuntime = {
+        appContext: {} as any,
+        functionApi: {} as any,
+        jobApi: {} as any,
+        logContext: {} as any,
+        logLevel: {} as any,
+        notifier: {} as any,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        secrets: new SampleStore(),
+        secretsStore: new SampleStore(),
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        settings: new SampleStore(),
+        settingsStore: new SampleStore(),
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        kvStore: new SampleStore()
-      });
+        kvStore: new SampleStore(),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        sharedKvStore: new SampleStore()
+      };
 
       expect(storage.secrets).toBeInstanceOf(SampleStore);
       expect(storage.settings).toBeInstanceOf(SampleStore);
       expect(storage.kvStore).toBeInstanceOf(SampleStore);
-    });
-
-    it('throws errors if you try to reset a non-local store', () => {
-      expect(() => resetLocalSecretsStore()).toThrow();
-      expect(() => resetLocalSettingsStore()).toThrow();
-      expect(() => resetLocalKvStore()).toThrow();
+      expect(storage.sharedKvStore).toBeInstanceOf(SampleStore);
     });
   });
 });

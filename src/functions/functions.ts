@@ -1,28 +1,26 @@
 import {FunctionApi} from './FunctionApi';
 import {LocalFunctionApi} from './LocalFunctionApi';
 
-let functionApi = new LocalFunctionApi();
+const localFunctionApi = new LocalFunctionApi();
 
-/**
- * @hidden
- */
-export const initializeFunctionApi = (api: FunctionApi) => {
-  functionApi = api;
-};
+function getFunctionApi(): FunctionApi {
+  return global.ocpRuntime?.functionApi || localFunctionApi;
+}
 
 /**
  * The functions api implementation
  */
 export const functions: FunctionApi = {
+
   getEndpoints(installId?: number): Promise<{[name: string]: string}> {
-    return functionApi.getEndpoints(installId);
+    return getFunctionApi().getEndpoints(installId);
   },
 
   getGlobalEndpoints(): Promise<{[name: string]: string}> {
-    return functionApi.getGlobalEndpoints();
+    return getFunctionApi().getGlobalEndpoints();
   },
 
   getAuthorizationGrantUrl(): string {
-    return functionApi.getAuthorizationGrantUrl();
+    return getFunctionApi().getAuthorizationGrantUrl();
   }
 };

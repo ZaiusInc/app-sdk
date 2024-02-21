@@ -1,5 +1,5 @@
 import 'jest';
-import {Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
+import {Logger, logger, LogLevel, LogVisibility} from '../Logger';
 
 describe('Logger', () => {
   beforeAll(() => {
@@ -9,7 +9,10 @@ describe('Logger', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    setLogLevel(LogLevel.Info);
+    global.ocpRuntime = {
+      logLevel: LogLevel.Info,
+      logContext: null
+    } as any;
   });
 
   afterAll(() => {
@@ -25,19 +28,19 @@ describe('Logger', () => {
     });
 
     it('sets the default visibility', () => {
-      new Logger({level: LogLevel.Info, defaultVisibility: LogVisibility.Zaius}).info('info');
+      new Logger({defaultVisibility: LogVisibility.Zaius}).info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
 
     it('uses the provided log context', () => {
-      setLogContext({
+      global.ocpRuntime.logContext = {
         app_id: 'sample',
         app_version: '1.0.0',
         tracker_id: 'vdl',
         install_id: 1234,
         entry_point: 'job:foo',
         job_id: '123-456'
-      });
+      };
       logger.info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
         context: {
@@ -53,27 +56,34 @@ describe('Logger', () => {
   });
 
   describe('debug', () => {
+    beforeEach(() => {
+      global.ocpRuntime.logLevel = LogLevel.Debug;
+    });
+
     it('logs to stdout', () => {
-      new Logger({level: LogLevel.Debug}).debug('debug');
+      new Logger().debug('debug');
       expect(process.stdout.write).toHaveBeenCalledTimes(1);
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({message: 'debug'}));
     });
 
     it('does nothing if log level > debug', () => {
-      new Logger({level: LogLevel.Warn}).debug('debug');
-      new Logger({level: LogLevel.Info}).debug('debug');
-      new Logger({level: LogLevel.Error}).debug('debug');
+      global.ocpRuntime.logLevel = LogLevel.Warn;
+      new Logger().debug('debug');
+      global.ocpRuntime.logLevel = LogLevel.Info;
+      new Logger().debug('debug');
+      global.ocpRuntime.logLevel = LogLevel.Error;
+      new Logger().debug('debug');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
     it('sets the log level to debug on the log', () => {
-      setLogLevel(LogLevel.Debug);
+      global.ocpRuntime.logLevel = LogLevel.Debug;
       logger.debug('level check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({level: 'debug'}));
     });
 
     it('respects visibility', () => {
-      setLogLevel(LogLevel.Debug);
+      global.ocpRuntime.logLevel = LogLevel.Debug;
       logger.debug(LogVisibility.Zaius, 'check check');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({audience: 'zaius'}));
     });
@@ -81,16 +91,19 @@ describe('Logger', () => {
 
   describe('info', () => {
     it('logs to stdout when the log level is <= info', () => {
-      new Logger({level: LogLevel.Debug}).info('debug');
-      new Logger({level: LogLevel.Info}).info('info');
+      new Logger().info('debug');
+      global.ocpRuntime.logLevel = LogLevel.Info;
+      new Logger().info('info');
       expect(process.stdout.write).toHaveBeenCalledTimes(2);
       expect(process.stdout.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stdout.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
     });
 
     it('does nothing if log level > info', () => {
-      new Logger({level: LogLevel.Warn}).info('info');
-      new Logger({level: LogLevel.Error}).info('info');
+      global.ocpRuntime.logLevel = LogLevel.Warn;
+      new Logger().info('info');
+      global.ocpRuntime.logLevel = LogLevel.Error;
+      new Logger().info('info');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
@@ -107,9 +120,12 @@ describe('Logger', () => {
 
   describe('warn', () => {
     it('logs to stdout when the log level is <= warn', () => {
-      new Logger({level: LogLevel.Debug}).warn('debug');
-      new Logger({level: LogLevel.Info}).warn('info');
-      new Logger({level: LogLevel.Warn}).warn('warn');
+      global.ocpRuntime.logLevel = LogLevel.Debug;
+      new Logger().warn('debug');
+      global.ocpRuntime.logLevel = LogLevel.Info;
+      new Logger().warn('info');
+      global.ocpRuntime.logLevel = LogLevel.Warn;
+      new Logger().warn('warn');
       expect(process.stdout.write).toHaveBeenCalledTimes(3);
       expect(process.stdout.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stdout.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
@@ -117,7 +133,8 @@ describe('Logger', () => {
     });
 
     it('does nothing if log level > warn', () => {
-      new Logger({level: LogLevel.Error}).warn('warn');
+      global.ocpRuntime.logLevel = LogLevel.Error;
+      new Logger().warn('warn');
       expect(process.stdout.write).not.toHaveBeenCalled();
     });
 
@@ -134,11 +151,16 @@ describe('Logger', () => {
 
   describe('error', () => {
     it('logs to stderr', () => {
-      new Logger({level: LogLevel.Debug}).error('debug');
-      new Logger({level: LogLevel.Info}).error('info');
-      new Logger({level: LogLevel.Warn}).error('warn');
-      new Logger({level: LogLevel.Error}).error('error');
-      new Logger({level: LogLevel.NEVER}).error('never'); // suppresses log
+      global.ocpRuntime.logLevel = LogLevel.Debug;
+      new Logger().error('debug');
+      global.ocpRuntime.logLevel = LogLevel.Info;
+      new Logger().error('info');
+      global.ocpRuntime.logLevel = LogLevel.Warn;
+      new Logger().error('warn');
+      global.ocpRuntime.logLevel = LogLevel.Error;
+      new Logger().error('error');
+      global.ocpRuntime.logLevel = LogLevel.NEVER;
+      new Logger().error('never'); // suppresses log
       expect(process.stderr.write).toHaveBeenCalledTimes(4);
       expect(process.stderr.write).toHaveBeenNthCalledWith(1, expect.jsonContaining({message: 'debug'}));
       expect(process.stderr.write).toHaveBeenNthCalledWith(2, expect.jsonContaining({message: 'info'}));
@@ -147,7 +169,8 @@ describe('Logger', () => {
     });
 
     it('logs even if log level is error', () => {
-      new Logger({level: LogLevel.Error}).error('error');
+      global.ocpRuntime.logLevel = LogLevel.Error;
+      new Logger().error('error');
       expect(process.stderr.write).toHaveBeenCalledWith(expect.jsonContaining({message: 'error'}));
     });
 
@@ -195,14 +218,14 @@ describe('Logger', () => {
     });
 
     it('fills in all the expected details', () => {
-      setLogContext({
+      global.ocpRuntime.logContext = {
         app_id: 'sample1',
         app_version: '1.1.0',
         tracker_id: 'abc123',
         install_id: 123,
         entry_point: 'function:foo',
         request_id: '12345-678-90'
-      });
+      };
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       logger.info('This is a test');
       expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonRepresenting({
@@ -237,7 +260,7 @@ describe('Logger', () => {
   describe('override default log level', () => {
     it('logs to stdout only logs with level >= overriden log level ', () => {
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
-      setLogLevel(LogLevel.Warn);
+      global.ocpRuntime.logLevel = LogLevel.Warn;
       logger.debug('debug');
       logger.info('info');
       logger.warn('warn');
@@ -250,7 +273,7 @@ describe('Logger', () => {
 
     it('does nothing if the overridden log level < overridden log level', () => {
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
-      setLogLevel(LogLevel.Warn);
+      global.ocpRuntime.logLevel = LogLevel.Warn;
       logger.debug('debug');
       logger.info('info');
       expect(process.stdout.write).not.toHaveBeenCalled();

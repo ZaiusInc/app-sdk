@@ -4,49 +4,10 @@ import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 import {LocalKVStore} from './LocalKVStore';
 import {LocalStore} from './LocalStore';
 
-let settingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
-let secretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
-let kvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
-let sharedKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
-
-export function resetLocalStores() {
-  resetLocalSettingsStore();
-  resetLocalSecretsStore();
-  resetLocalKvStore();
-  resetLocalSharedKvStore();
-}
-
-export function resetLocalSettingsStore() {
-  if (storage.settings instanceof LocalStore) {
-    storage.settings.reset();
-  } else {
-    throw new Error('Attempting to reset non-local store');
-  }
-}
-
-export function resetLocalSecretsStore() {
-  if (storage.secrets instanceof LocalStore) {
-    storage.secrets.reset();
-  } else {
-    throw new Error('Attempting to reset non-local store');
-  }
-}
-
-export function resetLocalKvStore() {
-  if (storage.kvStore instanceof LocalKVStore) {
-    storage.kvStore.reset();
-  } else {
-    throw new Error('Attempting to reset non-local store');
-  }
-}
-
-export function resetLocalSharedKvStore() {
-  if (storage.sharedKvStore instanceof LocalKVStore) {
-    storage.sharedKvStore.reset();
-  } else {
-    throw new Error('Attempting to reset non-local store');
-  }
-}
+const localSettingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+const localSecretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+const localKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
+const localSharedKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
 
 /**
  * @hidden
@@ -59,16 +20,6 @@ export interface InitialStores {
 }
 
 /**
- * @hidden
- */
-export const initializeStores = (config: InitialStores) => {
-  settingsStore = config.settings;
-  secretsStore = config.secrets;
-  kvStore = config.kvStore;
-  sharedKvStore = config.sharedKvStore;
-};
-
-/**
  * Namespace for accessing storage apis
  */
 export const storage = {
@@ -76,24 +27,24 @@ export const storage = {
    * The settings store
    */
   get settings() {
-    return settingsStore;
+    return global.ocpRuntime?.settingsStore || localSettingsStore;
   },
   /**
    * The secrets store
    */
   get secrets() {
-    return secretsStore;
+    return global.ocpRuntime?.secretsStore || localSecretsStore;
   },
   /**
    * The key-value store
    */
   get kvStore() {
-    return kvStore;
+    return global.ocpRuntime?.kvStore || localKvStore;
   },
   /**
    * The shared key-value store
    */
   get sharedKvStore() {
-    return sharedKvStore;
+    return global.ocpRuntime?.sharedKvStore || localSharedKvStore;
   }
 };
