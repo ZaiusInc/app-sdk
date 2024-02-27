@@ -3,6 +3,7 @@ import {KVStore} from './KVStore';
 import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 import {LocalKVStore} from './LocalKVStore';
 import {LocalStore} from './LocalStore';
+import {getOCPContext} from '../app';
 
 const localSettingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
 const localSecretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
@@ -27,24 +28,24 @@ export const storage = {
    * The settings store
    */
   get settings() {
-    return global.ocpRuntime?.settingsStore || localSettingsStore;
+    return getOCPContext()?.ocpRuntime?.settingsStore || localSettingsStore;
   },
   /**
    * The secrets store
    */
   get secrets() {
-    return global.ocpRuntime?.secretsStore || localSecretsStore;
+    return getOCPContext()?.ocpRuntime?.secretsStore || localSecretsStore;
   },
   /**
    * The key-value store
    */
   get kvStore() {
-    return global.ocpRuntime?.kvStore || localKvStore;
+    return getOCPContext()?.ocpRuntime?.kvStore || localKvStore;
   },
   /**
    * The shared key-value store
    */
   get sharedKvStore() {
-    return global.ocpRuntime?.sharedKvStore || localSharedKvStore;
+    return getOCPContext()?.ocpRuntime?.sharedKvStore || localSharedKvStore;
   }
 };

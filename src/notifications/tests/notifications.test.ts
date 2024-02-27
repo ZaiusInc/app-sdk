@@ -1,6 +1,7 @@
 import 'jest';
 import {notifications, Notifier} from '..';
 import {LocalNotifier} from '../LocalNotifier';
+import {AsyncLocalStorage} from 'async_hooks';
 
 describe('activityLog', () => {
   describe('initialize', () => {
@@ -33,9 +34,12 @@ describe('activityLog', () => {
         error: jest.fn()
       };
 
-      global.ocpRuntime = {
-        notifier: mockNotifier
-      } as any;
+      global.ocpContextStorage = new AsyncLocalStorage();
+      global.ocpContextStorage.enterWith({
+        ocpRuntime: {
+          notifier: mockNotifier
+        }
+      } as any);
 
       await notifications.info('activity', 'title', 'summary', 'detail');
       expect(mockNotifier.info).toHaveBeenCalled();
@@ -58,9 +62,12 @@ describe('activityLog', () => {
         error: jest.fn()
       };
 
-      global.ocpRuntime = {
-        notifier: mockNotifier
-      } as any;
+      global.ocpContextStorage = new AsyncLocalStorage();
+      global.ocpContextStorage.enterWith({
+        ocpRuntime: {
+          notifier: mockNotifier
+        }
+      } as any);
 
       await notifications.info(' ', 'title', 'summary', 'detail');
       expect(mockNotifier.info).not.toHaveBeenCalled();

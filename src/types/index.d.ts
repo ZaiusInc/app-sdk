@@ -4,6 +4,11 @@ import {FunctionApi} from '../functions';
 import {JobApi} from '../jobs';
 import {LogContext} from '../logging';
 import {Notifier} from '../notifications';
+import {AsyncLocalStorage} from 'async_hooks';
+
+export interface OCPContext {
+  ocpRuntime: OCPRuntime;
+}
 
 export interface OCPRuntime {
   appContext: AppContext;
@@ -20,5 +25,5 @@ export interface OCPRuntime {
 
 declare global {
   /* eslint-disable no-var */
-  var ocpRuntime: OCPRuntime;
+  var ocpContextStorage: AsyncLocalStorage<OCPContext>;
 }

@@ -1,11 +1,12 @@
 import {ValueHash} from '..';
 import {JobApi, JobDetail, JobRunStatus} from './JobApi';
 import {LocalJobApi} from './LocalJobApi';
+import {getOCPContext} from '../app';
 
 const localJobsApi: JobApi = new LocalJobApi();
 
 function getJobApi(): JobApi {
-  return global.ocpRuntime?.jobApi || localJobsApi;
+  return getOCPContext()?.ocpRuntime?.jobApi || localJobsApi;
 }
 
 /**

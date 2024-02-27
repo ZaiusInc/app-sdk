@@ -1,10 +1,11 @@
 import {FunctionApi} from './FunctionApi';
 import {LocalFunctionApi} from './LocalFunctionApi';
+import {getOCPContext} from '../app';
 
 const localFunctionApi = new LocalFunctionApi();
 
 function getFunctionApi(): FunctionApi {
-  return global.ocpRuntime?.functionApi || localFunctionApi;
+  return getOCPContext()?.ocpRuntime?.functionApi || localFunctionApi;
 }
 
 /**

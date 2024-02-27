@@ -1,7 +1,7 @@
 import {EventData, z} from '@zaiusinc/node-sdk';
-import {getAppContext} from '../AppContext';
 import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';
+import {getOCPContext} from '../AppContext';
 
 export type CampaignAction = 'sent' | 'delivery' | 'open' | 'click' | 'engage' | 'disengage'
 | 'soft_bounce' | 'hard_bounce' | 'spam_report';
@@ -31,7 +31,7 @@ export class CampaignEvents {
     type?: string
   ) {
     if (!type) {
-      type = getAppContext().manifest.channel?.type;
+      type = getOCPContext()?.ocpRuntime?.appContext.manifest.channel?.type;
       if (!type) {
         throw new Error('Type is required for generating a campaign event');
       }

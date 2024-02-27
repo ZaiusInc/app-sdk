@@ -1,20 +1,30 @@
 import 'jest';
 import {jobs} from '../jobs';
 import {LocalJobApi} from '../LocalJobApi';
+import {AsyncLocalStorage} from 'async_hooks';
+import {OCPContext} from '../../types';
+import {JobApi} from '../JobApi';
 
 describe('jobs', () => {
-  const mockJobApi = {
+  const mockJobApi: JobApi = {
     trigger: jest.fn(),
     getDetail: jest.fn(),
     getStatus: jest.fn()
   };
   const mockJobId = '8157c520-b0a3-47c7-a8a6-b09d3ca24b78';
 
-  beforeEach(() => {
-    global.ocpRuntime = {
-      jobApi: mockJobApi
-    } as any;
-  });
+  function runWithAsyncLocalStore(code: () => void) {
+    const ocpContextStorage = new AsyncLocalStorage<OCPContext>();
+    global.ocpContextStorage = ocpContextStorage;
+
+    const context = {
+      ocpRuntime: {
+        jobApi: mockJobApi
+      }
+    } as OCPContext;
+
+    ocpContextStorage.run(context, code);
+  }
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -22,8 +32,6 @@ describe('jobs', () => {
 
   it('uses local job Api if not configured', async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    global.ocpRuntime = null;
     const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
 
     expect(() => jobs.trigger('foot', {})).toThrow();
@@ -31,17 +39,23 @@ describe('jobs', () => {
   });
 
   it('uses the configured implementation for trigger', async () => {
-    await jobs.trigger('foo', {});
+    runWithAsyncLocalStore(async () => {
+      await jobs.trigger('foo', {});
+    });
     expect(mockJobApi.trigger).toHaveBeenCalled();
   });
 
   it('uses the configured implementation for getJobDetail', async () => {
-    await jobs.getDetail(mockJobId);
+    runWithAsyncLocalStore(async () => {
+      await jobs.getDetail(mockJobId);
+    });
     expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
   });
 
   it('uses the configured implementation for getStatus', async () => {
-    await jobs.getStatus(mockJobId);
+    runWithAsyncLocalStore(async () => {
+      await jobs.getStatus(mockJobId);
+    });
     expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
   });
 });

@@ -1,4 +1,5 @@
 import * as util from 'util';
+import {getOCPContext} from '../app';
 
 /**
  * Supported log levels, in order of least important to most.
@@ -180,7 +181,7 @@ export class Logger implements ILogger {
   }
 
   private getLogLevel(): LogLevel {
-    return global.ocpRuntime?.logLevel ||  DEFAULT_LOG_LEVEL;
+    return getOCPContext()?.ocpRuntime?.logLevel ||  DEFAULT_LOG_LEVEL;
   }
 
   public debug(...args: any[]) {
@@ -247,7 +248,7 @@ export class Logger implements ILogger {
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
-      context: global.ocpRuntime?.logContext,
+      context: getOCPContext()?.ocpRuntime?.logContext,
     } as LogMessage) + '\n');
   }
 
