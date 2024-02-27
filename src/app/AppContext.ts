@@ -1,4 +1,5 @@
 import {AppManifest} from './types';
+import { asyncLocalStorage } from '../util';
 
 export interface AppContext {
   manifest: AppManifest;
@@ -6,22 +7,22 @@ export interface AppContext {
   installId: number;
 }
 
-let currentContext!: AppContext;
 
 export function setContext(context: AppContext) {
-  currentContext = context;
+  asyncLocalStorage.enterWith(context);
 }
 
 /**
  * Get the app context for the current request/job
  */
 export function getAppContext() {
-  return currentContext;
+  return asyncLocalStorage.getStore() as AppContext;
 }
 
 /**
  * Check if the current context is for a global function request
  */
 export function isGlobalContext() {
+  const currentContext = getAppContext();
   return !!currentContext && !(currentContext.installId > 0);
 }
