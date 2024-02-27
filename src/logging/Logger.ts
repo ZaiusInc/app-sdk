@@ -1,5 +1,5 @@
 import * as util from 'util';
-import {getOCPContext} from '../app';
+import {getOCPContext} from '../app/AppContext';
 
 /**
  * Supported log levels, in order of least important to most.
