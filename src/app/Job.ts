@@ -68,17 +68,19 @@ export abstract class Job {
    * @param params a hash if params were supplied to the job run, otherwise an empty hash
    * @param status provided ONLY if the job was interrupted and should continue from the last known state
    * @param resuming if the job was interrupted, resuming will be set to true when it is resumed
+   * @param timeout maximum amount of time allowed for the method to execute before it timeout
    */
-  public abstract prepare(params: ValueHash, status?: JobStatus, resuming?: boolean): Promise<JobStatus>;
+  public abstract prepare(params: ValueHash, status?: JobStatus, resuming?: boolean, timeout?: number): Promise<JobStatus>;
 
   /**
    * Performs a unit of work. Jobs should perform a small unit of work and then return the current state.
    * Perform is automatically called in a loop where the previously returned state will be given to the next iteration.
    * Iteration will continue until complete is set to true in the returned job status.
    * @param status last known job state and status
+   * @param timeout maximum amount of time allowed for the method to execute before it timeout
    * @returns The current JobStatus/state that can be used to perform the next iteration or resume a job if interrupted.
    */
-  public abstract perform(status: JobStatus): Promise<JobStatus>;
+  public abstract perform(status: JobStatus, timeout?: number): Promise<JobStatus>;
 
   /**
    * Wrapper for interruptible tasks, such as waiting for a long api call or a timeout loop waiting for a result.
