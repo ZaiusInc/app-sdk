@@ -14,6 +14,12 @@ export interface JobInvocation {
    * @default {} (an empty hash)
    */
   parameters: ValueHash;
+
+  /**
+   * Optional parameters that may be supplied from jobs.trigger() or the app.yml.
+   * @default {} (an empty hash)
+   */
+  
 }
 
 export interface JobStatus extends ValueHash {
@@ -68,7 +74,7 @@ export abstract class Job {
    * @param params a hash if params were supplied to the job run, otherwise an empty hash
    * @param status provided ONLY if the job was interrupted and should continue from the last known state
    * @param resuming if the job was interrupted, resuming will be set to true when it is resumed
-   * @param timeout maximum amount of time allowed for the method to execute before it timeout
+   * @param timeout maximum amount of time allowed for the method to execute before timing out
    */
   public abstract prepare(params: ValueHash, status?: JobStatus, resuming?: boolean, timeout?: number): Promise<JobStatus>;
 
@@ -77,7 +83,7 @@ export abstract class Job {
    * Perform is automatically called in a loop where the previously returned state will be given to the next iteration.
    * Iteration will continue until complete is set to true in the returned job status.
    * @param status last known job state and status
-   * @param timeout maximum amount of time allowed for the method to execute before it timeout
+   * @param timeout maximum amount of time allowed for the method to execute before timing out
    * @returns The current JobStatus/state that can be used to perform the next iteration or resume a job if interrupted.
    */
   public abstract perform(status: JobStatus, timeout?: number): Promise<JobStatus>;
