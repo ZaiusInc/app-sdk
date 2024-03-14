@@ -45,7 +45,7 @@ export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture'
 | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
 | 'Subscriptions';
 
-export type AppRuntime = 'node12' | 'node18';
+export type AppRuntime = 'node12' | 'node18' | 'node18_rt';
 
 export enum ChannelType {
   Email = 'email',
