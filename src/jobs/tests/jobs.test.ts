@@ -1,5 +1,5 @@
 import 'jest';
-import {jobs} from '../jobs';
+import {initializeJobApi, jobs} from '../jobs';
 import {LocalJobApi} from '../LocalJobApi';
 import {AsyncLocalStorage} from 'async_hooks';
 import {OCPContext} from '../../types';
@@ -30,32 +30,54 @@ describe('jobs', () => {
     jest.resetAllMocks();
   });
 
-  it('uses local job Api if not configured', async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
+  describe('async local store configured', () => {
+    it('uses local job Api if not configured', async () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
 
-    expect(() => jobs.trigger('foot', {})).toThrow();
-    expect(getEndpointsFn).toHaveBeenCalled();
+      expect(() => jobs.trigger('foot', {})).toThrow();
+      expect(getEndpointsFn).toHaveBeenCalled();
+    });
+
+    it('uses the configured implementation for trigger', async () => {
+      runWithAsyncLocalStore(async () => {
+        await jobs.trigger('foo', {});
+      });
+      expect(mockJobApi.trigger).toHaveBeenCalled();
+    });
+
+    it('uses the configured implementation for getJobDetail', async () => {
+      runWithAsyncLocalStore(async () => {
+        await jobs.getDetail(mockJobId);
+      });
+      expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
+    });
+
+    it('uses the configured implementation for getStatus', async () => {
+      runWithAsyncLocalStore(async () => {
+        await jobs.getStatus(mockJobId);
+      });
+      expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
+    });
   });
 
-  it('uses the configured implementation for trigger', async () => {
-    runWithAsyncLocalStore(async () => {
+  describe('module scope config', () => {
+    it('uses the configured implementation for trigger', async () => {
+      initializeJobApi(mockJobApi);
       await jobs.trigger('foo', {});
+      expect(mockJobApi.trigger).toHaveBeenCalled();
     });
-    expect(mockJobApi.trigger).toHaveBeenCalled();
-  });
 
-  it('uses the configured implementation for getJobDetail', async () => {
-    runWithAsyncLocalStore(async () => {
+    it('uses the configured implementation for getJobDetail', async () => {
+      initializeJobApi(mockJobApi);
       await jobs.getDetail(mockJobId);
+      expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
     });
-    expect(mockJobApi.getDetail).toHaveBeenCalledWith(mockJobId);
-  });
 
-  it('uses the configured implementation for getStatus', async () => {
-    runWithAsyncLocalStore(async () => {
+    it('uses the configured implementation for getStatus', async () => {
+      initializeJobApi(mockJobApi);
       await jobs.getStatus(mockJobId);
+      expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
     });
-    expect(mockJobApi.getStatus).toHaveBeenCalledWith(mockJobId);
   });
 });

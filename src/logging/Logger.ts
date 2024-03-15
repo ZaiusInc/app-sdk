@@ -1,5 +1,4 @@
 import * as util from 'util';
-import {getOCPContext} from '../app/AppContext';
 
 /**
  * Supported log levels, in order of least important to most.
@@ -86,6 +85,36 @@ const INSPECT_OPTIONS = {
   depth: 5,
   color: false
 };
+
+let context: LogContext;
+
+/**
+ * @hidden
+ * Set automatically when an app starts up
+ * @param logContext configuration for runtime
+ */
+export function setLogContext(logContext: LogContext) {
+  context = logContext;
+}
+
+function getLogContext(): LogContext {
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.logContext || context;
+}
+
+let level: LogLevel;
+
+/**
+ * @hidden
+ * Set the current LogLevel
+ * @param logLevel to set
+ */
+export function setLogLevel(logLevel: LogLevel) {
+  level = logLevel;
+}
+
+function getLogLevel(): LogLevel {
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.logLevel || level;
+}
 
 /**
  * OCP Logger interface
@@ -181,7 +210,7 @@ export class Logger implements ILogger {
   }
 
   private getLogLevel(): LogLevel {
-    return getOCPContext()?.ocpRuntime?.logLevel ||  DEFAULT_LOG_LEVEL;
+    return getLogLevel() ||  DEFAULT_LOG_LEVEL;
   }
 
   public debug(...args: any[]) {
@@ -248,7 +277,7 @@ export class Logger implements ILogger {
       message: this.truncateMessage(args.join(' ')),
       stacktrace,
       audience: visibility,
-      context: getOCPContext()?.ocpRuntime?.logContext,
+      context: getLogContext(),
     } as LogMessage) + '\n');
   }
 

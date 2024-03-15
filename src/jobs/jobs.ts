@@ -1,13 +1,19 @@
 import {ValueHash} from '..';
 import {JobApi, JobDetail, JobRunStatus} from './JobApi';
 import {LocalJobApi} from './LocalJobApi';
-import {getOCPContext} from '../app';
 
-const localJobsApi: JobApi = new LocalJobApi();
+let jobsApi: JobApi = new LocalJobApi();
 
 function getJobApi(): JobApi {
-  return getOCPContext()?.ocpRuntime?.jobApi || localJobsApi;
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.jobApi || jobsApi;
 }
+
+/**
+ * @hidden
+ */
+export const initializeJobApi = (api: JobApi) => {
+  jobsApi = api;
+};
 
 /**
  * The jobs api implementation

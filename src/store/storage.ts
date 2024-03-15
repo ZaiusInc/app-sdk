@@ -3,12 +3,60 @@ import {KVStore} from './KVStore';
 import {LocalAsyncStoreBackend} from './LocalAsyncStoreBackend';
 import {LocalKVStore} from './LocalKVStore';
 import {LocalStore} from './LocalStore';
-import {getOCPContext} from '../app';
 
-const localSettingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
-const localSecretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
-const localKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
-const localSharedKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
+let settingsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+let secretsStore: BaseKVStore = new LocalStore(new LocalAsyncStoreBackend());
+let kvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
+let sharedKvStore: KVStore = new LocalKVStore(new LocalAsyncStoreBackend());
+
+export function resetLocalStores() {
+  resetLocalSettingsStore();
+  resetLocalSecretsStore();
+  resetLocalKvStore();
+  resetLocalSharedKvStore();
+}
+
+export function resetLocalSettingsStore() {
+  if (storage.settings instanceof LocalStore) {
+    storage.settings.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+export function resetLocalSecretsStore() {
+  if (storage.secrets instanceof LocalStore) {
+    storage.secrets.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+export function resetLocalKvStore() {
+  if (storage.kvStore instanceof LocalKVStore) {
+    storage.kvStore.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+export function resetLocalSharedKvStore() {
+  if (storage.sharedKvStore instanceof LocalKVStore) {
+    storage.sharedKvStore.reset();
+  } else {
+    throw new Error('Attempting to reset non-local store');
+  }
+}
+
+/**
+ * @hidden
+ */
+export const initializeStores = (config: InitialStores) => {
+  settingsStore = config.settings;
+  secretsStore = config.secrets;
+  kvStore = config.kvStore;
+  sharedKvStore = config.sharedKvStore;
+};
 
 /**
  * @hidden
@@ -28,24 +76,24 @@ export const storage = {
    * The settings store
    */
   get settings() {
-    return getOCPContext()?.ocpRuntime?.settingsStore || localSettingsStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.settingsStore || settingsStore;
   },
   /**
    * The secrets store
    */
   get secrets() {
-    return getOCPContext()?.ocpRuntime?.secretsStore || localSecretsStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.secretsStore || secretsStore;
   },
   /**
    * The key-value store
    */
   get kvStore() {
-    return getOCPContext()?.ocpRuntime?.kvStore || localKvStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.kvStore || kvStore;
   },
   /**
    * The shared key-value store
    */
   get sharedKvStore() {
-    return getOCPContext()?.ocpRuntime?.sharedKvStore || localSharedKvStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.sharedKvStore || sharedKvStore;
   }
 };

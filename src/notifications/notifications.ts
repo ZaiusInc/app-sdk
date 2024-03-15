@@ -1,9 +1,15 @@
 import {Notifier} from './Notifier';
 import {LocalNotifier} from './LocalNotifier';
 import {logger} from '../logging';
-import {getOCPContext} from '../app';
 
-const localNotifier: Notifier = new LocalNotifier();
+let notifier: Notifier = new LocalNotifier();
+
+/**
+ * @hidden
+ */
+export const setNotifier = (otherNotifier: Notifier) => {
+  notifier = otherNotifier;
+};
 
 const validate = (activity: string, title: string, summary: string, _details?: string) => {
   const errors = [];
@@ -26,7 +32,7 @@ const validate = (activity: string, title: string, summary: string, _details?: s
 };
 
 function getNotifier(): Notifier {
-  return getOCPContext()?.ocpRuntime?.notifier || localNotifier;
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.notifier || notifier;
 }
 
 /**

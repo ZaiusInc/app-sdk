@@ -1,5 +1,5 @@
 import 'jest';
-import {functions} from '../functions';
+import {functions, initializeFunctionApi} from '../functions';
 import {LocalFunctionApi} from '../LocalFunctionApi';
 import {AsyncLocalStorage} from 'async_hooks';
 import {OCPContext} from '../../types';
@@ -29,31 +29,53 @@ describe('functions', () => {
     jest.resetAllMocks();
   });
 
-  it('uses local functions if not configured', async () => {
-    const getEndpointsFn = jest.spyOn(LocalFunctionApi.prototype, 'getEndpoints');
+  describe('async local store configured', () => {
+    it('uses local functions if not configured', async () => {
+      const getEndpointsFn = jest.spyOn(LocalFunctionApi.prototype, 'getEndpoints');
 
-    expect(() => functions.getEndpoints()).toThrow();
-    expect(getEndpointsFn).toHaveBeenCalled();
+      expect(() => functions.getEndpoints()).toThrow();
+      expect(getEndpointsFn).toHaveBeenCalled();
+    });
+
+    it('uses the configured implementation for getAllEndpoints', async () => {
+      runWithAsyncLocalStore(async () => {
+        await functions.getEndpoints();
+      });
+      expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
+    });
+
+    it('uses the configured implementation for getGlobalEndpoints', async () => {
+      runWithAsyncLocalStore(async () => {
+        await functions.getGlobalEndpoints();
+      });
+      expect(mockFunctionApi.getGlobalEndpoints).toHaveBeenCalled();
+    });
+
+    it('uses the configured implementation for getAuthorizationGrantUrl', () => {
+      runWithAsyncLocalStore(() => {
+        functions.getAuthorizationGrantUrl();
+      });
+      expect(mockFunctionApi.getAuthorizationGrantUrl).toHaveBeenCalled();
+    });
   });
 
-  it('uses the configured implementation for getAllEndpoints', async () => {
-    runWithAsyncLocalStore(async () => {
+  describe('module scope config', () => {
+    it('uses the configured implementation for getAllEndpoints', async () => {
+      initializeFunctionApi(mockFunctionApi);
       await functions.getEndpoints();
+      expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
     });
-    expect(mockFunctionApi.getEndpoints).toHaveBeenCalled();
-  });
 
-  it('uses the configured implementation for getGlobalEndpoints', async () => {
-    runWithAsyncLocalStore(async () => {
+    it('uses the configured implementation for getGlobalEndpoints', async () => {
+      initializeFunctionApi(mockFunctionApi);
       await functions.getGlobalEndpoints();
+      expect(mockFunctionApi.getGlobalEndpoints).toHaveBeenCalled();
     });
-    expect(mockFunctionApi.getGlobalEndpoints).toHaveBeenCalled();
-  });
 
-  it('uses the configured implementation for getAuthorizationGrantUrl', () => {
-    runWithAsyncLocalStore(() => {
+    it('uses the configured implementation for getAuthorizationGrantUrl', () => {
+      initializeFunctionApi(mockFunctionApi);
       functions.getAuthorizationGrantUrl();
+      expect(mockFunctionApi.getAuthorizationGrantUrl).toHaveBeenCalled();
     });
-    expect(mockFunctionApi.getAuthorizationGrantUrl).toHaveBeenCalled();
   });
 });

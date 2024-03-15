@@ -7,7 +7,13 @@ export interface AppContext {
   installId: number;
 }
 
-export function getOCPContext(): OCPContext | undefined {
+let currentContext: AppContext;
+
+export function setContext(context: AppContext) {
+  currentContext = context;
+}
+
+function getOCPContext(): OCPContext | undefined {
   return global.ocpContextStorage?.getStore();
 }
 
@@ -15,17 +21,13 @@ export function getOCPContext(): OCPContext | undefined {
  * Get the app context for the current request/job
  */
 export function getAppContext(): AppContext {
-  const ocpContext = getOCPContext();
-  if (!ocpContext) {
-    throw new Error('OCP context not initialized');
-  }
-  return ocpContext.ocpRuntime.appContext;
+  return getOCPContext()?.ocpRuntime.appContext || currentContext;
 }
 
 /**
  * Check if the current context is for a global function request
  */
 export function isGlobalContext() {
-  const ocpContext = getOCPContext();
-  return ocpContext && !(ocpContext.ocpRuntime.appContext.installId > 0);
+  const appContext = getAppContext();
+  return !!appContext && !(appContext.installId > 0);
 }

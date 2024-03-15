@@ -1,12 +1,18 @@
 import {FunctionApi} from './FunctionApi';
 import {LocalFunctionApi} from './LocalFunctionApi';
-import {getOCPContext} from '../app';
 
-const localFunctionApi = new LocalFunctionApi();
+let functionApi = new LocalFunctionApi();
 
 function getFunctionApi(): FunctionApi {
-  return getOCPContext()?.ocpRuntime?.functionApi || localFunctionApi;
+  return global.ocpContextStorage?.getStore()?.ocpRuntime.functionApi || functionApi;
 }
+
+/**
+ * @hidden
+ */
+export const initializeFunctionApi = (api: FunctionApi) => {
+  functionApi = api;
+};
 
 /**
  * The functions api implementation
