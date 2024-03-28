@@ -5,7 +5,7 @@ The App SDK includes helpers and interfaces for apps running on the Optimizely C
 
 The following OCP command-line interface (CLI) command scaffolds your app and installs the dependencies, including this SDK.
 ```shell
-opti app init
+ocp app init
 ```
 
 ### The basics
@@ -23,4 +23,5 @@ OCP apps are required to follow conventions outlined in the developer docs. They
 * _src/liquid-extension_ – Extensions for dynamic campaign content (powered by Shopify Liquid).
 * _src/schema_ – Custom fields and relations users are required to install with an app.
 
-Apps are run in an isolated environment and to avoid data leaking/pollution across accounts, each process of an app only handles a single request at a time. However, there can be hundreds of processes running simultaneously, so avoid race conditions when interacting with external storage and APIs.
+Apps are run in an isolated environment and to avoid data leaking/pollution across accounts. 
+However, there can be hundreds of requests running simultaneously, so avoid race conditions when interacting with external storage and APIs.

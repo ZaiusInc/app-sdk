@@ -3,6 +3,10 @@ import {LocalFunctionApi} from './LocalFunctionApi';
 
 let functionApi = new LocalFunctionApi();
 
+function getFunctionApi(): FunctionApi {
+  return global.ocpContextStorage?.getStore()?.ocpRuntime.functionApi || functionApi;
+}
+
 /**
  * @hidden
  */
@@ -14,15 +18,16 @@ export const initializeFunctionApi = (api: FunctionApi) => {
  * The functions api implementation
  */
 export const functions: FunctionApi = {
+
   getEndpoints(installId?: number): Promise<{[name: string]: string}> {
-    return functionApi.getEndpoints(installId);
+    return getFunctionApi().getEndpoints(installId);
   },
 
   getGlobalEndpoints(): Promise<{[name: string]: string}> {
-    return functionApi.getGlobalEndpoints();
+    return getFunctionApi().getGlobalEndpoints();
   },
 
   getAuthorizationGrantUrl(): string {
-    return functionApi.getAuthorizationGrantUrl();
+    return getFunctionApi().getAuthorizationGrantUrl();
   }
 };

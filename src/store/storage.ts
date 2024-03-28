@@ -51,22 +51,22 @@ export function resetLocalSharedKvStore() {
 /**
  * @hidden
  */
-export interface InitialStores {
-  settings: BaseKVStore;
-  secrets: BaseKVStore;
-  kvStore: KVStore;
-  sharedKvStore: KVStore;
-}
-
-/**
- * @hidden
- */
 export const initializeStores = (config: InitialStores) => {
   settingsStore = config.settings;
   secretsStore = config.secrets;
   kvStore = config.kvStore;
   sharedKvStore = config.sharedKvStore;
 };
+
+/**
+ * @hidden
+ */
+export interface InitialStores {
+  settings: BaseKVStore;
+  secrets: BaseKVStore;
+  kvStore: KVStore;
+  sharedKvStore: KVStore;
+}
 
 /**
  * Namespace for accessing storage apis
@@ -76,24 +76,24 @@ export const storage = {
    * The settings store
    */
   get settings() {
-    return settingsStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.settingsStore || settingsStore;
   },
   /**
    * The secrets store
    */
   get secrets() {
-    return secretsStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.secretsStore || secretsStore;
   },
   /**
    * The key-value store
    */
   get kvStore() {
-    return kvStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.kvStore || kvStore;
   },
   /**
    * The shared key-value store
    */
   get sharedKvStore() {
-    return sharedKvStore;
+    return global.ocpContextStorage?.getStore()?.ocpRuntime?.sharedKvStore || sharedKvStore;
   }
 };

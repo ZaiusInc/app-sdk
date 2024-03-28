@@ -4,6 +4,13 @@ import {logger} from '../logging';
 
 let notifier: Notifier = new LocalNotifier();
 
+/**
+ * @hidden
+ */
+export const setNotifier = (otherNotifier: Notifier) => {
+  notifier = otherNotifier;
+};
+
 const validate = (activity: string, title: string, summary: string, _details?: string) => {
   const errors = [];
 
@@ -23,12 +30,10 @@ const validate = (activity: string, title: string, summary: string, _details?: s
     return false;
   }
 };
-/**
- * @hidden
- */
-export const setNotifier = (otherNotifier: Notifier) => {
-  notifier = otherNotifier;
-};
+
+function getNotifier(): Notifier {
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.notifier || notifier;
+}
 
 /**
  * Namespace for accessing notifications
@@ -36,25 +41,25 @@ export const setNotifier = (otherNotifier: Notifier) => {
 export const notifications: LocalNotifier = {
   async info(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      await notifier.info(activity, title, summary, details);
+      await getNotifier().info(activity, title, summary, details);
     }
   },
 
   async success(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      await notifier.success(activity, title, summary, details);
+      await getNotifier().success(activity, title, summary, details);
     }
   },
 
   async warn(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      await notifier.warn(activity, title, summary, details);
+      await getNotifier().warn(activity, title, summary, details);
     }
   },
 
   async error(activity: string, title: string, summary: string, details?: string): Promise<void> {
     if (validate(activity, title, summary, details)) {
-      await notifier.error(activity, title, summary, details);
+      await getNotifier().error(activity, title, summary, details);
     }
   }
 };

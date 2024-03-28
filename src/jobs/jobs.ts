@@ -4,6 +4,10 @@ import {LocalJobApi} from './LocalJobApi';
 
 let jobsApi: JobApi = new LocalJobApi();
 
+function getJobApi(): JobApi {
+  return global.ocpContextStorage?.getStore()?.ocpRuntime?.jobApi || jobsApi;
+}
+
 /**
  * @hidden
  */
@@ -16,12 +20,12 @@ export const initializeJobApi = (api: JobApi) => {
  */
 export const jobs: JobApi = {
   trigger(jobName: string, parameters: ValueHash): Promise<JobDetail> {
-    return jobsApi.trigger(jobName, parameters);
+    return getJobApi().trigger(jobName, parameters);
   },
   getDetail(jobId: string): Promise<JobDetail> {
-    return jobsApi.getDetail(jobId);
+    return getJobApi().getDetail(jobId);
   },
   getStatus(jobId: string): Promise<JobRunStatus> {
-    return jobsApi.getStatus(jobId);
+    return getJobApi().getStatus(jobId);
   }
 };
