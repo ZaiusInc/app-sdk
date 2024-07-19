@@ -1,0 +1,10 @@
+name: PR watcher
+
+on:
+  pull_request
+
+jobs:
+  build:
+    uses: ZaiusInc/node-sdk/.github/workflows/reusable-build.yaml@master
+    secrets:
+      nodeAuthToken: ${{ secrets.GITHUB_TOKEN }}
