@@ -11,7 +11,7 @@ on:
 
 jobs:
   release:
-    uses: ZaiusInc/node-sdk/.github/workflows/reusable-release.yaml@OCP-784-fix-reusable-workflows
+    uses: ZaiusInc/node-sdk/.github/workflows/reusable-release.yaml@main
     secrets:
       npmJSToken: ${{ secrets.NPMJS_TOKEN }}
       githubPackagesToken: ${{ secrets.GHA_PAT }}
