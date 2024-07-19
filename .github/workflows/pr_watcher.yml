@@ -5,6 +5,6 @@ on:
 
 jobs:
   build:
-    uses: ZaiusInc/node-sdk/.github/workflows/reusable-build.yaml@main
+    uses: ZaiusInc/node-sdk/.github/workflows/reusable-build.yaml@OCP-784-fix-reusable-workflows
     secrets:
       nodeAuthToken: ${{ secrets.GITHUB_TOKEN }}
