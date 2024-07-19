@@ -25,4 +25,3 @@ OCP apps are required to follow conventions outlined in the developer docs. They
 
 Apps are run in an isolated environment and to avoid data leaking/pollution across accounts. 
 However, there can be hundreds of requests running simultaneously, so avoid race conditions when interacting with external storage and APIs.
-

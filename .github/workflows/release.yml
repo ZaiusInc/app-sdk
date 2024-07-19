@@ -11,7 +11,7 @@ on:
 
 jobs:
   release:
-    uses: ZaiusInc/node-sdk/.github/workflows/reusable-release.yaml@main
+    uses: ZaiusInc/node-sdk/.github/workflows/reusable-release.yaml@master
     secrets:
       npmJSToken: ${{ secrets.NPMJS_TOKEN }}
       githubPackagesToken: ${{ secrets.GHA_PAT }}
