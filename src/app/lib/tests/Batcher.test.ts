@@ -39,5 +39,14 @@ describe('Batcher', () => {
       await batcher.flush();
       expect(fn).not.toHaveBeenCalled();
     });
+
+    it('does not cause the batch limit to be exceeded ' +
+        'if add is called during flush long running operation', async () => {
+      const fn = jest.fn(() => new Promise((r) => setTimeout(r, 2000)));
+      const batcher = new Batcher(fn, 2);
+      await Promise.all([batcher.append('test1'), batcher.append('test2'), batcher.append('test3')]);
+      expect(fn).toHaveBeenCalledWith(['test1', 'test2']);
+      expect(batcher['batch']).toEqual(['test3']);
+    });
   });
 });

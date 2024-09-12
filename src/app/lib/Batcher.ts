@@ -32,9 +32,9 @@ export class Batcher<T> {
    */
   public async flush() {
     if (this.batch.length > 0) {
-      await this.operation(this.batch);
-      // Do not truncate the original array for safety. We do not know the side-effects of operation().
-      this.batch = [];
+      const flushBatch = this.batch.splice(0, this.limit);
+      await this.operation(flushBatch);
+
     }
   }
 }
