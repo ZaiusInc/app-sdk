@@ -24,6 +24,26 @@
             ],
             "type": "object"
         },
+        "AppDataExport": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "entry_point",
+                "schema"
+            ],
+            "type": "object"
+        },
         "AppFunction": {
             "additionalProperties": false,
             "properties": {
@@ -387,6 +407,12 @@
         "consumers": {
             "additionalProperties": {
                 "$ref": "#/definitions/AppConsumer"
+            },
+            "type": "object"
+        },
+        "data_exports": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppDataExport"
             },
             "type": "object"
         },

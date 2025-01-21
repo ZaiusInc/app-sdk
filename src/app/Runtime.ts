@@ -14,6 +14,7 @@ import * as manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
+import {DataExport} from './DataExport';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -83,6 +84,16 @@ export class Runtime {
 
     const job = jobs[name];
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
+  }
+
+  public async getDataExportClass<T extends DataExport<any>>(name: string): Promise<new () => T> {
+    const exports = this.manifest.data_exports;
+    if (!exports || !exports[name]) {
+      throw new Error(`No data export named ${name} defined in manifest`);
+    }
+    const exp = exports[name];
+    return (await this.import(join(this.dirName, 'data-exports', exp.entry_point)))[exp.entry_point];
+
   }
 
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
