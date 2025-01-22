@@ -37,5 +37,5 @@ export abstract class DataExport<T> {
    * @returns A DataExportBatchResult with success/failure,
    *          if the batch should be reried and a failure reason if applicable.
    */
-  public abstract export(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
+  public abstract deliver(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
 }
