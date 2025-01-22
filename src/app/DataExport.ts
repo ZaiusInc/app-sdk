@@ -14,6 +14,11 @@ export interface DataExportBatchResult {
   failureReason?: string;
 }
 
+export interface DataExportReadyResult {
+  ready: boolean;
+  message?: string;
+}
+
 export abstract class DataExport<T> {
 
   /**
@@ -23,7 +28,7 @@ export abstract class DataExport<T> {
    * @async
    * @returns true if the data export is ready to use
    */
-  public abstract ready(): Promise<boolean>;
+  public abstract ready(): Promise<DataExportReadyResult>;
 
   /**
    * Exports the given batch to i.e. an external system.
