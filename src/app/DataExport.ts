@@ -1,6 +1,7 @@
 export interface DataExportBatch<T> {
   items: T[];
   attempt: number;
+  sync: DataSync;
 }
 
 export interface DataSync {
@@ -36,5 +37,5 @@ export abstract class DataExport<T> {
    * @returns A DataExportBatchResult with success/failure,
    *          if the batch should be reried and a failure reason if applicable.
    */
-  public abstract export(sync: DataSync, batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
+  public abstract export(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
 }
