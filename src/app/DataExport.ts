@@ -1,5 +1,5 @@
 export interface DataExportBatch<T> {
-  data: T[];
+  items: T[];
   attempt: number;
 }
 
@@ -8,7 +8,7 @@ export interface DataSync {
   name: string;
 }
 
-export interface DataExportBatchResult {
+export interface DataExportDeliverResult {
   success: boolean;
   retryable: boolean;
   failureReason?: string;
@@ -34,7 +34,7 @@ export abstract class DataExport<T> {
    * Exports the given batch to i.e. an external system.
    * @param batch - The batch to be exported
    * @returns A DataExportBatchResult with success/failure,
-   *          if the batch should be reried and a failurer reason if applicable.
+   *          if the batch should be reried and a failure reason if applicable.
    */
-  public abstract export(sync: DataSync, batch: DataExportBatch<T>): Promise<DataExportBatchResult>;
+  public abstract export(sync: DataSync, batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
 }
