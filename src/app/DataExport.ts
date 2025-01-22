@@ -11,7 +11,7 @@ export interface DataSync {
 
 export interface DataExportDeliverResult {
   success: boolean;
-  retryable: boolean;
+  retryable?: boolean;
   failureReason?: string;
 }
 
