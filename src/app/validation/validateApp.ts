@@ -7,6 +7,7 @@ import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
+import {validateDataExports} from './validateDataExports';
 import {validateLifecycle} from './validateLifecycle';
 import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
@@ -30,6 +31,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
+      .concat(await validateDataExports(runtime))
       .concat(await validateLiquidExtensions(runtime))
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
