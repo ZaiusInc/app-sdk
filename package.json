@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "1.5.0-dev.8",
+  "version": "1.5.0-dev.9",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -24,7 +24,7 @@
     "build-watch": "tsc -w",
     "lint": "npx eslint 'src/**/*.ts'",
     "test": "jest -i",
-    "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SchemaObject.ts SchemaObject > ./src/app/types/SchemaObject.schema.json",
+    "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SchemaObject.ts SchemaObject > ./src/app/types/SchemaObject.schema.json && typescript-json-schema --required --noExtraProps src/app/types/DataExportSchema.ts DataExportSchema > ./src/app/types/DataExportSchema.schema.json",
     "prepare-readme-export": "node scripts/prepare_readme_export.js",
     "generate-docs": "typedoc --plugin typedoc-plugin-markdown ./src/index.ts && yarn prepare-readme-export"
   },

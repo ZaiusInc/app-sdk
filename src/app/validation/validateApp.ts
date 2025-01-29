@@ -14,6 +14,8 @@ import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
+import * as dataExportSchema from '../types/DataExportSchema';
+import { validateDataExportSchema } from './validateDataExportSchema';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -39,15 +41,28 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateOutboundDomains(runtime));
   }
 
-  const schemaObjects = runtime.getSchemaObjects();
-  for (const file of Object.keys(schemaObjects)) {
-    const schemaObject = schemaObjects[file];
-    if (!ajv.validate(schemaObjectSchema, schemaObject)) {
-      ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
-    } else {
-      errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
+  if (runtime.manifest.data_exports) {
+    const schemaObjects = runtime.getDataExportSchemas();
+    for (const file of Object.keys(schemaObjects)) {
+      const schemaObject = schemaObjects[file];
+      if (!ajv.validate(dataExportSchema, schemaObject)) {
+        ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+      } else {
+        errors = errors.concat(validateDataExportSchema(schemaObject, file));
+      }
+    }
+  } else {
+    const schemaObjects = runtime.getSchemaObjects();
+    for (const file of Object.keys(schemaObjects)) {
+      const schemaObject = schemaObjects[file];
+      if (!ajv.validate(schemaObjectSchema, schemaObject)) {
+        ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+      } else {
+        errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
+      }
     }
   }
+
 
   return errors;
 }

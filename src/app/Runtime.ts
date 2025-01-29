@@ -15,6 +15,7 @@ import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 import {DataExport} from './DataExport';
+import { DataExportSchema, DataExportSchemaObjects } from './types/DataExportSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -112,6 +113,18 @@ export class Runtime {
     if (files.length > 0) {
       for (const file of files) {
         schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
+      }
+    }
+    return schemaObjects;
+  }
+
+
+  public getDataExportSchemas(): DataExportSchemaObjects {
+    const schemaObjects: DataExportSchemaObjects = {};
+    const files = glob.sync('data-exports/schema/*.{yml,yaml}', {cwd: this.dirName});
+    if (files.length > 0) {
+      for (const file of files) {
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DataExportSchema;
       }
     }
     return schemaObjects;
