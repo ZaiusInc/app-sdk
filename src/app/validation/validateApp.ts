@@ -42,24 +42,23 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   }
 
   if (runtime.manifest.data_exports) {
-    const schemaObjects = runtime.getDataExportSchemas();
-    for (const file of Object.keys(schemaObjects)) {
-      const schemaObject = schemaObjects[file];
-      if (!ajv.validate(dataExportSchema, schemaObject)) {
+    const exportSchemaObjects = runtime.getDataExportSchemas();
+    for (const file of Object.keys(exportSchemaObjects)) {
+      const exportSchemaObject = exportSchemaObjects[file];
+      if (!ajv.validate(dataExportSchema, exportSchemaObject)) {
         ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
       } else {
-        errors = errors.concat(validateDataExportSchema(schemaObject, file));
+        errors = errors.concat(validateDataExportSchema(exportSchemaObject, file));
       }
     }
-  } else {
-    const schemaObjects = runtime.getSchemaObjects();
-    for (const file of Object.keys(schemaObjects)) {
-      const schemaObject = schemaObjects[file];
-      if (!ajv.validate(schemaObjectSchema, schemaObject)) {
-        ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
-      } else {
-        errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
-      }
+  }
+  const schemaObjects = runtime.getSchemaObjects();
+  for (const file of Object.keys(schemaObjects)) {
+    const schemaObject = schemaObjects[file];
+    if (!ajv.validate(schemaObjectSchema, schemaObject)) {
+      ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+    } else {
+      errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
     }
   }
 
