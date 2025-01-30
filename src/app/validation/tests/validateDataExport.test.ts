@@ -1,7 +1,6 @@
 import { validateDataExports } from '../validateDataExports';
 import { DataExport } from '../../DataExport';
 import * as fs from 'fs';
-import { Runtime } from '../../Runtime';
 
 class ValidExport extends DataExport<any> {
   public async ready() {
@@ -34,17 +33,17 @@ describe('validateDataExport', () => {
           entry_point: 'invalidSchemaClass',
           schema: 123
         },
-      },
-    }
+      }
+    },
+    getDataExportClass: jest.fn()
   };
 
   it('should return error when data export class cannot be loaded', async () => {
-    const getDataExportClass = jest.spyOn(Runtime.prototype, 'getDataExportClass')
+    const getDataExportClass = jest.spyOn(invalidRuntime, 'getDataExportClass')
       .mockRejectedValue(new Error('not found'));
     const result = await validateDataExports(invalidRuntime);
     getDataExportClass.mockRestore();
-    expect(result.length).toBeGreaterThan(0);
-
+    expect(result).toContain('Error loading entry point validExport. Error: not found');
   });
 
 
@@ -55,7 +54,7 @@ describe('validateDataExport', () => {
 
   it('should return error when schema is not a string', async () => {
     const result = await validateDataExports(invalidRuntime);
-    expect(result.length).toBeGreaterThan(0);
+    expect(result).toContain('DataExport schema property must be a string: invalidSchema');
   });
 
   it('should return no error when configuration is valid', async () => {
