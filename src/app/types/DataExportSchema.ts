@@ -17,4 +17,3 @@ export interface DataExportSchemaObjects {
   [file: string]: DataExportSchema;
 }
 
-export const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;

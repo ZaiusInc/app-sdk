@@ -1,17 +1,22 @@
 import { validateDataExports } from '../validateDataExports';
-import { DataExport, DataExportBatch, DataExportDeliverResult, DataExportReadyResult } from '../../DataExport';
+import { DataExport } from '../../DataExport';
 import * as fs from 'fs';
 import { Runtime } from '../../Runtime';
-
-jest.spyOn(fs, 'existsSync');
 class ValidExport extends DataExport<any> {
-  public ready(): Promise<DataExportReadyResult> {
-    throw new Error('Method not implemented.');
+  public async ready() {
+    return { ready: true };
   }
-  public deliver(batch: DataExportBatch<any>): Promise<DataExportDeliverResult> {
-    throw new Error(`Method not implemented for ${batch}`);
+  public async deliver(batch: any) {
+    return { success: !batch };
   }
 }
+
+jest.spyOn(fs, 'existsSync');
+
+jest.mock('path', () => ({
+  ...jest.requireActual('path'),
+  join: jest.fn().mockReturnValue('mocked'),
+}));
 
 describe('validateDataExport', () => {
   const invalidRuntime: any = {

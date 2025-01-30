@@ -2,6 +2,7 @@ import {logger} from '../../logging';
 import {DataExport} from '../DataExport';
 import {Runtime} from '../Runtime';
 import * as fs from 'fs';
+import {join} from 'path';
 
 export async function validateDataExports(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -40,7 +41,7 @@ export async function validateDataExports(runtime: Runtime): Promise<string[]> {
         errors.push(`DataExport is missing the schema property: ${name}`);
       } else {
         const schema = runtime.manifest.data_exports[name].schema;
-        const schemaFilePath = runtime.baseDir + '/data-exports/schema/' + schema;
+        const schemaFilePath = join(runtime.baseDir, 'data-exports', 'schema', schema);
         if (typeof(schema) !== 'string') {
           errors.push(`DataExport schema property must be a string: ${name}`);
         } else if (schema.trim() === '') {

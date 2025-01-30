@@ -71,7 +71,7 @@ describe('validateDataExportSchema', () => {
       ]
     };
 
-    const file = 'InvalidName!.yml';
+    const file = 'InvalidName.yml';
     const result = validateDataExportSchema(invalidSchema, file);
     expect(result.length).toBeGreaterThan(0);
   });

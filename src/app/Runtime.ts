@@ -15,7 +15,7 @@ import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 import {DataExport} from './DataExport';
-import { DataExportSchema, DataExportSchemaObjects } from './types/DataExportSchema';
+import {DataExportSchema, DataExportSchemaObjects} from './types/DataExportSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;

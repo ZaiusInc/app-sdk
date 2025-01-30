@@ -1,6 +1,7 @@
 import { DataExportSchema, SchemaField } from '../types/DataExportSchema';
 import * as path from 'path';
-import { SCHEMA_NAME_FORMAT } from '../types/DataExportSchema';
+
+const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 
 export function validateDataExportSchema(
   dataExportSchema: DataExportSchema,
