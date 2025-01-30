@@ -63,7 +63,6 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
     }
   }
 
-
   return errors;
 }
 
