@@ -29,7 +29,11 @@ class DataExportSchemaValidator {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 
-    this.enforceNameFormat(this.dataExportSchema.name, 'name');
+    if (!this.dataExportSchema.name) {
+      this.errors.push(`Invalid ${this.file}: name must be specified`);
+    } else {
+      this.enforceNameFormat(this.dataExportSchema.name, 'name');
+    }
 
     if (!this.dataExportSchema.display_name || this.dataExportSchema.display_name.trim().length === 0) {
       this.errors.push(`Invalid ${this.file}: display_name must be specified`);
@@ -58,7 +62,12 @@ class DataExportSchemaValidator {
   }
 
   private validateField(field: SchemaField, index: number) {
-    this.enforceNameFormat(field.name, `fields[${index}].name`);
+    if (!field.name) {
+      this.errors.push(`Invalid ${this.file}: fields[${index}].name must be specified`);
+    } else {
+      this.enforceNameFormat(field.name, `fields[${index}].name`);
+    }
+
     if (!field.display_name || field.display_name.trim().length === 0) {
       this.errors.push(`Invalid ${this.file}: fields[${index}].display_name must be specified`);
     }
@@ -67,4 +76,3 @@ class DataExportSchemaValidator {
     }
   }
 }
-

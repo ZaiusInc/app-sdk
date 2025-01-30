@@ -74,4 +74,22 @@ describe('validateDataExport', () => {
     const result = await validateDataExports(validRuntime);
     expect(result.length).toEqual(0);
   });
+
+  it('should return error when schema is missing', async () => {
+    const validRuntime: any = {
+      manifest: {
+        data_exports: {
+          'validExport': {
+            entry_point: 'validExportClass',
+            schema: 'validSchema'
+          }
+        }
+      },
+      getDataExportClass: () => ValidExport
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
+    const result = await validateDataExports(validRuntime);
+    expect(result).toEqual(['File not found for DataExport schema validSchema']);
+  });
 });
