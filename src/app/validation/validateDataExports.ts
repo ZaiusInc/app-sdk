@@ -1,6 +1,7 @@
 import {logger} from '../../logging';
 import {DataExport} from '../DataExport';
 import {Runtime} from '../Runtime';
+import * as fs from 'fs';
 
 export async function validateDataExports(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -39,11 +40,13 @@ export async function validateDataExports(runtime: Runtime): Promise<string[]> {
         errors.push(`DataExport is missing the schema property: ${name}`);
       } else {
         const schema = runtime.manifest.data_exports[name].schema;
+        const schemaFilePath = 'data-exports/schema/' + schema;
         if (typeof(schema) !== 'string') {
           errors.push(`DataExport schema property must be a string: ${name}`);
-        }
-        if (schema.trim() === '') {
+        } else if (schema.trim() === '') {
           errors.push(`DataExport schema property cannot be empty: ${name}`);
+        } else if (!(fs.existsSync(schemaFilePath + '.yml') || fs.existsSync(schemaFilePath + '.yaml'))) {
+          errors.push(`File not found for DataExport schema ${name}`);
         }
       }
     }
