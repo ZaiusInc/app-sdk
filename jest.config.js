@@ -36,5 +36,15 @@ module.exports = {
       statements: 90
     }
   },
+  reporters: [
+    "default",
+    [
+      "jest-junit",
+      {
+        outputDirectory: "reports",
+        outputName: "jest-results.xml"
+      }
+    ]
+  ],
   testEnvironment: 'node'
 };
