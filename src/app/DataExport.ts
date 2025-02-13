@@ -20,8 +20,8 @@ export interface DataExportReadyResult {
   message?: string;
 }
 
-export interface ListHubAppDestinationSchemasResult {
-  schemas: HubAppDestinationSchema[];
+export interface GetHubAppDestinationSchemaResult {
+  schema: HubAppDestinationSchema;
 }
 
 export interface HubAppDestinationField {
@@ -57,5 +57,5 @@ export abstract class DataExport<T> {
    */
   public abstract deliver(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
 
-  public abstract listDestinationSchemas(): Promise<ListHubAppDestinationSchemasResult>;
+  public abstract getDestinationSchema(): Promise<GetHubAppDestinationSchemaResult>;
 }
