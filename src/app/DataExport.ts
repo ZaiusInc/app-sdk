@@ -21,7 +21,7 @@ export interface DataExportReadyResult {
 }
 
 export interface ListHubAppDestinationSchemasResult {
-  schemas: HubAppDestinationSchema[]
+  schemas: HubAppDestinationSchema[];
 }
 
 export interface HubAppDestinationField {
