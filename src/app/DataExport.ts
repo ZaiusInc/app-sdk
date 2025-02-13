@@ -20,6 +20,24 @@ export interface DataExportReadyResult {
   message?: string;
 }
 
+export interface ListHubAppDestinationSchemasResult {
+  schemas: HubAppDestinationSchema[]
+}
+
+export interface HubAppDestinationField {
+  name: string;
+  display_name: string;
+  type: string;
+}
+
+export interface HubAppDestinationSchema {
+  destination_name: string;
+  destination_display_name: string;
+  destination_icon_url: string;
+  fields: HubAppDestinationField[];
+}
+
+
 export abstract class DataExport<T> {
 
   /**
@@ -38,4 +56,6 @@ export abstract class DataExport<T> {
    *          if the batch should be reried and a failure reason if applicable.
    */
   public abstract deliver(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
+
+  public abstract listDestinationSchemas(): Promise<ListHubAppDestinationSchemasResult>;
 }

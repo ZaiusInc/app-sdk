@@ -153,6 +153,9 @@ export interface AppManifest {
   data_exports?: {
     [name: string]: AppDataExport;
   };
+  destinations?: {
+    [name: string]: AppDataExport;
+  };
   channel?: {
     type: ChannelType;
     targeting: 'dynamic' | CampaignTargeting[];

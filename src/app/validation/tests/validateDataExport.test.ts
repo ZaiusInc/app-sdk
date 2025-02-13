@@ -1,8 +1,11 @@
 import { validateDataExports } from '../validateDataExports';
-import { DataExport } from '../../DataExport';
+import { DataExport, ListHubAppDestinationSchemasResult } from '../../DataExport';
 import * as fs from 'fs';
-
 class ValidExport extends DataExport<any> {
+  public listDestinationSchemas(): Promise<ListHubAppDestinationSchemasResult> {
+    throw new Error('Method not implemented.');
+  }
+
   public async ready() {
     return { ready: true };
   }
