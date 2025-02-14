@@ -1,8 +1,8 @@
 import { validateDataExports } from '../validateDataExports';
-import { DataExport, GetHubAppDestinationSchemaResult } from '../../DataExport';
+import { DataExport, GetDestinationSchemaResult } from '../../DataExport';
 import * as fs from 'fs';
 class ValidExport extends DataExport<any> {
-  public getDestinationSchema(): Promise<GetHubAppDestinationSchemaResult> {
+  public getDestinationSchema(): Promise<GetDestinationSchemaResult> {
     throw new Error('Method not implemented.');
   }
 
