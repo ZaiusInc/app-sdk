@@ -8,4 +8,4 @@ export * from './Lifecycle';
 export * from './LiquidExtension';
 export * from './Runtime';
 export * from './types';
-export * from './DataExport';
+export * from './Destination';

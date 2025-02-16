@@ -1,11 +1,11 @@
-import { validateDataExports } from '../validateDataExports';
-import { DataExport, GetDestinationSchemaResult } from '../../DataExport';
+import { validateDestinations } from '../validateDestinations';
+import { Destination, GetDestinationSchemaResult } from '../../Destination';
 import * as fs from 'fs';
-class ValidExport extends DataExport<any> {
+
+class ValidDestination extends Destination<any> {
   public getDestinationSchema(): Promise<GetDestinationSchemaResult> {
     throw new Error('Method not implemented.');
   }
-
   public async ready() {
     return { ready: true };
   }
@@ -24,7 +24,7 @@ jest.mock('path', () => ({
 describe('validateDataExport', () => {
   const invalidRuntime: any = {
     manifest: {
-      data_exports: {
+      destinations: {
         'validExport': {
           entry_point: 'validExportClass',
           schema: 'validSchema'
@@ -38,61 +38,61 @@ describe('validateDataExport', () => {
         },
       }
     },
-    getDataExportClass: jest.fn()
+    getDestinationClass: jest.fn()
   };
 
   it('should return error when data export class cannot be loaded', async () => {
-    const getDataExportClass = jest.spyOn(invalidRuntime, 'getDataExportClass')
+    const getDestinationsClass = jest.spyOn(invalidRuntime, 'getDestinationClass')
       .mockRejectedValue(new Error('not found'));
-    const result = await validateDataExports(invalidRuntime);
-    getDataExportClass.mockRestore();
+    const result = await validateDestinations(invalidRuntime);
+    getDestinationsClass.mockRestore();
     expect(result).toContain('Error loading entry point validExport. Error: not found');
   });
 
 
   it('should return error when schema is missing', async () => {
-    const result = await validateDataExports(invalidRuntime);
+    const result = await validateDestinations(invalidRuntime);
     expect(result).toContain('DataExport is missing the schema property: missingSchema');
   });
 
   it('should return error when schema is not a string', async () => {
-    const result = await validateDataExports(invalidRuntime);
+    const result = await validateDestinations(invalidRuntime);
     expect(result).toContain('DataExport schema property must be a string: invalidSchema');
   });
 
   it('should return no error when configuration is valid', async () => {
     const validRuntime: any = {
       manifest: {
-        data_exports: {
+        destinations: {
           'validExport': {
             entry_point: 'validExportClass',
             schema: 'validSchema'
           }
         }
       },
-      getDataExportClass: () => ValidExport
+      getDestinationClass: () => ValidDestination
     };
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
-    const result = await validateDataExports(validRuntime);
+    const result = await validateDestinations(validRuntime);
     expect(result.length).toEqual(0);
   });
 
   it('should return error when schema is missing', async () => {
     const validRuntime: any = {
       manifest: {
-        data_exports: {
+        destinations: {
           'validExport': {
             entry_point: 'validExportClass',
             schema: 'validSchema'
           }
         }
       },
-      getDataExportClass: () => ValidExport
+      getDestinationClass: () => ValidDestination
     };
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
-    const result = await validateDataExports(validRuntime);
+    const result = await validateDestinations(validRuntime);
     expect(result).toEqual(['File not found for DataExport schema validSchema']);
   });
 });

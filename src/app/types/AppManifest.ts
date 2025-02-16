@@ -38,7 +38,7 @@ export interface AppLiquidExtension {
   };
 }
 
-export interface AppDataExport {
+export interface AppDestination {
   entry_point: string;
   schema: string;
   description: string;
@@ -150,11 +150,8 @@ export interface AppManifest {
   liquid_extensions?: {
     [name: string]: AppLiquidExtension;
   };
-  data_exports?: {
-    [name: string]: AppDataExport;
-  };
   destinations?: {
-    [name: string]: AppDataExport;
+    [name: string]: AppDestination;
   };
   channel?: {
     type: ChannelType;

@@ -1,4 +1,5 @@
-export interface DataExportBatch<T> {
+import { DestinationSchema } from './types';
+export interface AppDestinationBatch<T> {
   items: T[];
   attempt: number;
   sync: DataSync;
@@ -9,13 +10,13 @@ export interface DataSync {
   name: string;
 }
 
-export interface DataExportDeliverResult {
+export interface AppDestinationDeliverResult {
   success: boolean;
   retryable?: boolean;
   failureReason?: string;
 }
 
-export interface DataExportReadyResult {
+export interface AppDestinationReadyResult {
   ready: boolean;
   message?: string;
 }
@@ -24,19 +25,7 @@ export interface GetDestinationSchemaResult {
   schema: DestinationSchema;
 }
 
-export interface DestinationField {
-  name: string;
-  display_name: string;
-  type: string;
-}
-
-export interface DestinationSchema {
-  destination_name: string;
-  fields: DestinationField[];
-}
-
-
-export abstract class DataExport<T> {
+export abstract class Destination<T> {
 
   /**
    * Checks if the data export is ready to use.
@@ -45,7 +34,7 @@ export abstract class DataExport<T> {
    * @async
    * @returns true if the data export is ready to use
    */
-  public abstract ready(): Promise<DataExportReadyResult>;
+  public abstract ready(): Promise<AppDestinationReadyResult>;
 
   /**
    * Exports the given batch to i.e. an external system.
@@ -53,7 +42,7 @@ export abstract class DataExport<T> {
    * @returns A DataExportBatchResult with success/failure,
    *          if the batch should be reried and a failure reason if applicable.
    */
-  public abstract deliver(batch: DataExportBatch<T>): Promise<DataExportDeliverResult>;
+  public abstract deliver(batch: AppDestinationBatch<T>): Promise<AppDestinationDeliverResult>;
 
   public abstract getDestinationSchema(): Promise<GetDestinationSchemaResult>;
 }

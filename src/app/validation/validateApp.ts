@@ -7,15 +7,15 @@ import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
-import {validateDataExports} from './validateDataExports';
+import {validateDestinations} from './validateDestinations';
 import {validateLifecycle} from './validateLifecycle';
 import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
-import * as dataExportSchema from '../types/DataExportSchema';
-import { validateDataExportSchema } from './validateDataExportSchema';
+import * as destinationSchema from '../types/DestinationSchema';
+import { validateDestinationsSchema } from './validateDestinationsSchema';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -33,7 +33,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
-      .concat(await validateDataExports(runtime))
+      .concat(await validateDestinations(runtime))
       .concat(await validateLiquidExtensions(runtime))
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
@@ -41,14 +41,14 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateOutboundDomains(runtime));
   }
 
-  if (runtime.manifest.data_exports) {
-    const exportSchemaObjects = runtime.getDataExportSchemas();
+  if (runtime.manifest.destinations) {
+    const exportSchemaObjects = runtime.getDestinationSchema();
     for (const file of Object.keys(exportSchemaObjects)) {
       const exportSchemaObject = exportSchemaObjects[file];
-      if (!ajv.validate(dataExportSchema, exportSchemaObject)) {
+      if (!ajv.validate(destinationSchema, exportSchemaObject)) {
         ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
       } else {
-        errors = errors.concat(validateDataExportSchema(exportSchemaObject, file));
+        errors = errors.concat(validateDestinationsSchema(exportSchemaObject, file));
       }
     }
   }
