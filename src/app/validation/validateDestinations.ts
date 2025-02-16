@@ -41,7 +41,7 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
         errors.push(`DataExport is missing the schema property: ${name}`);
       } else {
         const schema = runtime.manifest.destinations[name].schema;
-        const schemaFilePath = join(runtime.baseDir, 'data-exports', 'schema', schema);
+        const schemaFilePath = join(runtime.baseDir, 'destinations', 'schema', schema);
         if (typeof(schema) !== 'string') {
           errors.push(`DataExport schema property must be a string: ${name}`);
         } else if (schema.trim() === '') {
