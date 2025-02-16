@@ -1,4 +1,3 @@
-import { DestinationSchema } from './types';
 export interface AppDestinationBatch<T> {
   items: T[];
   attempt: number;
@@ -22,8 +21,20 @@ export interface AppDestinationReadyResult {
 }
 
 export interface GetDestinationSchemaResult {
-  schema: DestinationSchema;
+  schema: DestinationSchemaResult;
 }
+
+export interface DestinationField {
+  name: string;
+  display_name: string;
+  type: string;
+}
+
+export interface DestinationSchemaResult {
+  destination_name: string;
+  fields: DestinationField[];
+}
+
 
 export abstract class Destination<T> {
 
