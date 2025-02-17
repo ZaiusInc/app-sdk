@@ -28,6 +28,7 @@
                 }
             },
             "required": [
+                "description",
                 "display_name",
                 "name",
                 "type"
