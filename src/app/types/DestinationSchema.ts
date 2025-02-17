@@ -1,4 +1,4 @@
-export interface DataExportSchema {
+export interface DestinationSchema {
   name: string;
   display_name: string;
   fields: SchemaField[];
@@ -13,7 +13,7 @@ export interface SchemaField {
   format?: 'url';
 }
 
-export interface DataExportSchemaObjects {
-  [file: string]: DataExportSchema;
+export interface DestinationSchemaObjects {
+  [file: string]: DestinationSchema;
 }
 

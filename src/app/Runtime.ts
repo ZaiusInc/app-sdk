@@ -14,8 +14,8 @@ import * as manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
-import {DataExport} from './DataExport';
-import {DataExportSchema, DataExportSchemaObjects} from './types/DataExportSchema';
+import {Destination} from './Destination';
+import {DestinationSchema, DestinationSchemaObjects} from './types/DestinationSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -87,13 +87,13 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
-  public async getDataExportClass<T extends DataExport<any>>(name: string): Promise<new () => T> {
-    const exports = this.manifest.data_exports;
+  public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
+    const exports = this.manifest.destinations;
     if (!exports || !exports[name]) {
       throw new Error(`No data export named ${name} defined in manifest`);
     }
     const exp = exports[name];
-    return (await this.import(join(this.dirName, 'data-exports', exp.entry_point)))[exp.entry_point];
+    return (await this.import(join(this.dirName, 'destinations', exp.entry_point)))[exp.entry_point];
 
   }
 
@@ -119,12 +119,12 @@ export class Runtime {
   }
 
 
-  public getDataExportSchemas(): DataExportSchemaObjects {
-    const schemaObjects: DataExportSchemaObjects = {};
-    const files = glob.sync('data-exports/schema/*.{yml,yaml}', {cwd: this.dirName});
+  public getDestinationSchema(): DestinationSchemaObjects {
+    const schemaObjects: DestinationSchemaObjects = {};
+    const files = glob.sync('destinations/schema/*.{yml,yaml}', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DataExportSchema;
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
       }
     }
     return schemaObjects;

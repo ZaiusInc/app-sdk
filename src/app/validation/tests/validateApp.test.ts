@@ -16,7 +16,7 @@ import {validateLifecycle} from '../validateLifecycle';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 import {validateMeta} from '../validateMeta';
 import {validateSchemaObject} from '../validateSchemaObject';
-import { validateDataExports } from '../validateDataExports';
+import {validateDestinations} from '../validateDestinations';
 
 jest.mock('../validateMeta');
 jest.mock('../validateEnvironment');
@@ -27,7 +27,7 @@ jest.mock('../validateLifecycle');
 jest.mock('../validateChannel');
 jest.mock('../validateSchemaObject');
 jest.mock('../validateAssets');
-jest.mock('../validateDataExports');
+jest.mock('../validateDestinations');
 
 const appManifest = deepFreeze({
   meta: {
@@ -55,7 +55,7 @@ const appManifest = deepFreeze({
       description: 'Does a thing'
     }
   },
-  data_exports: {
+  destinations: {
     foo_export: {
       entry_point: 'FooExport',
       description: 'Basic data export',
@@ -150,7 +150,7 @@ describe('validateApp', () => {
     (validateChannel as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
-    (validateDataExports as jest.Mock).mockReturnValue([]);
+    (validateDestinations as jest.Mock).mockReturnValue([]);
   });
 
   it('succeeds with a proper definition', async () => {
@@ -184,7 +184,7 @@ describe('validateApp', () => {
       }
     } as any);
 
-    const getDataExportSchema = jest.spyOn(runtime, 'getDataExportSchemas').mockReturnValue({
+    const getDataExportSchema = jest.spyOn(runtime, 'getDestinationSchema').mockReturnValue({
       'data-exports/schema/asset.yml': {
         ...schemaObjects['data-exports/schema/asset.yml'],
         name: undefined,
@@ -216,7 +216,7 @@ describe('validateApp', () => {
     (validateLiquidExtensions as jest.Mock).mockResolvedValue(['liquid error 1', 'liquid error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
     (validateChannel as jest.Mock).mockResolvedValue(['channel error 1', 'channel error 2']);
-    (validateDataExports as jest.Mock).mockResolvedValue(['export error 1', 'export error 2']);
+    (validateDestinations as jest.Mock).mockResolvedValue(['export error 1', 'export error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
@@ -247,6 +247,6 @@ describe('validateApp', () => {
       [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']]
     ]);
     expect(validateAssets).toBeCalledWith(runtime);
-    expect(validateDataExports).toBeCalledWith(runtime);
+    expect(validateDestinations).toBeCalledWith(runtime);
   });
 });

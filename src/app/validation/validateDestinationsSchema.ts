@@ -1,46 +1,46 @@
-import { DataExportSchema, SchemaField } from '../types/DataExportSchema';
+import { DestinationSchema, SchemaField } from '../types/DestinationSchema';
 import * as path from 'path';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 
-export function validateDataExportSchema(
-  dataExportSchema: DataExportSchema,
+export function validateDestinationsSchema(
+  destinationSchema: DestinationSchema,
   file: string
 ): string[] {
-  return new DataExportSchemaValidator(dataExportSchema, file).validate();
+  return new DestinationSchemaValidator(destinationSchema, file).validate();
 }
 
-class DataExportSchemaValidator {
+class DestinationSchemaValidator {
   private readonly errors: string[] = [];
-  private dataExportSchema: DataExportSchema;
+  private destinationsSchema: DestinationSchema;
   private file: string;
 
   public constructor(
-    dataExportSchema: DataExportSchema,
+    destinationSchema: DestinationSchema,
     file: string
   ) {
-    this.dataExportSchema = dataExportSchema;
+    this.destinationsSchema = destinationSchema;
     this.file = file;
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.dataExportSchema.name &&
-        path.basename(this.file, '.yaml') !== this.dataExportSchema.name) {
+    if (path.basename(this.file, '.yml') !== this.destinationsSchema.name &&
+        path.basename(this.file, '.yaml') !== this.destinationsSchema.name) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 
-    if (!this.dataExportSchema.name) {
+    if (!this.destinationsSchema.name) {
       this.errors.push(`Invalid ${this.file}: name must be specified`);
     } else {
-      this.enforceNameFormat(this.dataExportSchema.name, 'name');
+      this.enforceNameFormat(this.destinationsSchema.name, 'name');
     }
 
-    if (!this.dataExportSchema.display_name || this.dataExportSchema.display_name.trim().length === 0) {
+    if (!this.destinationsSchema.display_name || this.destinationsSchema.display_name.trim().length === 0) {
       this.errors.push(`Invalid ${this.file}: display_name must be specified`);
     }
 
     let hasPrimaryKey = false;
-    this.dataExportSchema.fields.forEach((field, index) => {
+    this.destinationsSchema.fields.forEach((field, index) => {
       this.validateField(field, index);
       if (field.primary) {
         hasPrimaryKey = true;

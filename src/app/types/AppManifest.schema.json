@@ -24,7 +24,7 @@
             ],
             "type": "object"
         },
-        "AppDataExport": {
+        "AppDestination": {
             "additionalProperties": false,
             "properties": {
                 "description": {
@@ -410,9 +410,9 @@
             },
             "type": "object"
         },
-        "data_exports": {
+        "destinations": {
             "additionalProperties": {
-                "$ref": "#/definitions/AppDataExport"
+                "$ref": "#/definitions/AppDestination"
             },
             "type": "object"
         },
