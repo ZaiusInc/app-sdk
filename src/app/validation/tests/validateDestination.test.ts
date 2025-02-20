@@ -21,7 +21,7 @@ jest.mock('path', () => ({
   join: jest.fn().mockReturnValue('mocked'),
 }));
 
-describe('validateDataExport', () => {
+describe('validateDestination', () => {
   const invalidRuntime: any = {
     manifest: {
       destinations: {
@@ -52,12 +52,12 @@ describe('validateDataExport', () => {
 
   it('should return error when schema is missing', async () => {
     const result = await validateDestinations(invalidRuntime);
-    expect(result).toContain('DataExport is missing the schema property: missingSchema');
+    expect(result).toContain('Destination is missing the schema property: missingSchema');
   });
 
   it('should return error when schema is not a string', async () => {
     const result = await validateDestinations(invalidRuntime);
-    expect(result).toContain('DataExport schema property must be a string: invalidSchema');
+    expect(result).toContain('Destination schema property must be a string: invalidSchema');
   });
 
   it('should return no error when configuration is valid', async () => {
@@ -93,6 +93,6 @@ describe('validateDataExport', () => {
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
     const result = await validateDestinations(validRuntime);
-    expect(result).toEqual(['File not found for DataExport schema validSchema']);
+    expect(result).toEqual(['File not found for Destination schema validSchema']);
   });
 });
