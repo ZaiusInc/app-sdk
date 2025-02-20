@@ -124,7 +124,8 @@ export class Runtime {
     const files = glob.sync('destinations/schema/*.{yml,yaml}', {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
+        const schema = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
+        schemaObjects[schema.name] = schema;
       }
     }
     return schemaObjects;
