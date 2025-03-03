@@ -1,6 +1,7 @@
 import { validateDestinationsSchema } from '../validateDestinationsSchema';
 import { DestinationSchema } from '../../types';
-describe('validateDataExportSchema', () => {
+
+describe('validateDestinationSchema', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

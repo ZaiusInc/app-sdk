@@ -57,8 +57,8 @@ const appManifest = deepFreeze({
   },
   destinations: {
     foo_export: {
-      entry_point: 'FooExport',
-      description: 'Basic data export',
+      entry_point: 'FooDestination',
+      description: 'Basic Destination',
       schema: 'asset'
     }
   },
@@ -102,7 +102,7 @@ const schemaObjects = deepFreeze({
       description: 'Percentage discount'
     }]
   },
-  'data-exports/schema/asset.yml': {
+  'destinations/schema/asset.yml': {
     name: 'asset',
     display_name: 'Asset',
     fields: [{
@@ -125,9 +125,9 @@ describe('validateApp', () => {
           'my_app_coupons.yml': jsYaml.dump(schemaObjects['schema/my_app_coupons.yml']),
           'something_else.yml.txt': 'something else'
         },
-        'data-exports': {
+        'destinations': {
           'schema': {
-            'asset.yml': jsYaml.dump(schemaObjects['data-exports/schema/asset.yml']),
+            'asset.yml': jsYaml.dump(schemaObjects['destinations/schema/asset.yml']),
           }
         }
       }
@@ -184,26 +184,26 @@ describe('validateApp', () => {
       }
     } as any);
 
-    const getDataExportSchema = jest.spyOn(runtime, 'getDestinationSchema').mockReturnValue({
-      'data-exports/schema/asset.yml': {
-        ...schemaObjects['data-exports/schema/asset.yml'],
+    const getDestinationSchema = jest.spyOn(runtime, 'getDestinationSchema').mockReturnValue({
+      'destinations/schema/asset.yml': {
+        ...schemaObjects['destinations/schema/asset.yml'],
         name: undefined,
-        fields: [{...schemaObjects['data-exports/schema/asset.yml'].fields![0],
+        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0],
           type: 'string', display_name: undefined}]
       }
     } as any);
 
     expect(await validateApp(runtime)).toEqual([
-      'Invalid data-exports/schema/asset.yml: name must match file base name',
-      'Invalid data-exports/schema/asset.yml: name must be specified',
-      'Invalid data-exports/schema/asset.yml: fields[0].display_name must be specified',
+      'Invalid destinations/schema/asset.yml: name must match file base name',
+      'Invalid destinations/schema/asset.yml: name must be specified',
+      'Invalid destinations/schema/asset.yml: fields[0].display_name must be specified',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
     ]);
 
     getSchemaObjects.mockRestore();
-    getDataExportSchema.mockRestore();
+    getDestinationSchema.mockRestore();
   });
 
   it('captures content errors', async () => {

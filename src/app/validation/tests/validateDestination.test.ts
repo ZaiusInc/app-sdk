@@ -41,7 +41,7 @@ describe('validateDestination', () => {
     getDestinationClass: jest.fn()
   };
 
-  it('should return error when data export class cannot be loaded', async () => {
+  it('should return error when destination cannot be loaded', async () => {
     const getDestinationsClass = jest.spyOn(invalidRuntime, 'getDestinationClass')
       .mockRejectedValue(new Error('not found'));
     const result = await validateDestinations(invalidRuntime);
