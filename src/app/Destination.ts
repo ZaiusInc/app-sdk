@@ -54,6 +54,4 @@ export abstract class Destination<T> {
    *          if the batch should be reried and a failure reason if applicable.
    */
   public abstract deliver(batch: DestinationBatch<T>): Promise<DestinationDeliverResult>;
-
-  public abstract getDestinationSchema(): Promise<GetDestinationSchemaResult>;
 }

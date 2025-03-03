@@ -6,7 +6,7 @@ import {join} from 'path';
 export async function validateDestinations(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
 
-  // Make sure all the data_exports listed in the manifest actually exist and are implemented
+  // Make sure all the destinations listed in the manifest actually exist and are implemented
   if (runtime.manifest.destinations) {
     for (const name of Object.keys(runtime.manifest.destinations)) {
       let destinationClass = null;
