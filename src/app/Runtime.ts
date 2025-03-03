@@ -88,13 +88,12 @@ export class Runtime {
   }
 
   public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
-    const exports = this.manifest.destinations;
-    if (!exports || !exports[name]) {
-      throw new Error(`No data export named ${name} defined in manifest`);
+    const destinations = this.manifest.destinations;
+    if (!destinations || !destinations[name]) {
+      throw new Error(`No destination ${name} defined in manifest`);
     }
-    const exp = exports[name];
-    return (await this.import(join(this.dirName, 'destinations', exp.entry_point)))[exp.entry_point];
-
+    const destination = destinations[name];
+    return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
