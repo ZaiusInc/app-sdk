@@ -56,7 +56,7 @@ const appManifest = deepFreeze({
     }
   },
   destinations: {
-    foo_export: {
+    foo_destination: {
       entry_point: 'FooDestination',
       description: 'Basic Destination',
       schema: 'asset'
@@ -216,7 +216,7 @@ describe('validateApp', () => {
     (validateLiquidExtensions as jest.Mock).mockResolvedValue(['liquid error 1', 'liquid error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
     (validateChannel as jest.Mock).mockResolvedValue(['channel error 1', 'channel error 2']);
-    (validateDestinations as jest.Mock).mockResolvedValue(['export error 1', 'export error 2']);
+    (validateDestinations as jest.Mock).mockResolvedValue(['destination error 1', 'destination error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
@@ -227,7 +227,7 @@ describe('validateApp', () => {
       'environment error 1', 'environment error 2',
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
-      'export error 1', 'export error 2',
+      'destination error 1', 'destination error 2',
       'liquid error 1', 'liquid error 2',
       'lifecycle error 1', 'lifecycle error 2',
       'channel error 1', 'channel error 2',
