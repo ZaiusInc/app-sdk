@@ -48,10 +48,10 @@ export abstract class Destination<T> {
   public abstract ready(): Promise<DestinationReadyResult>;
 
   /**
-   * Exports the given batch to i.e. an external system.
-   * @param batch - The batch to be exported
+   * Delivers the given batch to i.e. an external system.
+   * @param batch - The batch to be delivered
    * @returns A DestinationDeliverResult with success/failure,
-   *          if the batch should be reried and a failure reason if applicable.
+   *          if the batch should be retried and a failure reason if applicable.
    */
   public abstract deliver(batch: DestinationBatch<T>): Promise<DestinationDeliverResult>;
 }

@@ -25,8 +25,8 @@ describe('validateDestination', () => {
   const invalidRuntime: any = {
     manifest: {
       destinations: {
-        'validExport': {
-          entry_point: 'validExportClass',
+        'validDestination': {
+          entry_point: 'validDestinationClass',
           schema: 'validSchema'
         },
         'missingSchema': {
@@ -46,7 +46,7 @@ describe('validateDestination', () => {
       .mockRejectedValue(new Error('not found'));
     const result = await validateDestinations(invalidRuntime);
     getDestinationsClass.mockRestore();
-    expect(result).toContain('Error loading entry point validExport. Error: not found');
+    expect(result).toContain('Error loading entry point validDestination. Error: not found');
   });
 
 
@@ -64,8 +64,8 @@ describe('validateDestination', () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
-          'validExport': {
-            entry_point: 'validExportClass',
+          'validDestination': {
+            entry_point: 'validDestinationClass',
             schema: 'validSchema'
           }
         }
@@ -82,8 +82,8 @@ describe('validateDestination', () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
-          'validExport': {
-            entry_point: 'validExportClass',
+          'validDestination': {
+            entry_point: 'validDestinationClass',
             schema: 'validSchema'
           }
         }

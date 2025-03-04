@@ -42,13 +42,13 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   }
 
   if (runtime.manifest.destinations) {
-    const exportSchemaObjects = runtime.getDestinationSchema();
-    for (const file of Object.keys(exportSchemaObjects)) {
-      const exportSchemaObject = exportSchemaObjects[file];
-      if (!ajv.validate(destinationSchema, exportSchemaObject)) {
+    const destinationSchemaObjects = runtime.getDestinationSchema();
+    for (const file of Object.keys(destinationSchemaObjects)) {
+      const destinationSchemaObject = destinationSchemaObjects[file];
+      if (!ajv.validate(destinationSchema, destinationSchemaObject)) {
         ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
       } else {
-        errors = errors.concat(validateDestinationsSchema(exportSchemaObject, file));
+        errors = errors.concat(validateDestinationsSchema(destinationSchemaObject, file));
       }
     }
   }
