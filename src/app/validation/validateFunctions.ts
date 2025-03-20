@@ -2,7 +2,7 @@ import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
 import { AppFunction } from '../types';
-import * as jp from 'jsonpath';
+import jp from 'jsonpath';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];

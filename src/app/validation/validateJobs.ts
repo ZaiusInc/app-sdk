@@ -1,7 +1,7 @@
 import {logger} from '../../logging';
 import {Job} from '../Job';
 import {Runtime} from '../Runtime';
-import * as cronValidator from 'cron-expression-validator';
+import cronValidator from 'cron-expression-validator';
 
 export async function validateJobs(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];

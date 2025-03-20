@@ -1,5 +1,5 @@
 import {logger} from '../logging';
-import * as ObjectHash from 'object-hash';
+import ObjectHash from 'object-hash';
 import {Transform, Stream} from 'stream';
 
 export interface FileRowProcessor<T> {

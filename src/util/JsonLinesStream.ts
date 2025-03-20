@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import {URL} from 'url';
-import * as zlib from 'zlib';
+import zlib from 'zlib';
 import {FileReadableStreamBuilder, FileRowProcessor, FileStream} from './FileStream';
 import {parse, Options} from './JsonLinesParser';
 

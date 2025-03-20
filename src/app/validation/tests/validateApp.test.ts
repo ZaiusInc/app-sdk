@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import 'jest';
-import * as jsYaml from 'js-yaml';
-import * as mockFs from 'mock-fs';
+import jsYaml from 'js-yaml';
+import mockFs from 'mock-fs';
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {SchemaObject} from '../../types/SchemaObject';

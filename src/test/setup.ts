@@ -1,5 +1,5 @@
 import {isEqual} from 'lodash';
-import * as util from 'util';
+import util from 'util';
 
 expect.extend({
   jsonContaining(json: string, expected: any) {

@@ -1,8 +1,8 @@
 import {ErrorObject} from 'ajv';
 import Ajv from 'ajv';
 import {Runtime} from '../Runtime';
-import * as manifestSchema from '../types/AppManifest.schema.json';
-import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
+import manifestSchema from '../types/AppManifest.schema.json';
+import schemaObjectSchema from '../types/SchemaObject.schema.json';
 import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';

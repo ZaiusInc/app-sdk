@@ -1,10 +1,10 @@
 /* eslint max-classes-per-file: "off" */
 import 'jest';
 import {JsonLinesStream} from '../JsonLinesStream';
-import * as nock from 'nock';
-import * as zlib from 'zlib';
+import nock from 'nock';
+import zlib from 'zlib';
 import {Stream} from 'stream';
-import * as ObjectHash from 'object-hash';
+import ObjectHash from 'object-hash';
 import {FileRowProcessor} from '../FileStream';
 
 interface Row {

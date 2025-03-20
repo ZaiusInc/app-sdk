@@ -1,19 +1,11 @@
 import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation/validateForm';
-import * as fs from 'fs';
-import * as jsYaml from 'js-yaml';
-import * as path from 'path';
-import * as remark from 'remark';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as links from 'remark-validate-links';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as vfile from 'to-vfile';
-import {VFile} from 'vfile';
+import fs from 'fs';
+import jsYaml from 'js-yaml';
+import path from 'path';
 import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
-import glob = require('glob');
+import * as glob from 'glob';
 import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
@@ -58,10 +50,12 @@ class AssetValidator {
 
   private async validateMarkdownFiles(): Promise<void> {
     try {
-      const vfiles: VFile[] = await Promise.all(
+      const {VFile} = await import ('vfile');
+      const {remark} = await import('remark');
+      const links = await import('remark-validate-links');
+      const vfiles = await Promise.all(
         glob.sync(`${this.baseDir}/assets/**/*.md`)
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          .map((file) => remark().use(links, {repository: false}).process(vfile.readSync(file)))
+          .map((file) => remark().use(links.default, {repository: false}).process(new VFile({path: file})))
       );
 
       vfiles.forEach((file) => {

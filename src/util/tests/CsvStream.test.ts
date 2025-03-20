@@ -1,10 +1,10 @@
 /* eslint max-classes-per-file: "off" */
 import 'jest';
 import {CsvRowProcessor, CsvStream} from '../CsvStream';
-import * as nock from 'nock';
+import nock from 'nock';
 import {Stream} from 'stream';
 import {Options} from 'csv-parser';
-import * as ObjectHash from 'object-hash';
+import ObjectHash from 'object-hash';
 import {JsonLinesStream} from '../JsonLinesStream';
 
 interface Row {

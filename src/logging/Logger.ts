@@ -1,4 +1,4 @@
-import * as util from 'util';
+import util from 'util';
 
 /**
  * Supported log levels, in order of least important to most.
