@@ -24,6 +24,26 @@
             ],
             "type": "object"
         },
+        "AppDestination": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description",
+                "entry_point",
+                "schema"
+            ],
+            "type": "object"
+        },
         "AppFunction": {
             "additionalProperties": false,
             "properties": {
@@ -387,6 +407,12 @@
         "consumers": {
             "additionalProperties": {
                 "$ref": "#/definitions/AppConsumer"
+            },
+            "type": "object"
+        },
+        "destinations": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppDestination"
             },
             "type": "object"
         },

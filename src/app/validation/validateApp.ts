@@ -7,12 +7,15 @@ import {validateChannel} from './validateChannel';
 import {validateEnvironment} from './validateEnvironment';
 import {validateFunctions} from './validateFunctions';
 import {validateJobs} from './validateJobs';
+import {validateDestinations} from './validateDestinations';
 import {validateLifecycle} from './validateLifecycle';
 import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
+import * as destinationSchema from '../types/DestinationSchema';
+import { validateDestinationsSchema } from './validateDestinationsSchema';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -30,6 +33,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
+      .concat(await validateDestinations(runtime))
       .concat(await validateLiquidExtensions(runtime))
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
@@ -37,6 +41,17 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(validateOutboundDomains(runtime));
   }
 
+  if (runtime.manifest.destinations) {
+    const destinationSchemaObjects = runtime.getDestinationSchema();
+    for (const file of Object.keys(destinationSchemaObjects)) {
+      const destinationSchemaObject = destinationSchemaObjects[file];
+      if (!ajv.validate(destinationSchema, destinationSchemaObject)) {
+        ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+      } else {
+        errors = errors.concat(validateDestinationsSchema(destinationSchemaObject, file));
+      }
+    }
+  }
   const schemaObjects = runtime.getSchemaObjects();
   for (const file of Object.keys(schemaObjects)) {
     const schemaObject = schemaObjects[file];

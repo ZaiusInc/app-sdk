@@ -38,6 +38,12 @@ export interface AppLiquidExtension {
   };
 }
 
+export interface AppDestination {
+  entry_point: string;
+  schema: string;
+  description: string;
+}
+
 export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
 | 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
 | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
@@ -143,6 +149,9 @@ export interface AppManifest {
   };
   liquid_extensions?: {
     [name: string]: AppLiquidExtension;
+  };
+  destinations?: {
+    [name: string]: AppDestination;
   };
   channel?: {
     type: ChannelType;

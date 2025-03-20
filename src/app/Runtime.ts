@@ -14,6 +14,8 @@ import * as manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
+import {Destination} from './Destination';
+import {DestinationSchema, DestinationSchemaObjects} from './types/DestinationSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -85,6 +87,15 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
+  public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
+    const destinations = this.manifest.destinations;
+    if (!destinations || !destinations[name]) {
+      throw new Error(`No destination ${name} defined in manifest`);
+    }
+    const destination = destinations[name];
+    return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
+  }
+
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
     const liquidExtensions = this.manifest.liquid_extensions;
     if (!liquidExtensions || !liquidExtensions[name]) {
@@ -101,6 +112,19 @@ export class Runtime {
     if (files.length > 0) {
       for (const file of files) {
         schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
+      }
+    }
+    return schemaObjects;
+  }
+
+
+  public getDestinationSchema(): DestinationSchemaObjects {
+    const schemaObjects: DestinationSchemaObjects = {};
+    const files = glob.sync('destinations/schema/*.{yml,yaml}', {cwd: this.dirName});
+    if (files.length > 0) {
+      for (const file of files) {
+        const schema = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
+        schemaObjects[schema.name] = schema;
       }
     }
     return schemaObjects;

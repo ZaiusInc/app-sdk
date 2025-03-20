@@ -16,6 +16,7 @@ import {validateLifecycle} from '../validateLifecycle';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 import {validateMeta} from '../validateMeta';
 import {validateSchemaObject} from '../validateSchemaObject';
+import {validateDestinations} from '../validateDestinations';
 
 jest.mock('../validateMeta');
 jest.mock('../validateEnvironment');
@@ -26,6 +27,7 @@ jest.mock('../validateLifecycle');
 jest.mock('../validateChannel');
 jest.mock('../validateSchemaObject');
 jest.mock('../validateAssets');
+jest.mock('../validateDestinations');
 
 const appManifest = deepFreeze({
   meta: {
@@ -51,6 +53,13 @@ const appManifest = deepFreeze({
     bar: {
       entry_point: 'Bar',
       description: 'Does a thing'
+    }
+  },
+  destinations: {
+    foo_destination: {
+      entry_point: 'FooDestination',
+      description: 'Basic Destination',
+      schema: 'asset'
     }
   },
   outbound_domains: [
@@ -92,6 +101,17 @@ const schemaObjects = deepFreeze({
       display_name: 'Percent Off',
       description: 'Percentage discount'
     }]
+  },
+  'destinations/schema/asset.yml': {
+    name: 'asset',
+    display_name: 'Asset',
+    fields: [{
+      name: 'bynder_app_id',
+      type: 'string',
+      display_name: 'Bynder App Id',
+      description: 'Id of the app',
+      primary: true
+    }]
   }
 } as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
@@ -104,6 +124,11 @@ describe('validateApp', () => {
           'events.yml': jsYaml.dump(schemaObjects['schema/events.yml']),
           'my_app_coupons.yml': jsYaml.dump(schemaObjects['schema/my_app_coupons.yml']),
           'something_else.yml.txt': 'something else'
+        },
+        'destinations': {
+          'schema': {
+            'asset.yml': jsYaml.dump(schemaObjects['destinations/schema/asset.yml']),
+          }
         }
       }
     });
@@ -125,6 +150,7 @@ describe('validateApp', () => {
     (validateChannel as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
+    (validateDestinations as jest.Mock).mockReturnValue([]);
   });
 
   it('succeeds with a proper definition', async () => {
@@ -158,13 +184,26 @@ describe('validateApp', () => {
       }
     } as any);
 
+    const getDestinationSchema = jest.spyOn(runtime, 'getDestinationSchema').mockReturnValue({
+      'destinations/schema/asset.yml': {
+        ...schemaObjects['destinations/schema/asset.yml'],
+        name: undefined,
+        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0],
+          type: 'string', display_name: undefined}]
+      }
+    } as any);
+
     expect(await validateApp(runtime)).toEqual([
+      'Invalid destinations/schema/asset.yml: name must match file base name',
+      'Invalid destinations/schema/asset.yml: name must be specified',
+      'Invalid destinations/schema/asset.yml: fields[0].display_name must be specified',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
     ]);
 
     getSchemaObjects.mockRestore();
+    getDestinationSchema.mockRestore();
   });
 
   it('captures content errors', async () => {
@@ -177,6 +216,7 @@ describe('validateApp', () => {
     (validateLiquidExtensions as jest.Mock).mockResolvedValue(['liquid error 1', 'liquid error 2']);
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
     (validateChannel as jest.Mock).mockResolvedValue(['channel error 1', 'channel error 2']);
+    (validateDestinations as jest.Mock).mockResolvedValue(['destination error 1', 'destination error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
@@ -187,6 +227,7 @@ describe('validateApp', () => {
       'environment error 1', 'environment error 2',
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
+      'destination error 1', 'destination error 2',
       'liquid error 1', 'liquid error 2',
       'lifecycle error 1', 'lifecycle error 2',
       'channel error 1', 'channel error 2',
@@ -206,5 +247,6 @@ describe('validateApp', () => {
       [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']]
     ]);
     expect(validateAssets).toBeCalledWith(runtime);
+    expect(validateDestinations).toBeCalledWith(runtime);
   });
 });
