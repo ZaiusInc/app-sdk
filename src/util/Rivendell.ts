@@ -7,7 +7,7 @@ export interface Shard {
 export class Rivendell {
   public static async shards(): Promise<string[]> {
     const response = await fetch('https://rivendell.zaius.com/shards');
-    const shards: Shard[] = await response.json();
+    const shards = await response.json() as Shard[];
     return shards.map((x) => x.id);
   }
 }

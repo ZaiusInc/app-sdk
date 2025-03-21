@@ -4,7 +4,7 @@ import {Job, JobStatus} from '../Job';
 
 class MyJob extends Job {
   public async prepare(
-    _params: ValueHash, _status?: JobStatus | undefined, _resuming?: boolean | undefined
+    _params: ValueHash, _status?: JobStatus, _resuming?: boolean
   ): Promise<JobStatus> {
     return {state: {}, complete: false};
   }

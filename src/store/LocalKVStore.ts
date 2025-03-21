@@ -291,7 +291,7 @@ export class LocalKVStore implements KVStore {
       for (const field of fields) {
         const value = current[field];
         if (value == null || Array.isArray(value)) {
-          const update = operation(value == null ? undefined : value , field);
+          const update = operation(value == null ? undefined : value, field);
           current[field] = update ? Array.from(update) : undefined;
         } else {
           throw new Error(`Cannot operate on non-array value at ${key}.${field}. Value is type ${typeof value}.`);

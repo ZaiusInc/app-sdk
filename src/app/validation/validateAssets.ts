@@ -13,7 +13,7 @@ import {VFile} from 'vfile';
 import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
-import glob = require('glob');
+import * as glob from 'glob';
 import { Schema } from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
