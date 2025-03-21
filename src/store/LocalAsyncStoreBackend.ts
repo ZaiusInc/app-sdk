@@ -96,7 +96,7 @@ export class LocalAsyncStoreBackend<T> {
       } else {
         const options = {ttl: undefined};
         let value = {} as O;
-        value = this.copy(updater(value , options));
+        value = this.copy(updater(value, options));
         this.data[key] = {
           cas: 0,
           expires: options.ttl == null ? undefined : (epoch + Number(options.ttl)),
@@ -146,7 +146,7 @@ export class LocalAsyncStoreBackend<T> {
         try {
           resolve(operation());
         } catch (e) {
-          reject(e);
+          reject(e instanceof Error ? e : new Error(String(e)));
         }
       }, this.avgDelay * (0.5 + Math.random()))
     );

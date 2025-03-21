@@ -262,8 +262,8 @@ describe('Runtime', () => {
 
       const result = runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
+        ['/tmp/foo/schema/my_app_coupons.yaml', 'utf8'],
         ['/tmp/foo/schema/events.yml', 'utf8'],
-        ['/tmp/foo/schema/my_app_coupons.yaml', 'utf8']
       ]);
       expect(result).toEqual(schemaObjects);
 
