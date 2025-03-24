@@ -124,7 +124,7 @@ function streamToString(stream: Stream) {
   const chunks: any[] = [];
   return new Promise((resolve, reject) => {
     stream.on('data', (chunk) => chunks.push(chunk));
-    stream.on('error', (err) => reject(err));
+    stream.on('error', (err) => reject(err instanceof Error ? err : new Error(String(err))));
     stream.on('end', () => resolve(chunks));
   });
 }

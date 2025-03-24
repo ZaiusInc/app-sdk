@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import {FormData} from '@zaiusinc/app-forms-schema';
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import 'jest';
 import {CampaignContent, CampaignDelivery, CampaignTracking, Channel, ChannelDeliverOptions, ChannelDeliverResult, ChannelPrepareOptions, ChannelPrepareResult, ChannelPublishOptions, ChannelValidateOptions} from '../../Channel';
 import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../../lib';

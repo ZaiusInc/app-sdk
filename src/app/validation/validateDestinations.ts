@@ -1,6 +1,6 @@
 import {Destination} from '../Destination';
 import {Runtime} from '../Runtime';
-import * as fs from 'fs';
+import fs from 'fs';
 import {join} from 'path';
 
 export async function validateDestinations(runtime: Runtime): Promise<string[]> {

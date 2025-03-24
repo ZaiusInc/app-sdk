@@ -2,7 +2,7 @@ import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
 import { AppFunction } from '../types';
-import * as jp from 'jsonpath';
+import jp from 'jsonpath';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -21,10 +21,10 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
           errors.push(`Failed to load function class ${name}.  Error was: ${msg}`);
           return errors;
         }
-        errorMessage = e.toString();
+        errorMessage = e instanceof Error ? e.message : String(e);
       }
       if (!fnClass) {
-        errors.push(`Error loading function class ${name}. ${errorMessage}`);
+        errors.push(`Error loading function class ${name}. Error: ${errorMessage}`);
       } else if (!fnDefinition.global && !(fnClass.prototype instanceof Function)) {
         errors.push(`Function entry point does not extend App.Function: ${fnDefinition.entry_point}`);
       } else if (fnDefinition.global && !(fnClass.prototype instanceof GlobalFunction)) {
