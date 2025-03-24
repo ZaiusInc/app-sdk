@@ -14,7 +14,7 @@ import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
 import * as glob from 'glob';
-import { Schema } from '@zaiusinc/app-forms-schema';
+import {Schema} from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
   'assets/directory/overview.md',

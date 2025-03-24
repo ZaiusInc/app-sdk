@@ -1,4 +1,3 @@
-
 import deepFreeze from 'deep-freeze';
 import 'jest';
 import * as jsYaml from 'js-yaml';
