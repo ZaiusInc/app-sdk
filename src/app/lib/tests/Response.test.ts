@@ -1,4 +1,3 @@
-
 import 'jest';
 import {Headers} from '../Headers';
 import {Response} from '../Response';
