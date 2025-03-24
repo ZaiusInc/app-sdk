@@ -10,7 +10,7 @@ import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
-import * as manifestSchema from './types/AppManifest.schema.json';
+import manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects, SchemaObject} from './types/SchemaObject';
 import deepFreeze from 'deep-freeze';
 import * as glob from 'glob';
