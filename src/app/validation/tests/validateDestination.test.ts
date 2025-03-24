@@ -1,6 +1,6 @@
 import { validateDestinations } from '../validateDestinations';
 import { Destination, GetDestinationSchemaResult } from '../../Destination';
-import * as fs from 'fs';
+import fs from 'fs';
 
 class ValidDestination extends Destination<any> {
   public getDestinationSchema(): Promise<GetDestinationSchemaResult> {

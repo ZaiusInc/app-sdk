@@ -1,11 +1,11 @@
 import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation/validateForm';
-import * as fs from 'fs';
+import fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';
-import * as remark from 'remark';
+import remark from 'remark';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import * as links from 'remark-validate-links';
+import links from 'remark-validate-links';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as vfile from 'to-vfile';

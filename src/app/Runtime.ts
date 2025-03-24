@@ -12,7 +12,7 @@ import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects, SchemaObject} from './types/SchemaObject';
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchema, DestinationSchemaObjects} from './types/DestinationSchema';

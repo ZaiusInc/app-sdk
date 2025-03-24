@@ -1,4 +1,4 @@
-import * as csv from 'csv-parser';
+import csv from 'csv-parser';
 import fetch from 'node-fetch';
 import {URL} from 'url';
 import * as zlib from 'zlib';
