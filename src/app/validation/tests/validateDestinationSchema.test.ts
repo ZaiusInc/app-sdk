@@ -10,6 +10,7 @@ describe('validateDestinationSchema', () => {
     const validSchema: DestinationSchema = {
       name: 'valid_schema',
       display_name: 'Valid Schema',
+      description: 'Description',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true },
         { name: 'field2', display_name: 'Field 2', description: 'Description', type: 'string' },
@@ -23,6 +24,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if the schema name does not match the file name', () => {
     const invalidSchema: DestinationSchema = {
       name: 'invalid_schema',
+      description: 'Description',
       display_name: 'Invalid Schema',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
@@ -36,6 +38,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if display_name is missing in the schema', () => {
     const invalidSchema: DestinationSchema = {
       name: 'valid_schema',
+      description: 'Description',
       display_name: '',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
@@ -49,6 +52,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if no primary key is defined in the schema fields', () => {
     const invalidSchema: DestinationSchema = {
       name: 'valid_schema',
+      description: 'Description',
       display_name: 'Valid Schema',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string' },
@@ -64,6 +68,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if schema name does not match the format', () => {
     const invalidSchema: DestinationSchema = {
       name: 'InvalidName!',
+      description: 'Description',
       display_name: 'Invalid Schema',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
@@ -79,6 +84,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if field name does not match format', () => {
     const invalidSchema: DestinationSchema = {
       name: 'valid_schema',
+      description: 'Description',
       display_name: 'Valid Schema',
       fields: [
         { name: 'invalid-field', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
@@ -94,6 +100,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if field display_name is missing', () => {
     const invalidSchema: DestinationSchema = {
       name: 'valid_schema',
+      description: 'Description',
       display_name: 'Valid Schema',
       fields: [
         { name: 'field1', display_name: '', description: 'Description', type: 'string', primary: true }
@@ -107,6 +114,7 @@ describe('validateDestinationSchema', () => {
   it('should return an error if field description is missing', () => {
     const invalidSchema: DestinationSchema = {
       name: 'valid_schema',
+      description: 'Description',
       display_name: 'Valid Schema',
       fields: [
         { name: 'field1', display_name: 'Field 1', description: '', type: 'string', primary: true }

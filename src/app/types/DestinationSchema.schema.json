@@ -44,6 +44,9 @@
         }
     },
     "properties": {
+        "description": {
+            "type": "string"
+        },
         "display_name": {
             "type": "string"
         },
@@ -58,6 +61,7 @@
         }
     },
     "required": [
+        "description",
         "display_name",
         "fields",
         "name"
