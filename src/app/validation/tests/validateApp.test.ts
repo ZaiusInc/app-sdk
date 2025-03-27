@@ -189,14 +189,14 @@ describe('validateApp', () => {
         ...schemaObjects['destinations/schema/asset.yml'],
         name: undefined,
         fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0],
-          type: 'string', display_name: undefined}]
+          type: 'no', display_name: undefined}]
       }
     } as any);
 
     expect(await validateApp(runtime)).toEqual([
-      'Invalid destinations/schema/asset.yml: name must match file base name',
-      'Invalid destinations/schema/asset.yml: name must be specified',
-      'Invalid destinations/schema/asset.yml: fields[0].display_name must be specified',
+      "Invalid destinations/schema/asset.yml: must have required property 'name'",
+      "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
+      "Invalid destinations/schema/asset.yml: fields/0/type must be equal to one of the allowed values",
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
