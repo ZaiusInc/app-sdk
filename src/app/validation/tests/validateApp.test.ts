@@ -105,6 +105,7 @@ const schemaObjects = deepFreeze({
   'destinations/schema/asset.yml': {
     name: 'asset',
     display_name: 'Asset',
+    description: 'description',
     fields: [{
       name: 'bynder_app_id',
       type: 'string',
