@@ -196,7 +196,7 @@ describe('validateApp', () => {
     expect(await validateApp(runtime)).toEqual([
       "Invalid destinations/schema/asset.yml: must have required property 'name'",
       "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
-      "Invalid destinations/schema/asset.yml: fields/0/type must be equal to one of the allowed values",
+      'Invalid destinations/schema/asset.yml: fields/0/type must be equal to one of the allowed values',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
