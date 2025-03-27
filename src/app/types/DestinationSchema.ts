@@ -1,5 +1,6 @@
 export interface DestinationSchema {
   name: string;
+  description: string;
   display_name: string;
   fields: SchemaField[];
 }
