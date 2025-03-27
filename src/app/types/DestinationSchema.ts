@@ -8,7 +8,7 @@ export interface SchemaField {
   name: string;
   display_name: string;
   description: string;
-  type: string;
+  type: 'string' | 'boolean' | 'int' | 'float' | 'long';
   primary?: boolean;
   format?: 'url';
 }
