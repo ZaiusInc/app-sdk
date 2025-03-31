@@ -14,7 +14,7 @@ import {validateMeta} from './validateMeta';
 import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
-import * as destinationSchema from '../types/DestinationSchema';
+import * as destinationSchema from '../types/DestinationSchema.schema.json';
 import { validateDestinationsSchema } from './validateDestinationsSchema';
 
 /**
