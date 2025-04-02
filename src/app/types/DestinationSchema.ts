@@ -1,5 +1,6 @@
 export interface DestinationSchema {
   name: string;
+  description: string;
   display_name: string;
   fields: SchemaField[];
 }
@@ -8,7 +9,7 @@ export interface SchemaField {
   name: string;
   display_name: string;
   description: string;
-  type: string;
+  type: 'string' | 'boolean' | 'int' | 'float' | 'long';
   primary?: boolean;
   format?: 'url';
 }
