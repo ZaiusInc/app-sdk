@@ -15,7 +15,10 @@ import {validateSchemaObject} from './validateSchemaObject';
 import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
 import * as destinationSchema from '../types/DestinationSchema.schema.json';
+import * as sourceSchema from '../types/SourceSchema.schema.json';
 import { validateDestinationsSchema } from './validateDestinationsSchema';
+import { validateSources } from './validateSources';
+import { validateSourcesSchema } from './validateSourcesSchema';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -34,6 +37,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))
       .concat(await validateDestinations(runtime))
+      .concat(await validateSources(runtime))
       .concat(await validateLiquidExtensions(runtime))
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
@@ -52,6 +56,19 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       }
     }
   }
+
+  if (runtime.manifest.sources) {
+    const sourceSchemaObjects = runtime.getSourceSchema();
+    for (const file of Object.keys(sourceSchemaObjects)) {
+      const sourceSchemaObject = sourceSchemaObjects[file];
+      if (!ajv.validate(sourceSchema, sourceSchemaObject)) {
+        ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError(file, e)));
+      } else {
+        errors = errors.concat(validateSourcesSchema(sourceSchemaObject, file));
+      }
+    }
+  }
+
   const schemaObjects = runtime.getSchemaObjects();
   for (const file of Object.keys(schemaObjects)) {
     const schemaObject = schemaObjects[file];
