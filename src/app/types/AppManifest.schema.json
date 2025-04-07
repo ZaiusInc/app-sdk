@@ -161,6 +161,37 @@
             ],
             "type": "string"
         },
+        "AppSource": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "schema": {
+                    "type": "string"
+                },
+                "webhook": {
+                    "$ref": "#/definitions/AppSourceWebhook"
+                }
+            },
+            "required": [
+                "description",
+                "schema"
+            ],
+            "type": "object"
+        },
+        "AppSourceWebhook": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
+            ],
+            "type": "object"
+        },
         "CampaignTargeting": {
             "additionalProperties": false,
             "description": "Defines the targeting requirements for a channel.",
@@ -524,6 +555,12 @@
         },
         "runtime": {
             "$ref": "#/definitions/AppRuntime"
+        },
+        "sources": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppSource"
+            },
+            "type": "object"
         }
     },
     "required": [

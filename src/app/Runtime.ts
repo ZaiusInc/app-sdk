@@ -11,11 +11,13 @@ import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import * as manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects, SchemaObject} from './types/SchemaObject';
+import {SchemaObjects} from './types/SchemaObject';
 import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 import {Destination} from './Destination';
-import {DestinationSchema, DestinationSchemaObjects} from './types/DestinationSchema';
+import {DestinationSchemaObjects} from './types/DestinationSchema';
+import { Source } from './Source';
+import { SourceSchemaObjects } from './types/SourceSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -96,6 +98,18 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
+  public async getSourceWebhookClass<T extends Source>(name: string): Promise<new () => T> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    if (!sources[name].webhook) {
+      throw new Error(`Source '${name}' is not a webhook source`);
+    }
+    const webhookEntryPoint = sources[name].webhook?.entry_point;
+    return (await this.import(join(this.dirName, 'sources', webhookEntryPoint)))[webhookEntryPoint];
+  }
+
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
     const liquidExtensions = this.manifest.liquid_extensions;
     if (!liquidExtensions || !liquidExtensions[name]) {
@@ -107,22 +121,23 @@ export class Runtime {
   }
 
   public getSchemaObjects(): SchemaObjects {
-    const schemaObjects: SchemaObjects = {};
-    const files = glob.sync('schema/*.{yml,yaml}', {cwd: this.dirName});
-    if (files.length > 0) {
-      for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
-      }
-    }
-    return schemaObjects;
+    return this.getSchema('schema') as SchemaObjects;
   }
 
   public getDestinationSchema(): DestinationSchemaObjects {
-    const schemaObjects: DestinationSchemaObjects = {};
-    const files = glob.sync('destinations/schema/*.{yml,yaml}', {cwd: this.dirName});
+    return this.getSchema('destinations/schema') as DestinationSchemaObjects;
+  }
+
+  public getSourceSchema(): SourceSchemaObjects {
+    return this.getSchema('sources/schema') as SourceSchemaObjects;
+  }
+
+  private getSchema(path: string) {
+    const schemaObjects: any = {};
+    const files = glob.sync(`${path}/*.{yml,yaml}`, { cwd: this.dirName });
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8'));
       }
     }
     return schemaObjects;
@@ -145,7 +160,7 @@ export class Runtime {
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
     const manifest = (await import('js-yaml')).load(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
-    ) ;
+    );
 
     if (!skipJsonValidation) {
       const ajv: Ajv = new Ajv({allowUnionTypes: true});

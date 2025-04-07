@@ -1,11 +1,11 @@
-export interface DestinationSchema {
+export interface SourceSchema {
   name: string;
   description: string;
   display_name: string;
-  fields: DestinationSchemaField[];
+  fields: SourceSchemaField[];
 }
 
-export interface DestinationSchemaField {
+export interface SourceSchemaField {
   name: string;
   display_name: string;
   description: string;
@@ -14,7 +14,6 @@ export interface DestinationSchemaField {
   format?: 'url';
 }
 
-export interface DestinationSchemaObjects {
-  [file: string]: DestinationSchema;
+export interface SourceSchemaObjects {
+  [file: string]: SourceSchema;
 }
-

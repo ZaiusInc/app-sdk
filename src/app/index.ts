@@ -9,3 +9,4 @@ export * from './LiquidExtension';
 export * from './Runtime';
 export * from './types';
 export * from './Destination';
+export * from './Source';
