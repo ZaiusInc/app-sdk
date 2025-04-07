@@ -21,8 +21,8 @@ export async function validateSources(runtime: Runtime): Promise<string[]> {
 
 async function validateSchema(runtime: Runtime, name: string) {
   const errors: string[] = [];
-  const source = runtime.manifest.sources![name];
-  if (!source.schema) {
+  const source = runtime.manifest.sources?.[name];
+  if (!source || !source.schema) {
     errors.push(`Source is missing the schema property: ${name}`);
   } else {
     const schema = source.schema;
@@ -40,7 +40,7 @@ async function validateSchema(runtime: Runtime, name: string) {
 
 async function validateWebhook(runtime: Runtime, name: string) {
   const errors: string[] = [];
-  const source = runtime.manifest.sources![name];
+  const source = runtime.manifest.sources?.[name];
   let sourceClass = null;
   let errorMessage: string | null = null;
   try {
@@ -48,7 +48,7 @@ async function validateWebhook(runtime: Runtime, name: string) {
   } catch (e: any) {
     errorMessage = e;
   }
-  if (!sourceClass) {
+  if (!source || !sourceClass) {
     errors.push(`Error loading entry point ${name}. ${errorMessage}`);
   } else if (!(sourceClass.prototype instanceof Source)) {
     errors.push(

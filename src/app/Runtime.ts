@@ -103,10 +103,10 @@ export class Runtime {
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
     }
-    if (!sources[name].webhook) {
+    const webhookEntryPoint = sources[name].webhook?.entry_point;
+    if (!webhookEntryPoint) {
       throw new Error(`Source '${name}' is not a webhook source`);
     }
-    const webhookEntryPoint = sources[name].webhook?.entry_point;
     return (await this.import(join(this.dirName, 'sources', webhookEntryPoint)))[webhookEntryPoint];
   }
 
