@@ -1,4 +1,4 @@
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import 'jest';
 import {Rivendell} from '../../../util/Rivendell';
 import {Runtime} from '../../Runtime';
