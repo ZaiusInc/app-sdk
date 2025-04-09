@@ -73,21 +73,23 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @async
    * @param key of the stored object
    * @param value hash of fields and values to update the object with. Leaves all other fields untouched.
+   * @param options optionally set a TTL for this row
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
-  patch<T extends KVHash>(key: string, value: T): Promise<T>;
+  patch<T extends KVHash>(key: string, value: T, options?: KVRowOptions): Promise<T>;
 
   /**
    * Update a stored object using a callback to make changes.
    * @async
    * @param key of the stored object
    * @param updater function to manipulate the existing object (may be called multiple times to ensure an atomic change)
+   * @param options optionally set a TTL for this row
    * @returns the complete object from before the update
    * An empty object is returned if the object previously did not exist.
    */
   // eslint-disable-next-line @typescript-eslint/unified-signatures
-  patch<T extends KVHash>(key: string, updater: KVPatchUpdater<T>): Promise<T>;
+  patch<T extends KVHash>(key: string, updater: KVPatchUpdater<T>, options?: KVRowOptions): Promise<T>;
 
   /**
    * Delete an object or a single field from the store at a given key.
@@ -119,9 +121,10 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @param key of the stored object
    * @param field to increment
    * @param amount by which to increment (can be negative, defaults to 1)
+   * @param options optionally set a TTL for this row
    * @returns the value of the field after incrementing
    */
-  increment(key: string, field: string, amount?: number): Promise<number>;
+  increment(key: string, field: string, amount?: number, options?: KVRowOptions): Promise<number>;
 
   /**
    * Atomically increment the values of multiple numeric fields. If the object or fields did not previously exist, the
@@ -130,9 +133,10 @@ export interface KVStore extends BaseKVStore<KVHash, KVHash> {
    * @async
    * @param key of the stored object
    * @param fieldAmounts hash of fields to amounts by which to increment (can be negative)
+   * @param options optionally set a TTL for this row
    * @returns hash of fields to values after incrementing
    */
-  incrementMulti(key: string, fieldAmounts: MultiValue<number>): Promise<MultiValue<number>>;
+  incrementMulti(key: string, fieldAmounts: MultiValue<number>, options?: KVRowOptions): Promise<MultiValue<number>>;
 
   // ===================================================================================================================
   // List Operations
