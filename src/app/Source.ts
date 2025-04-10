@@ -3,9 +3,9 @@ import { RequestHandler } from './RequestHandler';
 
 export interface SourceConfiguration {
   dataSyncId: string;
-  webhookUrl: string;
   sourceKey: string;
   schema: string;
+  webhookUrl?: string;
 }
 
 export interface SourceResponse {
