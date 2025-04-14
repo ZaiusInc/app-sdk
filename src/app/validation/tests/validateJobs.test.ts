@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import 'jest';
 import {ValueHash} from '../../../store';
 import {Job, JobStatus} from '../../Job';
