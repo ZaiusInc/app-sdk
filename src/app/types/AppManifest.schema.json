@@ -158,8 +158,7 @@
                 "node12",
                 "node18",
                 "node18_rt",
-                "node22",
-                "node22_rt"
+                "node22"
             ],
             "type": "string"
         },
