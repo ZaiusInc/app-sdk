@@ -49,7 +49,7 @@ export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture'
 | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
 | 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
 | 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
-| 'Subscriptions';
+| 'Subscriptions' | 'Audience Sync';
 
 export type AppRuntime = 'node12' | 'node18' | 'node18_rt';
 
