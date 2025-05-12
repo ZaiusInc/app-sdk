@@ -16,7 +16,7 @@ import deepFreeze = require('deep-freeze');
 import glob = require('glob');
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
-import { Source } from './Source';
+import { Source, SourceConfiguration } from './Source';
 import { SourceSchemaObjects } from './types/SourceSchema';
 
 interface SerializedRuntime {
@@ -98,7 +98,7 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
-  public async getSourceWebhookClass<T extends Source>(name: string): Promise<new () => T> {
+  public async getSourceWebhookClass<T extends Source>(name: string): Promise<new (request: Request | null, config: SourceConfiguration) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);

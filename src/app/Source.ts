@@ -1,5 +1,5 @@
 import { Request } from './lib/Request';
-import { RequestHandler } from './RequestHandler';
+import { Response } from './lib/Response';
 
 export interface SourceConfiguration {
   dataSyncId: string;
@@ -23,12 +23,13 @@ export type SourceDeleteResponse = SourceResponse;
 export type SourceEnableResponse = SourceResponse;
 export type SourcePauseResponse = SourceResponse;
 
-export abstract class Source extends RequestHandler {
+export abstract class Source {
   protected config: SourceConfiguration;
+  protected request: Request | null;
 
-  public constructor(request: Request, config: SourceConfiguration) {
-    super(request);
+  public constructor(request: Request | null, config: SourceConfiguration) {
     this.config = config;
+    this.request = request;
   }
 
   /**
@@ -60,4 +61,6 @@ export abstract class Source extends RequestHandler {
    * Called when a sources is paused.
    */
   public abstract onSourcePause(): Promise<SourcePauseResponse>;
+
+  public abstract perform(): Promise<Response>;
 }
