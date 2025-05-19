@@ -18,6 +18,7 @@ import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { Source, SourceConfiguration } from './Source';
 import { SourceSchemaObjects } from './types/SourceSchema';
+import { SourceEventForwarderApi } from '../sources';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -99,7 +100,7 @@ export class Runtime {
   }
 
   public async getSourceWebhookClass<T extends Source>(name: string): Promise<
-  new (request: Request | null, config: SourceConfiguration) => T> {
+  new (request: Request | null, config: SourceConfiguration, forwarder: SourceEventForwarderApi) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);

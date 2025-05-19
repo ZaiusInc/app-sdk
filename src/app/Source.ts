@@ -1,3 +1,4 @@
+import { SourceEventForwarderApi } from '../sources';
 import { Request } from './lib/Request';
 import { Response } from './lib/Response';
 
@@ -26,10 +27,12 @@ export type SourcePauseResponse = SourceResponse;
 export abstract class Source {
   protected config: SourceConfiguration;
   protected request: Request | null;
+  protected sourceEventForwarder: SourceEventForwarderApi;
 
-  public constructor(request: Request | null, config: SourceConfiguration) {
+  public constructor(request: Request | null, config: SourceConfiguration, forwarder: SourceEventForwarderApi) {
     this.config = config;
     this.request = request;
+    this.sourceEventForwarder = forwarder;
   }
 
   /**
