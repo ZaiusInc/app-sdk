@@ -1,5 +1,6 @@
 export interface SourceEventForwarderResponse {
   success: boolean;
+  message?: string;
 }
 
 /**
@@ -11,5 +12,5 @@ export class SourceEventForwarderApiError extends Error { }
  * Interface to forward source events
  */
 export interface SourceEventForwarderApi {
-  sendEvent(data: any): Promise<SourceEventForwarderResponse>;
+  sendEvent(data: object): Promise<SourceEventForwarderResponse>;
 }
