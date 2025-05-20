@@ -50,14 +50,14 @@ describe('validateSources', () => {
           },
         }
       },
-      getSourceWebhookClass: jest.fn()
+      getSourceFunctionClass: jest.fn()
     };
 
     it('should return error when source webhook cannot be loaded', async () => {
-      const getSourceWebhookClass = jest.spyOn(invalidRuntime, 'getSourceWebhookClass')
+      const getSourceFunctionClass = jest.spyOn(invalidRuntime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
       const result = await validateSources(invalidRuntime);
-      getSourceWebhookClass.mockRestore();
+      getSourceFunctionClass.mockRestore();
       expect(result).toContain('Error loading entry point validSource. Error: not found');
     });
 
@@ -81,7 +81,7 @@ describe('validateSources', () => {
             }
           }
         },
-        getSourceWebhookClass: () => ValidSource
+        getSourceFunctionClass: () => ValidSource
       };
 
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
@@ -99,7 +99,7 @@ describe('validateSources', () => {
             }
           }
         },
-        getSourceWebhookClass: () => ValidSource
+        getSourceFunctionClass: () => ValidSource
       };
 
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
@@ -109,8 +109,8 @@ describe('validateSources', () => {
   });
 
   describe('validateSources webhook methods', () => {
-    function getSourceClassMissingMethod(methodName: string): typeof Source {
-      class ModifiedSource extends ValidSource {}
+    function getSourceClassMissingMethod(methodName: string): typeof SourceFunction {
+      class ModifiedSource extends ValidSource { }
       Object.defineProperty(ModifiedSource.prototype, methodName, {});
       return ModifiedSource;
     }
@@ -139,12 +139,12 @@ describe('validateSources', () => {
               }
             }
           },
-          getSourceWebhookClass: () => sourceClass
+          getSourceFunctionClass: () => sourceClass
         };
 
         jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
         const result = await validateSources(runtime);
-        expect(result).toContain(`Source entry point is missing the ${method} method: testSourceClass`);
+        expect(result).toContain(`SourceFunction entry point is missing the ${method} method: testSourceClass`);
       });
     });
   });

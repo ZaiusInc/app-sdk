@@ -1,4 +1,4 @@
-import { SourceEventForwarderApi } from '../sources';
+import { Source } from '../sources/Source';
 import { Request } from './lib/Request';
 import { Response } from './lib/Response';
 
@@ -24,15 +24,15 @@ export type SourceDeleteResponse = SourceResponse;
 export type SourceEnableResponse = SourceResponse;
 export type SourcePauseResponse = SourceResponse;
 
-export abstract class Source {
+export abstract class SourceFunction {
   protected config: SourceConfiguration;
   protected request: Request | null;
-  protected sourceEventForwarder: SourceEventForwarderApi;
+  protected source: Source | null;
 
-  public constructor(request: Request | null, config: SourceConfiguration, forwarder: SourceEventForwarderApi) {
+  public constructor(config: SourceConfiguration, request: Request | null, source: Source | null) {
     this.config = config;
     this.request = request;
-    this.sourceEventForwarder = forwarder;
+    this.source = source;
   }
 
   /**
