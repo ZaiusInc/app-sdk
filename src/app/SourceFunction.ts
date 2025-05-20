@@ -9,20 +9,16 @@ export interface SourceConfiguration {
   webhookUrl?: string;
 }
 
-export interface SourceResponse {
+export interface SourceCallbackResponse {
   success: boolean;
   message?: string;
 }
 
-export interface SourceCreateResponse {
-  success: boolean;
-  message?: string;
-}
-
-export type SourceUpdateResponse = SourceResponse;
-export type SourceDeleteResponse = SourceResponse;
-export type SourceEnableResponse = SourceResponse;
-export type SourcePauseResponse = SourceResponse;
+export type SourceCreateResponse = SourceCallbackResponse;
+export type SourceUpdateResponse = SourceCallbackResponse;
+export type SourceDeleteResponse = SourceCallbackResponse;
+export type SourceEnableResponse = SourceCallbackResponse;
+export type SourcePauseResponse = SourceCallbackResponse;
 
 export abstract class SourceFunction {
   protected config: SourceConfiguration;

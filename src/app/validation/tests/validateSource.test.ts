@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file */
 import * as fs from 'fs';
-import { Source, SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourcePauseResponse, SourceUpdateResponse } from '../../Source';
+import { SourceFunction, SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourcePauseResponse, SourceUpdateResponse } from '../../SourceFunction';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
 
-class ValidSource extends Source {
+class ValidSource extends SourceFunction {
   public async onSourceCreate(): Promise<SourceCreateResponse> {
     return {success: true};
   }
@@ -53,7 +53,7 @@ describe('validateSources', () => {
       getSourceFunctionClass: jest.fn()
     };
 
-    it('should return error when source webhook cannot be loaded', async () => {
+    it('should return error when source function cannot be loaded', async () => {
       const getSourceFunctionClass = jest.spyOn(invalidRuntime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
       const result = await validateSources(invalidRuntime);
@@ -108,7 +108,7 @@ describe('validateSources', () => {
     });
   });
 
-  describe('validateSources webhook methods', () => {
+  describe('validateSources function methods', () => {
     function getSourceClassMissingMethod(methodName: string): typeof SourceFunction {
       class ModifiedSource extends ValidSource { }
       Object.defineProperty(ModifiedSource.prototype, methodName, {});
@@ -133,7 +133,7 @@ describe('validateSources', () => {
               'testSource': {
                 entry_point: 'testSourceClass',
                 schema: 'testSchema',
-                webhook: {
+                function: {
                   entry_point: 'testSourceClass'
                 }
               }

@@ -167,11 +167,11 @@
                 "description": {
                     "type": "string"
                 },
+                "function": {
+                    "$ref": "#/definitions/AppSourceFunction"
+                },
                 "schema": {
                     "type": "string"
-                },
-                "webhook": {
-                    "$ref": "#/definitions/AppSourceWebhook"
                 }
             },
             "required": [
@@ -180,7 +180,7 @@
             ],
             "type": "object"
         },
-        "AppSourceWebhook": {
+        "AppSourceFunction": {
             "additionalProperties": false,
             "properties": {
                 "entry_point": {

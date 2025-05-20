@@ -105,9 +105,9 @@ export class Runtime {
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
     }
-    const functionEntryPoint = sources[name].webhook?.entry_point;
+    const functionEntryPoint = sources[name].function?.entry_point;
     if (!functionEntryPoint) {
-      throw new Error(`Source '${name}' is not a webhook source`);
+      throw new Error(`Source '${name}' is not a function source`);
     }
     return (await this.import(join(this.dirName, 'sources', functionEntryPoint)))[functionEntryPoint];
   }

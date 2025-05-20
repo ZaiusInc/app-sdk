@@ -53,13 +53,13 @@ async function validateFunction(runtime: Runtime, name: string) {
     errors.push(`Error loading entry point ${name}. ${errorMessage}`);
   } else if (!(sourceClass.prototype instanceof SourceFunction)) {
     errors.push(
-      `SourceFunction entry point does not extend App.SourceFunction: ${source.webhook?.entry_point}`
+      `SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`
     );
   } else {
     for (const method of SOURCE_FUNCTION_LIFECYCLE_METHODS) {
       if (typeof ((sourceClass.prototype as any)[method]) !== 'function') {
         errors.push(
-          `SourceFunction entry point is missing the ${method} method: ${source.webhook?.entry_point}`
+          `SourceFunction entry point is missing the ${method} method: ${source.function?.entry_point}`
         );
       }
     }
