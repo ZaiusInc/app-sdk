@@ -100,7 +100,7 @@ export class Runtime {
   }
 
   public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
-  new (config: SourceConfiguration, request: Request | null, source: Source) => T> {
+  new (config: SourceConfiguration, request: Request | null, source: Source | null) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
