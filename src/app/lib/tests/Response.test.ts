@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import 'jest';
 import {Headers} from '../Headers';
 import {Response} from '../Response';

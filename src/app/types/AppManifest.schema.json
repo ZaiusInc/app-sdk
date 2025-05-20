@@ -157,7 +157,8 @@
             "enum": [
                 "node12",
                 "node18",
-                "node18_rt"
+                "node18_rt",
+                "node22"
             ],
             "type": "string"
         },
