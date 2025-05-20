@@ -47,10 +47,10 @@ export interface AppDestination {
 export interface AppSource {
   description: string;
   schema: string;
-  webhook?: AppSourceWebhook;
+  function?: AppSourceFunction;
 }
 
-export interface AppSourceWebhook {
+export interface AppSourceFunction {
   entry_point: string;
 }
 
