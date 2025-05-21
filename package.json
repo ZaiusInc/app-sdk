@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "1.6.0-OCP-1137.3",
+  "version": "1.6.0-OCP-1137.4",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
