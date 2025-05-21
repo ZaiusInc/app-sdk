@@ -18,11 +18,11 @@ export class SourceError extends Error { }
 export interface Source {
 
   /**
-   * Send send data to be processed and send to the destination.
-   * @param data - SourceData the data   to be send
+   * Emit data to be processed and send to the destination.
+   * @param data - SourceData the data to be emitted
    * @returns A SourceResponse wiht success/failure and optional message in case
    *          of failure.
    */
-  sendData<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
+  emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
 }
 
