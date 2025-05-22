@@ -19,6 +19,7 @@ import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { SourceFunction, SourceConfiguration } from './SourceFunction';
 import { SourceSchemaObjects } from './types/SourceSchema';
 import { Source } from '../sources/Source';
+import { SourceLifecycle } from './SourceLifecycle';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -99,8 +100,19 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
+  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<(new (config: SourceConfiguration) => T) | null> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    const lifecycleEntryPoint = sources[name].lifecycle?.entry_point;
+    if (!lifecycleEntryPoint) {
+      return null;
+    }
+    return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
+  }
   public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
-  new (config: SourceConfiguration, request: Request | null, source: Source | null) => T> {
+    new (config: SourceConfiguration, request: Request, source: Source) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);

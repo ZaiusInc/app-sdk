@@ -2,6 +2,7 @@ import { SourceFunction } from '../SourceFunction';
 import { Runtime } from '../Runtime';
 import * as fs from 'fs';
 import { join } from 'path';
+import { SourceLifecycle } from '../SourceLifecycle';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
   'onSourceCreate', 'onSourceUpdate', 'onSourceDelete', 'onSourceEnable', 'onSourcePause'];
@@ -14,6 +15,7 @@ export async function validateSources(runtime: Runtime): Promise<string[]> {
     for (const name of Object.keys(runtime.manifest.sources)) {
       errors.push(...(await validateFunction(runtime, name)));
       errors.push(...(await validateSchema(runtime, name)));
+      errors.push(...(await validateLifecycle(runtime, name)));
     }
   }
 
@@ -39,6 +41,43 @@ async function validateSchema(runtime: Runtime, name: string) {
   return errors;
 }
 
+async function validateLifecycle(runtime: Runtime, name: string) {
+  const errors: string[] = [];
+  const source = runtime.manifest.sources?.[name];
+
+  if (!source?.lifecycle) {
+    return errors;
+  }
+
+  let lifecycleClass = null;
+  let errorMessage: string | null = null;
+  try {
+    lifecycleClass = await runtime.getSourceLifecycleClass(name);
+  } catch (e: any) {
+    errorMessage = e;
+  }
+
+  if (!source || errorMessage) {
+    errors.push(`Error loading SourceLifecycle entry point ${name}. ${errorMessage}`);
+  } else if (lifecycleClass) {
+    if (!(lifecycleClass.prototype instanceof SourceLifecycle)) {
+      errors.push(
+        `SourceLifecycle entry point does not extend App.SourceLifecycle: ${source.lifecycle?.entry_point}`
+      );
+    } else {
+      for (const method of SOURCE_FUNCTION_LIFECYCLE_METHODS) {
+        if (typeof ((lifecycleClass.prototype as any)[method]) !== 'function') {
+          errors.push(
+            `SourceLifecycle entry point is missing the ${method} method: ${source.lifecycle?.entry_point}`
+          );
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
 async function validateFunction(runtime: Runtime, name: string) {
   const errors: string[] = [];
   const source = runtime.manifest.sources?.[name];
@@ -50,19 +89,15 @@ async function validateFunction(runtime: Runtime, name: string) {
     errorMessage = e;
   }
   if (!source || !sourceClass) {
-    errors.push(`Error loading entry point ${name}. ${errorMessage}`);
+    errors.push(`Error loading SourceFunction entry point ${name}. ${errorMessage}`);
   } else if (!(sourceClass.prototype instanceof SourceFunction)) {
     errors.push(
       `SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`
     );
-  } else {
-    for (const method of SOURCE_FUNCTION_LIFECYCLE_METHODS) {
-      if (typeof ((sourceClass.prototype as any)[method]) !== 'function') {
-        errors.push(
-          `SourceFunction entry point is missing the ${method} method: ${source.function?.entry_point}`
-        );
-      }
-    }
+  } else if (typeof ((sourceClass.prototype as any)['perform']) !== 'function') {
+      errors.push(
+        `SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`
+      );
   }
   return errors;
 }

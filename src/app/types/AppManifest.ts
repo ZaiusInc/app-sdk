@@ -48,6 +48,11 @@ export interface AppSource {
   description: string;
   schema: string;
   function?: AppSourceFunction;
+  lifecycle?: AppSourceLifecycle;
+}
+
+export interface AppSourceLifecycle {
+  entry_point: string;
 }
 
 export interface AppSourceFunction {

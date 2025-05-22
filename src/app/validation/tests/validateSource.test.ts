@@ -1,10 +1,17 @@
 /* eslint-disable max-classes-per-file */
 import * as fs from 'fs';
-import { SourceFunction, SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourcePauseResponse, SourceUpdateResponse } from '../../SourceFunction';
+import { SourceFunction } from '../../SourceFunction';
+import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
 
-class ValidSource extends SourceFunction {
+class ValidSourceFunction extends SourceFunction {
+  public async perform(): Promise<Response> {
+    return new Response();
+  }
+}
+
+class ValidSourceLifecycle extends SourceLifecycle {
   public async onSourceCreate(): Promise<SourceCreateResponse> {
     return {success: true};
   }
@@ -20,9 +27,6 @@ class ValidSource extends SourceFunction {
   public async onSourcePause(): Promise<SourcePauseResponse> {
     return {success: true};
   }
-  public async perform(): Promise<Response> {
-    return new Response();
-  }
 }
 
 jest.spyOn(fs, 'existsSync');
@@ -32,60 +36,100 @@ jest.mock('path', () => ({
   join: jest.fn().mockReturnValue('mocked'),
 }));
 
-describe('validateSources', () => {
-  describe('basic validation', () => {
-    const invalidRuntime: any = {
+const getRuntime = (name: string, config: object) => {
+  return {
       manifest: {
         sources: {
-          'validSource': {
-            entry_point: 'validSourceClass',
-            schema: 'validSchema'
-          },
-          'missingSchema': {
-            entry_point: 'missingSchemaClass'
-          },
-          'invalidSchema': {
-            entry_point: 'invalidSchemaClass',
-            schema: 123
-          },
-        }
-      },
-      getSourceFunctionClass: jest.fn()
-    };
+        [name]: config 
+      }
+    },
+    getSourceFunctionClass: jest.fn(),
+    getSourceLifecycleClass: jest.fn()
+  }
+}
+
+describe('validateSources', () => {
+  describe('basic validation', () => {
 
     it('should return error when source function cannot be loaded', async () => {
-      const getSourceFunctionClass = jest.spyOn(invalidRuntime, 'getSourceFunctionClass')
+      const runtime: any = getRuntime('invalidFunctionEntry', {
+        function: {
+          entry_point: 'dne'
+        },
+        schema: 'validSchema'
+      })
+      const getSourceFunctionClass = jest.spyOn(runtime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
-      const result = await validateSources(invalidRuntime);
+      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+      const result = await validateSources(runtime);
+
       getSourceFunctionClass.mockRestore();
-      expect(result).toContain('Error loading entry point validSource. Error: not found');
+
+      expect(result).toContain('Error loading SourceFunction entry point invalidFunctionEntry. Error: not found');
+    });
+
+    it('should return error when source lifecycle cannot be loaded', async () => {
+      const runtime: any = getRuntime('missingLifecycle', {
+        function: {
+          entry_point: 'SourceEntry'
+        },
+        schema: 'fooSchema',
+        lifecycle: {
+          entry_point: 'dne'
+        }
+      })
+      const getSourceLifecycleClass = jest.spyOn(runtime, 'getSourceLifecycleClass')
+        .mockRejectedValue(new Error('not found'));
+      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+      const result = await validateSources(runtime);
+
+      getSourceLifecycleClass.mockRestore();
+      expect(result).toContain('Error loading SourceLifecycle entry point missingLifecycle. Error: not found');
     });
 
     it('should return error when schema is missing', async () => {
-      const result = await validateSources(invalidRuntime);
+      const runtime: any = getRuntime('missingSchema', {
+        function: {
+          entry_point: 'SourceEntry'
+        }
+      })
+
+      const result = await validateSources(runtime);
+
       expect(result).toContain('Source is missing the schema property: missingSchema');
     });
 
     it('should return error when schema is not a string', async () => {
-      const result = await validateSources(invalidRuntime);
+      const runtime: any = getRuntime('invalidSchema', {
+        function: {
+          entry_point: 'SourceEntry'
+        },
+        schema: 123
+      })
+
+      const result = await validateSources(runtime);
+
       expect(result).toContain('Source schema property must be a string: invalidSchema');
     });
 
     it('should return no error when configuration is valid', async () => {
-      const validRuntime: any = {
-        manifest: {
-          sources: {
-            'validSource': {
-              entry_point: 'validSourceClass',
-              schema: 'validSchema'
-            }
-          }
+      const runtime: any = getRuntime('valid', {
+        function: {
+          entry_point: 'validSourceFunctionClass'
         },
-        getSourceFunctionClass: () => ValidSource
-      };
+        lifecycle: {
+          entry_point: 'ValidSourceLifecycleClass'
+        },
+        schema: 'validSchema'
+      })
 
+      runtime.getSourceFunctionClass = () => ValidSourceFunction
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
-      const result = await validateSources(validRuntime);
+
+      const result = await validateSources(runtime);
+
       expect(result.length).toEqual(0);
     });
 
@@ -99,7 +143,8 @@ describe('validateSources', () => {
             }
           }
         },
-        getSourceFunctionClass: () => ValidSource
+        getSourceFunctionClass: () => ValidSourceFunction,
+        getSourceLifecycleClass: () => ValidSourceLifecycle
       };
 
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
@@ -108,9 +153,9 @@ describe('validateSources', () => {
     });
   });
 
-  describe('validateSources function methods', () => {
-    function getSourceClassMissingMethod(methodName: string): typeof SourceFunction {
-      class ModifiedSource extends ValidSource { }
+  describe('validate source lifecycle', () => {
+    function getSourceLifecycleClassMissingMethod(methodName: string): typeof SourceLifecycle {
+      class ModifiedSource extends ValidSourceLifecycle { }
       Object.defineProperty(ModifiedSource.prototype, methodName, {});
       return ModifiedSource;
     }
@@ -125,13 +170,15 @@ describe('validateSources', () => {
 
     requiredMethods.forEach((method) => {
       it(`should return error when source is missing the ${method} method`, async () => {
-        const sourceClass = getSourceClassMissingMethod(method);
+        const sourcelifecycleClass = getSourceLifecycleClassMissingMethod(method);
 
         const runtime: any = {
           manifest: {
             sources: {
               'testSource': {
-                entry_point: 'testSourceClass',
+                lifecycle: {
+                  entry_point: 'testSourceClass'
+                },
                 schema: 'testSchema',
                 function: {
                   entry_point: 'testSourceClass'
@@ -139,12 +186,13 @@ describe('validateSources', () => {
               }
             }
           },
-          getSourceFunctionClass: () => sourceClass
+          getSourceLifecycleClass: () => sourcelifecycleClass,
+          getSourceFunctionClass: () => ValidSourceFunction
         };
 
         jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
         const result = await validateSources(runtime);
-        expect(result).toContain(`SourceFunction entry point is missing the ${method} method: testSourceClass`);
+        expect(result).toContain(`SourceLifecycle entry point is missing the ${method} method: testSourceClass`);
       });
     });
   });
