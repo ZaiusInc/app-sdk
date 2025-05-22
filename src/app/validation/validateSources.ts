@@ -95,9 +95,9 @@ async function validateFunction(runtime: Runtime, name: string) {
       `SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`
     );
   } else if (typeof ((sourceClass.prototype as any)['perform']) !== 'function') {
-      errors.push(
-        `SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`
-      );
+    errors.push(
+      `SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`
+    );
   }
   return errors;
 }

@@ -1,4 +1,4 @@
-import { SourceConfiguration } from "./SourceFunction";
+import { SourceConfiguration } from './SourceFunction';
 
 export interface SourceCallbackResponse {
   success: boolean;

@@ -100,7 +100,8 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
-  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<(new (config: SourceConfiguration) => T) | null> {
+  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<
+  (new (config: SourceConfiguration) => T) | null> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
@@ -111,8 +112,9 @@ export class Runtime {
     }
     return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
   }
+
   public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
-    new (config: SourceConfiguration, request: Request, source: Source) => T> {
+  new (config: SourceConfiguration, request: Request, source: Source) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);

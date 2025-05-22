@@ -36,17 +36,15 @@ jest.mock('path', () => ({
   join: jest.fn().mockReturnValue('mocked'),
 }));
 
-const getRuntime = (name: string, config: object) => {
-  return {
-      manifest: {
-        sources: {
-        [name]: config 
-      }
-    },
-    getSourceFunctionClass: jest.fn(),
-    getSourceLifecycleClass: jest.fn()
-  }
-}
+const getRuntime = (name: string, config: object) => ({
+  manifest: {
+    sources: {
+      [name]: config
+    }
+  },
+  getSourceFunctionClass: jest.fn(),
+  getSourceLifecycleClass: jest.fn()
+});
 
 describe('validateSources', () => {
   describe('basic validation', () => {
@@ -57,7 +55,7 @@ describe('validateSources', () => {
           entry_point: 'dne'
         },
         schema: 'validSchema'
-      })
+      });
       const getSourceFunctionClass = jest.spyOn(runtime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
@@ -78,7 +76,7 @@ describe('validateSources', () => {
         lifecycle: {
           entry_point: 'dne'
         }
-      })
+      });
       const getSourceLifecycleClass = jest.spyOn(runtime, 'getSourceLifecycleClass')
         .mockRejectedValue(new Error('not found'));
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
@@ -94,7 +92,7 @@ describe('validateSources', () => {
         function: {
           entry_point: 'SourceEntry'
         }
-      })
+      });
 
       const result = await validateSources(runtime);
 
@@ -107,7 +105,7 @@ describe('validateSources', () => {
           entry_point: 'SourceEntry'
         },
         schema: 123
-      })
+      });
 
       const result = await validateSources(runtime);
 
@@ -123,9 +121,9 @@ describe('validateSources', () => {
           entry_point: 'ValidSourceLifecycleClass'
         },
         schema: 'validSchema'
-      })
+      });
 
-      runtime.getSourceFunctionClass = () => ValidSourceFunction
+      runtime.getSourceFunctionClass = () => ValidSourceFunction;
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
       const result = await validateSources(runtime);
