@@ -1,35 +1,21 @@
-import { Request } from './lib/Request';
-import { Response } from './lib/Response';
+import { SourceConfiguration } from './SourceFunction';
 
-export interface SourceConfiguration {
-  dataSyncId: string;
-  sourceKey: string;
-  schema: string;
-  webhookUrl?: string;
-}
-
-export interface SourceResponse {
+export interface SourceCallbackResponse {
   success: boolean;
   message?: string;
 }
 
-export interface SourceCreateResponse {
-  success: boolean;
-  message?: string;
-}
+export type SourceCreateResponse = SourceCallbackResponse;
+export type SourceUpdateResponse = SourceCallbackResponse;
+export type SourceDeleteResponse = SourceCallbackResponse;
+export type SourceEnableResponse = SourceCallbackResponse;
+export type SourcePauseResponse = SourceCallbackResponse;
 
-export type SourceUpdateResponse = SourceResponse;
-export type SourceDeleteResponse = SourceResponse;
-export type SourceEnableResponse = SourceResponse;
-export type SourcePauseResponse = SourceResponse;
-
-export abstract class Source {
+export abstract class SourceLifecycle {
   protected config: SourceConfiguration;
-  protected request: Request | null;
 
-  public constructor(request: Request | null, config: SourceConfiguration) {
+  public constructor(config: SourceConfiguration) {
     this.config = config;
-    this.request = request;
   }
 
   /**
@@ -61,6 +47,4 @@ export abstract class Source {
    * Called when a sources is paused.
    */
   public abstract onSourcePause(): Promise<SourcePauseResponse>;
-
-  public abstract perform(): Promise<Response>;
 }
