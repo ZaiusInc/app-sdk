@@ -91,6 +91,16 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
+  public async getSourceJobClass<T extends Job>(name: string): Promise<new (invocation: JobInvocation) => T> {
+    const jobs = this.manifest.source_jobs;
+    if (!jobs || !jobs[name]) {
+      throw new Error(`No job named ${name} defined in manifest`);
+    }
+
+    const job = jobs[name];
+    return (await this.import(join(this.dirName, 'sources/jobs', job.entry_point)))[job.entry_point];
+  }
+
   public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
     const destinations = this.manifest.destinations;
     if (!destinations || !destinations[name]) {

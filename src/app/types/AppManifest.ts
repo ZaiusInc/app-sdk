@@ -19,6 +19,13 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
+export interface AppSourceJob {
+  entry_point: string;
+  description: string;
+  cron?: string;
+  parameters?: ValueHash;
+}
+
 export interface AppConsumer {
   entry_point: string;
   description: string;
@@ -158,6 +165,9 @@ export interface AppManifest {
   };
   jobs?: {
     [name: string]: AppJob;
+  };
+  source_jobs?: {
+    [name: string]: AppSourceJob;
   };
   consumers?: {
     [name: string]: AppConsumer;

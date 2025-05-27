@@ -108,6 +108,29 @@
             ],
             "type": "object"
         },
+        "SourceAppJob": {
+            "additionalProperties": false,
+            "properties": {
+                "cron": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/ValueHash",
+                    "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option."
+                }
+            },
+            "required": [
+                "description",
+                "entry_point"
+            ],
+            "type": "object"
+        },
         "AppLiquidExtension": {
             "additionalProperties": false,
             "properties": {
@@ -169,6 +192,9 @@
                 },
                 "function": {
                     "$ref": "#/definitions/AppSourceFunction"
+                },
+                "jobs": {
+                    "$ref": "#/definitions/SourceAppJob"
                 },
                 "lifecycle": {
                     "$ref": "#/definitions/AppSourceLifecycle"

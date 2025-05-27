@@ -201,6 +201,30 @@ describe('Runtime', () => {
     });
   });
 
+  describe('getSourceJobClass', () => {
+    it('loads the specified module', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Bar: 'Bar'});
+
+      const bar = await runtime.getSourceJobClass('bar');
+
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/jobs/Bar');
+      expect(bar).toEqual('Bar');
+
+      importFn.mockRestore();
+    });
+
+    it("throws an error the job isn't in the manifest", async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+      try {
+        await runtime.getSourceJobClass('foo');
+      } catch (e: any) {
+        expect(e.message).toMatch(/^No job named foo/);
+      }
+    });
+  });
+
   describe('getLiquidExtensionClass', () => {
     it('loads the specified module', async () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
