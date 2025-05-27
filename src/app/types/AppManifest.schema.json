@@ -111,9 +111,6 @@
         "SourceAppJob": {
             "additionalProperties": false,
             "properties": {
-                "cron": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },
