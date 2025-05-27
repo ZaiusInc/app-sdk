@@ -41,6 +41,12 @@ const appManifest = deepFreeze({
       description: 'Does a thing'
     }
   },
+  source_jobs: {
+    bar: {
+      entry_point: 'Bar',
+      description: 'Does a thing'
+    }
+  },
   liquid_extensions: {
     buzz: {
       entry_point: 'Buzz',
@@ -208,7 +214,7 @@ describe('Runtime', () => {
 
       const bar = await runtime.getSourceJobClass('bar');
 
-      expect(importFn).toHaveBeenCalledWith('/tmp/foo/jobs/Bar');
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/sources/jobs/Bar');
       expect(bar).toEqual('Bar');
 
       importFn.mockRestore();
