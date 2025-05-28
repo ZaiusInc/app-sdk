@@ -271,7 +271,7 @@ describe('validateSources', () => {
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
       const errors = await validateSources(runtime);
-      
+
       expect(errors).toContain('Job entry point does not extend App.Job: InvalidSourceJob');
     });
   });
