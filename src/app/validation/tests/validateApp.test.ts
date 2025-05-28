@@ -67,7 +67,7 @@ const appManifest = deepFreeze({
     foo_source: {
       description: 'Foo Description',
       schema: 'asset',
-      webhook: {
+      function: {
         entry_point: 'FooSource'
       }
     }

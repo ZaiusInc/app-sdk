@@ -16,8 +16,10 @@ import deepFreeze from 'deep-freeze';
 import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
-import { Source, SourceConfiguration } from './Source';
+import { SourceFunction, SourceConfiguration } from './SourceFunction';
 import { SourceSchemaObjects } from './types/SourceSchema';
+import { Source } from '../sources/Source';
+import { SourceLifecycle } from './SourceLifecycle';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -98,17 +100,30 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
-  public async getSourceWebhookClass<T extends Source>(name: string): Promise<
-  new (request: Request | null, config: SourceConfiguration) => T> {
+  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<
+  (new (config: SourceConfiguration) => T) | null> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
     }
-    const webhookEntryPoint = sources[name].webhook?.entry_point;
-    if (!webhookEntryPoint) {
-      throw new Error(`Source '${name}' is not a webhook source`);
+    const lifecycleEntryPoint = sources[name].lifecycle?.entry_point;
+    if (!lifecycleEntryPoint) {
+      return null;
     }
-    return (await this.import(join(this.dirName, 'sources', webhookEntryPoint)))[webhookEntryPoint];
+    return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
+  }
+
+  public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
+  new (config: SourceConfiguration, request: Request, source: Source) => T> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    const functionEntryPoint = sources[name].function?.entry_point;
+    if (!functionEntryPoint) {
+      throw new Error(`Source '${name}' is not a function source`);
+    }
+    return (await this.import(join(this.dirName, 'sources', functionEntryPoint)))[functionEntryPoint];
   }
 
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
