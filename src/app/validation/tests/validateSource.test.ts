@@ -145,6 +145,7 @@ describe('validateSources', () => {
       });
 
       runtime.getSourceFunctionClass = () => ValidSourceFunction;
+      (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
       jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
       const result = await validateSources(runtime);
@@ -209,7 +210,7 @@ describe('validateSources', () => {
           getSourceFunctionClass: () => ValidSourceFunction
         };
 
-        jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+        (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
         const result = await validateSources(runtime);
         expect(result).toContain(`SourceLifecycle entry point is missing the ${method} method: testSourceClass`);
       });

@@ -34,3 +34,4 @@ yalc.lock
 
 docs/
 .vscode/
+*.iml

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as deepFreeze from 'deep-freeze';
+import deepFreeze from 'deep-freeze';
 import 'jest';
 import * as jsYaml from 'js-yaml';
-import * as mockFs from 'mock-fs';
+import mockFs from 'mock-fs';
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {SchemaObject} from '../../types/SchemaObject';
@@ -288,8 +287,8 @@ describe('validateApp', () => {
     expect(validateLifecycle).toBeCalledWith(runtime);
     expect(validateChannel).toBeCalledWith(runtime);
     expect((validateSchemaObject as jest.Mock).mock.calls).toEqual([
-      [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']],
-      [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']]
+      [runtime, schemaObjects['schema/my_app_coupons.yml'], 'schema/my_app_coupons.yml', ['events', 'customers']],
+      [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']]
     ]);
     expect(validateAssets).toBeCalledWith(runtime);
     expect(validateDestinations).toBeCalledWith(runtime);

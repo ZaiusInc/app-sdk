@@ -1,11 +1,11 @@
 import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation/validateForm';
-import * as fs from 'fs';
+import fs from 'fs';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';
-import * as remark from 'remark';
+import remark from 'remark';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import * as links from 'remark-validate-links';
+import links from 'remark-validate-links';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as vfile from 'to-vfile';
@@ -13,8 +13,8 @@ import {VFile} from 'vfile';
 import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
-import glob = require('glob');
-import { Schema } from '@zaiusinc/app-forms-schema';
+import * as glob from 'glob';
+import {Schema} from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = [
   'assets/directory/overview.md',
