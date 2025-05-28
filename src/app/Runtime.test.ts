@@ -212,7 +212,7 @@ describe('Runtime', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
       const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Bar: 'Bar'});
 
-      const bar = await runtime.getSourceJobClass('bar');
+      const bar = await runtime.getSourceJobClass('bar', 'Bar');
 
       expect(importFn).toHaveBeenCalledWith('/tmp/foo/sources/jobs/Bar');
       expect(bar).toEqual('Bar');
@@ -224,7 +224,7 @@ describe('Runtime', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
       try {
-        await runtime.getSourceJobClass('foo');
+        await runtime.getSourceJobClass('foo', 'Bar');
       } catch (e: any) {
         expect(e.message).toMatch(/^No job named foo/);
       }
