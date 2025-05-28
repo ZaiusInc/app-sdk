@@ -22,7 +22,6 @@ export interface AppJob {
 export interface AppSourceJob {
   entry_point: string;
   description: string;
-  cron?: string;
   parameters?: ValueHash;
 }
 
@@ -55,6 +54,9 @@ export interface AppSource {
   description: string;
   schema: string;
   function?: AppSourceFunction;
+  jobs?: {
+    [name: string]: AppSourceJob;
+  };
   lifecycle?: AppSourceLifecycle;
 }
 
@@ -165,9 +167,6 @@ export interface AppManifest {
   };
   jobs?: {
     [name: string]: AppJob;
-  };
-  source_jobs?: {
-    [name: string]: AppSourceJob;
   };
   consumers?: {
     [name: string]: AppConsumer;

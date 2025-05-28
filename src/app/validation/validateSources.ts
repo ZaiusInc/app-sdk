@@ -3,6 +3,8 @@ import { Runtime } from '../Runtime';
 import * as fs from 'fs';
 import { join } from 'path';
 import { SourceLifecycle } from '../SourceLifecycle';
+import {logger} from '../../logging';
+import {Job} from '../Job';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
   'onSourceCreate', 'onSourceUpdate', 'onSourceDelete', 'onSourceEnable', 'onSourcePause'];
@@ -16,6 +18,7 @@ export async function validateSources(runtime: Runtime): Promise<string[]> {
       errors.push(...(await validateFunction(runtime, name)));
       errors.push(...(await validateSchema(runtime, name)));
       errors.push(...(await validateLifecycle(runtime, name)));
+      errors.push(...(await validateSourceJobs(runtime, name)));
     }
   }
 
@@ -99,5 +102,43 @@ async function validateFunction(runtime: Runtime, name: string) {
       `SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`
     );
   }
+  return errors;
+}
+
+export async function validateSourceJobs(runtime: Runtime, sourceName: string): Promise<string[]> {
+  const errors: string[] = [];
+  const source = runtime.manifest.sources?.[sourceName];
+  // Make sure all the source jobs listed in the manifest actually exist and are implemented
+  if (source && source.jobs) {
+    for (const name of Object.keys(source.jobs)) {
+      let sourceJobClass = null;
+      let errorMessage: string | null = null;
+      try {
+        sourceJobClass = await runtime.getSourceJobClass(sourceName, name);
+      } catch (e: any) {
+        errorMessage = e;
+        logger.error(e);
+      }
+      if (!sourceJobClass) {
+        errors.push(`Error loading job entry point ${name}. ${errorMessage}`);
+      } else if (!(sourceJobClass.prototype instanceof Job)) {
+        errors.push(
+          `Job entry point does not extend App.Job: ${source.jobs[name].entry_point}`
+        );
+      } else {
+        if (typeof (sourceJobClass.prototype.prepare) !== 'function') {
+          errors.push(
+            `Job entry point is missing the prepare method: ${source.jobs[name].entry_point}`
+          );
+        }
+        if (typeof (sourceJobClass.prototype.perform) !== 'function') {
+          errors.push(
+            `Job entry point is missing the perform method: ${source.jobs[name].entry_point}`
+          );
+        }
+      }
+    }
+  }
+
   return errors;
 }

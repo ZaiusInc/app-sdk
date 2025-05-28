@@ -4,6 +4,8 @@ import { SourceFunction } from '../../SourceFunction';
 import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
+import {Job, JobStatus} from '../../Job';
+import {ValueHash} from '../../../store';
 
 class ValidSourceFunction extends SourceFunction {
   public async perform(): Promise<Response> {
@@ -29,6 +31,24 @@ class ValidSourceLifecycle extends SourceLifecycle {
   }
 }
 
+class NonExtendedBar {
+  public async prepare(_status?: JobStatus): Promise<JobStatus> {
+    return {complete: false, state: {}};
+  }
+  public async perform(status: JobStatus): Promise<JobStatus> {
+    return status;
+  }
+}
+class ProperBar extends Job {
+  public async prepare(params: ValueHash, _status?: JobStatus, _resuming?: boolean): Promise<JobStatus> {
+    return {complete: false, state: params};
+  }
+  public async perform(status: JobStatus): Promise<JobStatus> {
+    return status;
+  }
+}
+/* tslint:disable */
+
 jest.spyOn(fs, 'existsSync');
 
 jest.mock('path', () => ({
@@ -43,7 +63,8 @@ const getRuntime = (name: string, config: object) => ({
     }
   },
   getSourceFunctionClass: jest.fn(),
-  getSourceLifecycleClass: jest.fn()
+  getSourceLifecycleClass: jest.fn(),
+  getSourceJobClass: jest.fn()
 });
 
 describe('validateSources', () => {
@@ -194,4 +215,65 @@ describe('validateSources', () => {
       });
     });
   });
+
+  describe('validateJobs', () => {
+    it('succeeds with a proper definition', async () => {
+      const runtime: any = getRuntime('validSourceJobs', {
+        jobs: {
+          function: {
+            entry_point: 'validSourceFunctionClass'
+          },
+          bar: {
+            entry_point: 'ValidSourceJob'
+          }
+        },
+        schema: 'fooSchema'
+      });
+      runtime.getSourceFunctionClass = () => ValidSourceFunction;
+      runtime.getSourceJobClass = () => ProperBar;
+      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+      const errors = await validateSources(runtime);
+      expect(errors).toEqual([]);
+    });
+
+    it('should return error when source job cannot be loaded', async () => {
+      const runtime: any = getRuntime('invalidJobEntry', {
+        jobs: {
+          bar: {
+            entry_point: 'dne'
+          }
+        },
+        schema: 'validSchema'
+      });
+      const getSourceJobClass = jest.spyOn(runtime, 'getSourceJobClass')
+        .mockRejectedValue(new Error('not found'));
+      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+      const result = await validateSources(runtime);
+
+      getSourceJobClass.mockRestore();
+
+      expect(result).toContain('Error loading job entry point bar. Error: not found');
+    });
+
+    it('detects non-extended job entry point', async () => {
+      const runtime: any = getRuntime('nonExtendJob', {
+        jobs: {
+          bar: {
+            entry_point: 'InvalidSourceJob'
+          }
+        },
+        schema: 'validSchema'
+      });
+
+      runtime.getSourceJobClass = () => NonExtendedBar;
+      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+
+      const errors = await validateSources(runtime);
+      
+      expect(errors).toContain('Job entry point does not extend App.Job: InvalidSourceJob');
+    });
+  });
+
 });

@@ -91,13 +91,18 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
-  public async getSourceJobClass<T extends Job>(name: string): Promise<new (invocation: JobInvocation) => T> {
-    const jobs = this.manifest.source_jobs;
-    if (!jobs || !jobs[name]) {
-      throw new Error(`No job named ${name} defined in manifest`);
+  public async getSourceJobClass<T extends Job>(sourceName: string, jobName: string):
+  Promise<new (invocation: JobInvocation) => T> {
+    const source = this.manifest.sources;
+    if (!source || !source[sourceName]) {
+      throw new Error(`No source named ${sourceName} defined in manifest`);
     }
 
-    const job = jobs[name];
+    const jobs = source[sourceName].jobs;
+    if (!jobs || !jobs[jobName]) {
+      throw new Error(`No job named ${jobName} defined in manifest`);
+    }
+    const job = jobs[jobName];
     return (await this.import(join(this.dirName, 'sources/jobs', job.entry_point)))[job.entry_point];
   }
 
