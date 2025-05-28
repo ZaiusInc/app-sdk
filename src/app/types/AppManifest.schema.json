@@ -157,7 +157,8 @@
             "enum": [
                 "node12",
                 "node18",
-                "node18_rt"
+                "node18_rt",
+                "node22"
             ],
             "type": "string"
         },
@@ -490,6 +491,7 @@
                             "Advertising",
                             "Analytics & Reporting",
                             "Attribution & Linking",
+                            "Audience Sync",
                             "CDP / DMP",
                             "CRM",
                             "Channel",

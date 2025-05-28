@@ -1,11 +1,12 @@
 {
   "out": "./docs/",
+  "entryPoints": ["./src/index.ts"],
   "name": "OCP App SDK",
   "theme": "markdown",
   "excludePrivate": true,
-  "enableFrontmatter": true,
   "frontmatterGlobals": {
     "category": "6439220d942a8500247de824",
     "hidden": false
-  }
+  },
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-frontmatter", "./scripts/add_title_frontmatter_plugin.js"],
 }

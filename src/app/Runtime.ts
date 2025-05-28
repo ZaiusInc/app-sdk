@@ -10,10 +10,10 @@ import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
-import * as manifestSchema from './types/AppManifest.schema.json';
+import manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObjects} from './types/SchemaObject';
-import deepFreeze = require('deep-freeze');
-import glob = require('glob');
+import deepFreeze from 'deep-freeze';
+import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { Source, SourceConfiguration } from './Source';
@@ -60,7 +60,7 @@ export class Runtime {
     return this.dirName;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-restricted-types
   public async getFunctionClass<T extends Function>(name: string): Promise<new (request: Request) => T> {
     const functions = this.manifest.functions;
     if (!functions || !functions[name]) {

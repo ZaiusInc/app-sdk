@@ -1,8 +1,14 @@
 /* eslint-disable max-classes-per-file */
-import * as fs from 'fs';
 import { Source, SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourcePauseResponse, SourceUpdateResponse } from '../../Source';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
+
+// Mock fs module
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  existsSync: jest.fn()
+}));
+import * as fs from 'fs';
 
 class ValidSource extends Source {
   public async onSourceCreate(): Promise<SourceCreateResponse> {
@@ -25,7 +31,6 @@ class ValidSource extends Source {
   }
 }
 
-jest.spyOn(fs, 'existsSync');
 
 jest.mock('path', () => ({
   ...jest.requireActual('path'),
@@ -84,7 +89,7 @@ describe('validateSources', () => {
         getSourceWebhookClass: () => ValidSource
       };
 
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+      (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
       const result = await validateSources(validRuntime);
       expect(result.length).toEqual(0);
     });
@@ -142,7 +147,7 @@ describe('validateSources', () => {
           getSourceWebhookClass: () => sourceClass
         };
 
-        jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+        (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
         const result = await validateSources(runtime);
         expect(result).toContain(`Source entry point is missing the ${method} method: testSourceClass`);
       });
