@@ -2,6 +2,7 @@
 import { SourceFunction } from '../../SourceFunction';
 import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
+import { SourceSchema, SourceSchemaFunction } from '../../types';
 import { validateSources } from '../validateSources';
 
 // Mock fs module
@@ -21,6 +22,30 @@ const existsSyncMock = mockedModule.mocks.existsSyncMock;
 class ValidSourceFunction extends SourceFunction {
   public async perform(): Promise<Response> {
     return new Response();
+  }
+}
+class ValidSourceSchemaFunction extends SourceSchemaFunction {
+  public async getSourcesSchema(): Promise<SourceSchema> {
+    return Promise.resolve({
+      name: 'asset',
+      description: 'Asset Schema for Hub Shakedown',
+      display_name: 'Hub Shakedown Schema',
+      fields: [
+        {
+          name: 'hub_shakedown_name',
+          type: 'string',
+          display_name: 'Hub Shakedown Name',
+          description: 'The name',
+          primary: true,
+        },
+      ],
+    });
+  }
+}
+
+class InvalidSourceSchemaFunction extends Function {
+  public async getSourcesSchema(): Promise<SourceSchema> {
+    return {} as SourceSchema;
   }
 }
 
@@ -116,7 +141,7 @@ describe('validateSources', () => {
       expect(result).toContain('Source is missing the schema property: missingSchema');
     });
 
-    it('should return error when schema is not a string', async () => {
+    it('should return error when schema name is not a string', async () => {
       const runtime: any = getRuntime('invalidSchema', {
         function: {
           entry_point: 'SourceEntry'
@@ -126,7 +151,7 @@ describe('validateSources', () => {
 
       const result = await validateSources(runtime);
 
-      expect(result).toContain('Source schema property must be a string: invalidSchema');
+      expect(result).toContain('Source schema property must be a string or an object: invalidSchema');
     });
 
     it('should return no error when configuration is valid', async () => {
@@ -167,6 +192,55 @@ describe('validateSources', () => {
 
       const result = await validateSources(validRuntime);
       expect(result).toEqual(['File not found for Source schema validSchema']);
+    });
+
+    it('should validate schema entry_point when present', async () => {
+      const validRuntime: any = {
+        manifest: {
+          sources: {
+            validSource: {
+              entry_point: 'validSourceClass',
+              schema: {
+                entry_point: 'ValidSourceSchemaFunction',
+              },
+            },
+          },
+        },
+        getSourceFunctionClass: () => ValidSourceFunction,
+        getSourceLifecycleClass: () => ValidSourceLifecycle,
+        getSourceSchemaFunctionClass: () => ValidSourceSchemaFunction,
+      };
+
+      existsSyncMock.mockReturnValueOnce(true);
+
+      const result = await validateSources(validRuntime);
+      expect(result.length).toEqual(0);
+    });
+
+    it('should return errors if schema entry_point is not extending the correct interface', async () => {
+      const validRuntime: any = {
+        manifest: {
+          sources: {
+            validSource: {
+              entry_point: 'validSourceClass',
+              schema: {
+                entry_point: 'InvalidSourceSchemaFunction',
+              },
+            },
+          },
+        },
+        getSourceFunctionClass: () => ValidSourceFunction,
+        getSourceLifecycleClass: () => ValidSourceLifecycle,
+        getSourceSchemaFunctionClass: () => InvalidSourceSchemaFunction,
+      };
+
+      existsSyncMock.mockReturnValueOnce(true);
+
+      const result = await validateSources(validRuntime);
+      expect(result.length).toEqual(1);
+      expect(result).toContain(
+        'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: InvalidSourceSchemaFunction',
+      );
     });
   });
 

@@ -17,7 +17,7 @@ import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { SourceFunction, SourceConfiguration } from './SourceFunction';
-import { SourceSchemaObjects } from './types/SourceSchema';
+import { SourceSchema, SourceSchemaFunction, SourceSchemaObjects } from './types/SourceSchema';
 import { Source } from '../sources/Source';
 import { SourceLifecycle } from './SourceLifecycle';
 
@@ -113,6 +113,22 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
   }
 
+  public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
+  (new () => T) | null> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    if (typeof sources[name].schema === 'string') {
+      throw new Error(`Schema defined for source '${name}' is not a function`);
+    }
+    const providerEntryPoint = sources[name].schema.entry_point;
+    if (!providerEntryPoint) {
+      return null;
+    }
+    return (await this.import(join(this.dirName, 'sources', providerEntryPoint)))[providerEntryPoint];
+  }
+
   public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
   new (config: SourceConfiguration, request: Request, source: Source) => T> {
     const sources = this.manifest.sources;
@@ -142,6 +158,14 @@ export class Runtime {
 
   public getDestinationSchema(): DestinationSchemaObjects {
     return this.getSchema('destinations/schema') as DestinationSchemaObjects;
+  }
+
+  public async getDynamicSourceSchema(entry_point: string): Promise<SourceSchema> {
+    const schemaProvider = await this.getSourceSchemaFunctionClass(entry_point);
+    if (!schemaProvider) {
+      throw new Error(`No schema provider for source '${entry_point}' defined in manifest`);
+    }
+    return new schemaProvider().getSourcesSchema();
   }
 
   public getSourceSchema(): SourceSchemaObjects {
