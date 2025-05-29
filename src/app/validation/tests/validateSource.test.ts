@@ -1,11 +1,24 @@
-/* eslint-disable max-classes-per-file */
-import * as fs from 'fs';
+/* eslint-disable max-classes-per-file, @typescript-eslint/no-unsafe-call */
 import { SourceFunction } from '../../SourceFunction';
 import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
 import {Job, JobStatus} from '../../Job';
 import {ValueHash} from '../../../store';
+
+// Mock fs module
+jest.mock('fs', () => {
+  const originalExistsSyncMock = jest.fn();
+  return {
+    existsSync: originalExistsSyncMock,
+    mocks: {
+      existsSyncMock: originalExistsSyncMock
+    }
+  };
+});
+
+const mockedModule = jest.requireMock('fs');
+const existsSyncMock = mockedModule.mocks.existsSyncMock;
 
 class ValidSourceFunction extends SourceFunction {
   public async perform(): Promise<Response> {
@@ -68,6 +81,11 @@ const getRuntime = (name: string, config: object) => ({
 });
 
 describe('validateSources', () => {
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('basic validation', () => {
 
     it('should return error when source function cannot be loaded', async () => {
@@ -79,7 +97,7 @@ describe('validateSources', () => {
       });
       const getSourceFunctionClass = jest.spyOn(runtime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+      existsSyncMock.mockReturnValueOnce(true);
 
       const result = await validateSources(runtime);
 
@@ -100,7 +118,7 @@ describe('validateSources', () => {
       });
       const getSourceLifecycleClass = jest.spyOn(runtime, 'getSourceLifecycleClass')
         .mockRejectedValue(new Error('not found'));
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+      existsSyncMock.mockReturnValueOnce(true);
 
       const result = await validateSources(runtime);
 
@@ -145,8 +163,8 @@ describe('validateSources', () => {
       });
 
       runtime.getSourceFunctionClass = () => ValidSourceFunction;
-      (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+      runtime.getSourceLifecycleClass = () => ValidSourceLifecycle;
+      existsSyncMock.mockReturnValueOnce(true).mockReturnValueOnce(true);
 
       const result = await validateSources(runtime);
 
@@ -167,7 +185,8 @@ describe('validateSources', () => {
         getSourceLifecycleClass: () => ValidSourceLifecycle
       };
 
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => false);
+      existsSyncMock.mockImplementation(false);
+
       const result = await validateSources(validRuntime);
       expect(result).toEqual(['File not found for Source schema validSchema']);
     });
@@ -210,7 +229,7 @@ describe('validateSources', () => {
           getSourceFunctionClass: () => ValidSourceFunction
         };
 
-        (fs.existsSync as jest.Mock).mockImplementationOnce(() => true);
+        existsSyncMock.mockReturnValueOnce(true);
         const result = await validateSources(runtime);
         expect(result).toContain(`SourceLifecycle entry point is missing the ${method} method: testSourceClass`);
       });
