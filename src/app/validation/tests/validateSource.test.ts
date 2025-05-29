@@ -251,7 +251,6 @@ describe('validateSources', () => {
       });
       runtime.getSourceFunctionClass = () => ValidSourceFunction;
       runtime.getSourceJobClass = () => ProperBar;
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
       const errors = await validateSources(runtime);
       expect(errors).toEqual([]);
@@ -268,10 +267,8 @@ describe('validateSources', () => {
       });
       const getSourceJobClass = jest.spyOn(runtime, 'getSourceJobClass')
         .mockRejectedValue(new Error('not found'));
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
 
       const result = await validateSources(runtime);
-
       getSourceJobClass.mockRestore();
 
       expect(result).toContain('Error loading job entry point bar. Error: not found');
@@ -288,8 +285,6 @@ describe('validateSources', () => {
       });
 
       runtime.getSourceJobClass = () => NonExtendedBar;
-      jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
-
       const errors = await validateSources(runtime);
 
       expect(errors).toContain('Job entry point does not extend App.Job: InvalidSourceJob');
