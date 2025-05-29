@@ -45,7 +45,7 @@ describe('Job', () => {
           expect(job.isInterruptible).toBe(true);
           throw new Error('error');
         });
-      } catch (e) {
+      } catch (_) {
         expect(job.isInterruptible).toBe(false);
       }
     });

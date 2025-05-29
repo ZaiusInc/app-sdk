@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+/* eslint-disable max-classes-per-file, @typescript-eslint/no-unsafe-call */
 import { SourceFunction } from '../../SourceFunction';
 import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
@@ -6,17 +6,17 @@ import { validateSources } from '../validateSources';
 
 // Mock fs module
 jest.mock('fs', () => {
-  const existsSyncMock = jest.fn()
+  const originalExistsSyncMock = jest.fn();
   return {
-    existsSync: existsSyncMock,
+    existsSync: originalExistsSyncMock,
     mocks: {
-      existsSyncMock
+      existsSyncMock: originalExistsSyncMock
     }
   };
 });
 
 const mockedModule = jest.requireMock('fs');
-const existsSyncMock = mockedModule.mocks.existsSyncMock
+const existsSyncMock = mockedModule.mocks.existsSyncMock;
 
 class ValidSourceFunction extends SourceFunction {
   public async perform(): Promise<Response> {
@@ -61,7 +61,7 @@ const getRuntime = (name: string, config: object) => ({
 describe('validateSources', () => {
 
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.resetAllMocks();
   });
 
   describe('basic validation', () => {
