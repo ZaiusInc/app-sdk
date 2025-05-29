@@ -44,6 +44,21 @@ export interface AppDestination {
   description: string;
 }
 
+export interface AppSource {
+  description: string;
+  schema: string;
+  function?: AppSourceFunction;
+  lifecycle?: AppSourceLifecycle;
+}
+
+export interface AppSourceLifecycle {
+  entry_point: string;
+}
+
+export interface AppSourceFunction {
+  entry_point: string;
+}
+
 export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
 | 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
 | 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
@@ -152,6 +167,9 @@ export interface AppManifest {
   };
   destinations?: {
     [name: string]: AppDestination;
+  };
+  sources?: {
+    [name: string]: AppSource;
   };
   channel?: {
     type: ChannelType;
