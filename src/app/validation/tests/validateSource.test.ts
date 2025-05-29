@@ -60,9 +60,6 @@ class ProperBar extends Job {
     return status;
   }
 }
-/* tslint:disable */
-
-jest.spyOn(fs, 'existsSync');
 
 jest.mock('path', () => ({
   ...jest.requireActual('path'),
