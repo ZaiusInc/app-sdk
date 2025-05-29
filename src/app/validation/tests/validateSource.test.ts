@@ -248,6 +248,7 @@ describe('validateSources', () => {
       });
       runtime.getSourceFunctionClass = () => ValidSourceFunction;
       runtime.getSourceJobClass = () => ProperBar;
+      existsSyncMock.mockReturnValueOnce(true);
 
       const errors = await validateSources(runtime);
       expect(errors).toEqual([]);
