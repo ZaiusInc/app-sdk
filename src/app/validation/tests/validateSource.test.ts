@@ -164,7 +164,7 @@ describe('validateSources', () => {
       };
 
       existsSyncMock.mockImplementation(false);
-      
+
       const result = await validateSources(validRuntime);
       expect(result).toEqual(['File not found for Source schema validSchema']);
     });
