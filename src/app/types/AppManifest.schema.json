@@ -2,6 +2,36 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
+        "AppCategory": {
+            "enum": [
+                "Accounting & Finance",
+                "Advertising",
+                "Analytics & Reporting",
+                "Attribution & Linking",
+                "Audience Sync",
+                "CDP / DMP",
+                "CRM",
+                "Channel",
+                "Commerce Platform",
+                "Content Management",
+                "Customer Experience",
+                "Data Quality & Enrichment",
+                "Lead Capture",
+                "Loyalty & Rewards",
+                "Marketing",
+                "Merchandising & Products",
+                "Offers",
+                "Personalization & Content",
+                "Point of Sale",
+                "Productivity",
+                "Reviews & Ratings",
+                "Site & Content Experience",
+                "Subscriptions",
+                "Surveys & Feedback",
+                "Testing & Utilities"
+            ],
+            "type": "string"
+        },
         "AppConsumer": {
             "additionalProperties": false,
             "properties": {
@@ -162,6 +192,15 @@
             ],
             "type": "string"
         },
+        "AttributableMetric": {
+            "enum": [
+                "open",
+                "click",
+                "engage",
+                "delivery"
+            ],
+            "type": "string"
+        },
         "CampaignTargeting": {
             "additionalProperties": false,
             "description": "Defines the targeting requirements for a channel.",
@@ -228,21 +267,69 @@
         },
         "ChannelType": {
             "enum": [
-                "ad",
-                "api",
-                "app_push",
-                "direct_mail",
                 "email",
-                "facebook_messenger",
-                "segment_sync",
-                "sms",
-                "test_channel",
-                "web_embed",
-                "web_modal",
+                "app_push",
                 "web_push",
-                "whatsapp"
+                "web_modal",
+                "web_embed",
+                "sms",
+                "api",
+                "direct_mail",
+                "whatsapp",
+                "facebook_messenger",
+                "ad",
+                "segment_sync",
+                "test_channel"
             ],
             "type": "string"
+        },
+        "DeliveryMetric": {
+            "enum": [
+                "sent",
+                "delivery",
+                "delivery_unknown"
+            ],
+            "type": "string"
+        },
+        "DisengagementMetric": {
+            "enum": [
+                "disengage",
+                "opt-out",
+                "spam_report",
+                "list_unsubscribe"
+            ],
+            "type": "string"
+        },
+        "EngagementMetric": {
+            "enum": [
+                "open",
+                "click",
+                "engage"
+            ],
+            "type": "string"
+        },
+        "ReachabilityMetric": {
+            "enum": [
+                "hard_bounce",
+                "soft_bounce"
+            ],
+            "type": "string"
+        },
+        "Value": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/ValueHash"
+                },
+                {
+                    "type": [
+                        "null",
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            ],
+            "description": "A value type that is safe to write to any storage option"
         },
         "ValueHash": {
             "additionalProperties": {
@@ -252,20 +339,7 @@
                     },
                     {
                         "items": {
-                            "anyOf": [
-                                {
-                                    "$ref": "#/definitions/ValueHash"
-                                },
-                                {
-                                    "type": [
-                                        "null",
-                                        "string",
-                                        "number",
-                                        "boolean"
-                                    ]
-                                }
-                            ],
-                            "description": "A value type that is safe to write to any storage option"
+                            "$ref": "#/definitions/Value"
                         },
                         "type": "array"
                     },
@@ -310,57 +384,31 @@
                     "properties": {
                         "attributable": {
                             "items": {
-                                "enum": [
-                                    "click",
-                                    "delivery",
-                                    "engage",
-                                    "open"
-                                ],
-                                "type": "string"
+                                "$ref": "#/definitions/AttributableMetric"
                             },
                             "type": "array"
                         },
                         "delivery": {
                             "items": {
-                                "enum": [
-                                    "delivery",
-                                    "delivery_unknown",
-                                    "sent"
-                                ],
-                                "type": "string"
+                                "$ref": "#/definitions/DeliveryMetric"
                             },
                             "type": "array"
                         },
                         "disengagement": {
                             "items": {
-                                "enum": [
-                                    "disengage",
-                                    "list_unsubscribe",
-                                    "opt-out",
-                                    "spam_report"
-                                ],
-                                "type": "string"
+                                "$ref": "#/definitions/DisengagementMetric"
                             },
                             "type": "array"
                         },
                         "engagement": {
                             "items": {
-                                "enum": [
-                                    "click",
-                                    "engage",
-                                    "open"
-                                ],
-                                "type": "string"
+                                "$ref": "#/definitions/EngagementMetric"
                             },
                             "type": "array"
                         },
                         "reachability": {
                             "items": {
-                                "enum": [
-                                    "hard_bounce",
-                                    "soft_bounce"
-                                ],
-                                "type": "string"
+                                "$ref": "#/definitions/ReachabilityMetric"
                             },
                             "type": "array"
                         }
@@ -388,9 +436,7 @@
                             "type": "array"
                         },
                         {
-                            "enum": [
-                                "dynamic"
-                            ],
+                            "const": "dynamic",
                             "type": "string"
                         }
                     ]
@@ -455,34 +501,7 @@
                 },
                 "categories": {
                     "items": {
-                        "enum": [
-                            "Accounting & Finance",
-                            "Advertising",
-                            "Analytics & Reporting",
-                            "Attribution & Linking",
-                            "Audience Sync",
-                            "CDP / DMP",
-                            "CRM",
-                            "Channel",
-                            "Commerce Platform",
-                            "Content Management",
-                            "Customer Experience",
-                            "Data Quality & Enrichment",
-                            "Lead Capture",
-                            "Loyalty & Rewards",
-                            "Marketing",
-                            "Merchandising & Products",
-                            "Offers",
-                            "Personalization & Content",
-                            "Point of Sale",
-                            "Productivity",
-                            "Reviews & Ratings",
-                            "Site & Content Experience",
-                            "Subscriptions",
-                            "Surveys & Feedback",
-                            "Testing & Utilities"
-                        ],
-                        "type": "string"
+                        "$ref": "#/definitions/AppCategory"
                     },
                     "type": "array"
                 },
