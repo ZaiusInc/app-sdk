@@ -3,8 +3,8 @@ import { SourceFunction } from '../../SourceFunction';
 import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
 import { Response } from '../../lib';
 import { validateSources } from '../validateSources';
-import {Job, JobStatus} from '../../Job';
-import {ValueHash} from '../../../store';
+import { SourceJob, SourceJobStatus } from '../../SourceJob';
+import { ValueHash } from '../../../store';
 
 // Mock fs module
 jest.mock('fs', () => {
@@ -45,18 +45,18 @@ class ValidSourceLifecycle extends SourceLifecycle {
 }
 
 class NonExtendedBar {
-  public async prepare(_status?: JobStatus): Promise<JobStatus> {
+  public async prepare(_status?: SourceJobStatus): Promise<SourceJobStatus> {
     return {complete: false, state: {}};
   }
-  public async perform(status: JobStatus): Promise<JobStatus> {
+  public async perform(status: SourceJobStatus): Promise<SourceJobStatus> {
     return status;
   }
 }
-class ProperBar extends Job {
-  public async prepare(params: ValueHash, _status?: JobStatus, _resuming?: boolean): Promise<JobStatus> {
+class ProperBar extends SourceJob {
+  public async prepare(params: ValueHash, _status?: SourceJobStatus, _resuming?: boolean): Promise<SourceJobStatus> {
     return {complete: false, state: params};
   }
-  public async perform(status: JobStatus): Promise<JobStatus> {
+  public async perform(status: SourceJobStatus): Promise<SourceJobStatus> {
     return status;
   }
 }
