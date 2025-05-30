@@ -236,10 +236,10 @@ describe('validateSources', () => {
   describe('validateJobs', () => {
     it('succeeds with a proper definition', async () => {
       const runtime: any = getRuntime('validSourceJobs', {
+        function: {
+          entry_point: 'validSourceFunctionClass'
+        },
         jobs: {
-          function: {
-            entry_point: 'validSourceFunctionClass'
-          },
           bar: {
             entry_point: 'ValidSourceJob'
           }
@@ -285,7 +285,7 @@ describe('validateSources', () => {
       runtime.getSourceJobClass = () => NonExtendedBar;
       const errors = await validateSources(runtime);
 
-      expect(errors).toContain('Job entry point does not extend App.Job: InvalidSourceJob');
+      expect(errors).toContain('Job entry point does not extend App.SourceJob: InvalidSourceJob');
     });
   });
 

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 import { SourceLifecycle } from '../SourceLifecycle';
 import {logger} from '../../logging';
-import {Job} from '../Job';
+import {SourceJob} from '../SourceJob';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
   'onSourceCreate', 'onSourceUpdate', 'onSourceDelete', 'onSourceEnable', 'onSourcePause'];
@@ -121,9 +121,9 @@ export async function validateSourceJobs(runtime: Runtime, sourceName: string): 
       }
       if (!sourceJobClass) {
         errors.push(`Error loading job entry point ${name}. ${errorMessage}`);
-      } else if (!(sourceJobClass.prototype instanceof Job)) {
+      } else if (!(sourceJobClass.prototype instanceof SourceJob)) {
         errors.push(
-          `Job entry point does not extend App.Job: ${source.jobs[name].entry_point}`
+          `Job entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`
         );
       } else {
         if (typeof (sourceJobClass.prototype.prepare) !== 'function') {
