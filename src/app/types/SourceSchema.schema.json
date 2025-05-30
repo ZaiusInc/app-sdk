@@ -12,9 +12,7 @@
                     "type": "string"
                 },
                 "format": {
-                    "enum": [
-                        "url"
-                    ],
+                    "const": "url",
                     "type": "string"
                 },
                 "name": {

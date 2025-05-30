@@ -1,4 +1,5 @@
 import { SourceFunction } from '../SourceFunction';
+import { SourceSchemaFunction } from '../types/SourceSchema';
 import { Runtime } from '../Runtime';
 import * as fs from 'fs';
 import { join } from 'path';
@@ -29,13 +30,33 @@ async function validateSchema(runtime: Runtime, name: string) {
     errors.push(`Source is missing the schema property: ${name}`);
   } else {
     const schema = source.schema;
-    const schemaFilePath = join(runtime.baseDir, 'sources', 'schema', schema);
-    if (typeof (schema) !== 'string') {
-      errors.push(`Source schema property must be a string: ${name}`);
-    } else if (schema.trim() === '') {
-      errors.push(`Source schema property cannot be empty: ${name}`);
-    } else if (!(fs.existsSync(schemaFilePath + '.yml') || fs.existsSync(schemaFilePath + '.yaml'))) {
-      errors.push(`File not found for Source schema ${schema}`);
+    if (typeof schema !== 'object') {
+      const schemaFilePath = join(runtime.baseDir, 'sources', 'schema', schema);
+      if (typeof schema !== 'string') {
+        errors.push(`Source schema property must be a string or an object: ${name}`);
+      } else if (schema.trim() === '') {
+        errors.push(`Source schema property cannot be empty: ${name}`);
+      } else if (!(fs.existsSync(schemaFilePath + '.yml') || fs.existsSync(schemaFilePath + '.yaml'))) {
+        errors.push(`File not found for Source schema ${schema}`);
+      }
+    } else if (schema.entry_point) {
+      let sourceSchemaFunction = null;
+      try {
+        sourceSchemaFunction = await runtime.getSourceSchemaFunctionClass(name);
+      } catch (e: any) {
+        errors.push(`Error loading SourceSchemaFunction entry point ${schema.entry_point}. ${e}`);
+      }
+      if (sourceSchemaFunction) {
+        if (!(sourceSchemaFunction.prototype instanceof SourceSchemaFunction)) {
+          errors.push(
+            'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: ' + `${schema.entry_point}`,
+          );
+        } else if (typeof (sourceSchemaFunction.prototype as any)['getSourcesSchema'] !== 'function') {
+          errors.push(
+            'SourceSchemaFunction entry point is missing the getSourcesSchema method: ' + `${schema.entry_point}`,
+          );
+        }
+      }
     }
   }
   return errors;

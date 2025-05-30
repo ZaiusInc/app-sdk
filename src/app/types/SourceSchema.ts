@@ -17,3 +17,7 @@ export interface SourceSchemaField {
 export interface SourceSchemaObjects {
   [file: string]: SourceSchema;
 }
+
+export abstract class SourceSchemaFunction {
+  public abstract getSourcesSchema(): Promise<SourceSchema>;
+}

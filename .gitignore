@@ -35,3 +35,5 @@ yalc.lock
 docs/
 .vscode/
 *.iml
+
+jest-results.xml

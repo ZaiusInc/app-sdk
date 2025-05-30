@@ -5,7 +5,7 @@ import { Response } from './lib/Response';
 export interface SourceConfiguration {
   dataSyncId: string;
   sourceKey: string;
-  schema: string;
+  schema: string | { entry_point: string };
   webhookUrl?: string;
 }
 
