@@ -55,7 +55,7 @@ export abstract class SourceJob {
    * @IMPORTANT You MUST ensure the process is **NOT BLOCKED** while interruptible. This can be achieved
    * by manually calling `await this.sleep()` regularly or is automatic if you are waiting on non-blocking calls.
    *
-   * `Job::sleep` and `Job::performInterruptibleTask` will set this value automatically.
+   * `SourceJob::sleep` and `SourceJob::performInterruptibleTask` will set this value automatically.
    */
   public isInterruptible = false;
 
