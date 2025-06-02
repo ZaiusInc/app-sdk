@@ -123,7 +123,7 @@ export async function validateSourceJobs(runtime: Runtime, sourceName: string): 
         errors.push(`Error loading job entry point ${name}. ${errorMessage}`);
       } else if (!(sourceJobClass.prototype instanceof SourceJob)) {
         errors.push(
-          `Job entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`
+          `SourceJob entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`
         );
       } else {
         if (typeof (sourceJobClass.prototype.prepare) !== 'function') {
