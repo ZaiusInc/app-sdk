@@ -285,7 +285,7 @@ describe('validateSources', () => {
       runtime.getSourceJobClass = () => NonExtendedBar;
       const errors = await validateSources(runtime);
 
-      expect(errors).toContain('Job entry point does not extend App.SourceJob: InvalidSourceJob');
+      expect(errors).toContain('SourceJob entry point does not extend App.SourceJob: InvalidSourceJob');
     });
   });
 
