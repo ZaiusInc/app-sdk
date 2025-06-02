@@ -3,7 +3,6 @@ import { Runtime } from '../Runtime';
 import * as fs from 'fs';
 import { join } from 'path';
 import { SourceLifecycle } from '../SourceLifecycle';
-import {logger} from '../../logging';
 import {SourceJob} from '../SourceJob';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
