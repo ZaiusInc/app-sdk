@@ -117,7 +117,6 @@ export async function validateSourceJobs(runtime: Runtime, sourceName: string): 
         sourceJobClass = await runtime.getSourceJobClass(sourceName, name);
       } catch (e: any) {
         errorMessage = e;
-        logger.error(e);
       }
       if (!sourceJobClass) {
         errors.push(`Error loading job entry point ${name}. ${errorMessage}`);

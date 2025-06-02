@@ -93,7 +93,7 @@ export class Runtime {
   }
 
   public async getSourceJobClass<T extends SourceJob>(sourceName: string, jobName: string):
-  Promise<new (invocation: SourceJobInvocation) => T> {
+  Promise<new (invocation: SourceJobInvocation, source: Source) => T> {
     const source = this.manifest.sources;
     if (!source || !source[sourceName]) {
       throw new Error(`No source named ${sourceName} defined in manifest`);
