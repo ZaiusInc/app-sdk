@@ -17,7 +17,7 @@ import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { SourceFunction, SourceConfiguration } from './SourceFunction';
-import { SourceSchema, SourceSchemaFunction, SourceSchemaObjects } from './types/SourceSchema';
+import { SourceSchemaFunction, SourceSchemaFunctionConfig, SourceSchemaObjects } from './types/SourceSchema';
 import { Source } from '../sources/Source';
 import { SourceLifecycle } from './SourceLifecycle';
 
@@ -114,7 +114,7 @@ export class Runtime {
   }
 
   public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
-  (new () => T) | null> {
+  (new (config: SourceSchemaFunctionConfig) => T)> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
@@ -124,7 +124,7 @@ export class Runtime {
     }
     const providerEntryPoint = sources[name].schema.entry_point;
     if (!providerEntryPoint) {
-      return null;
+      throw new Error(`Source '${name}' doesn't have a schema function`);
     }
     return (await this.import(join(this.dirName, 'sources', providerEntryPoint)))[providerEntryPoint];
   }
@@ -158,14 +158,6 @@ export class Runtime {
 
   public getDestinationSchema(): DestinationSchemaObjects {
     return this.getSchema('destinations/schema') as DestinationSchemaObjects;
-  }
-
-  public async getDynamicSourceSchema(entry_point: string): Promise<SourceSchema> {
-    const schemaProvider = await this.getSourceSchemaFunctionClass(entry_point);
-    if (!schemaProvider) {
-      throw new Error(`No schema provider for source '${entry_point}' defined in manifest`);
-    }
-    return new schemaProvider().getSourcesSchema();
   }
 
   public getSourceSchema(): SourceSchemaObjects {
