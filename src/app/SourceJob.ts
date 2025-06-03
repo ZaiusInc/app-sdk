@@ -1,5 +1,5 @@
 import {ValueHash} from '../store';
-import { Source } from '../sources/Source';
+import {Source} from '../sources/Source';
 
 export interface SourceJobInvocation {
   /**
@@ -37,7 +37,7 @@ export interface SourceJobStatus extends ValueHash {
   complete: boolean;
 }
 
-export interface SleepOptions {
+export interface SourceSleepOptions {
   /**
    * true if the job can be safely interrupted during this sleep (and resumed later with the current job state)
    * @default undefined the interruptible status of the job will be unchanged
@@ -114,7 +114,7 @@ export abstract class SourceJob {
    * @param options `{interruptible: true}` if the job can be interrupted while sleeping.
    *                A sleep that is not interruptible cannot safely be longer than about 55 seconds.
    */
-  protected async sleep(miliseconds?: number, options?: SleepOptions): Promise<void> {
+  protected async sleep(miliseconds?: number, options?: SourceSleepOptions): Promise<void> {
     const lastInterruptible = this.isInterruptible;
     if (options?.interruptible !== undefined) {
       this.isInterruptible = !!options.interruptible;
