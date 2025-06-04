@@ -12,3 +12,4 @@ export * from './types';
 export * from './Destination';
 export * from './SourceFunction';
 export * from './SourceLifecycle';
+export * from './SourceSchemaFunction'
