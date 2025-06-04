@@ -52,7 +52,7 @@ export interface AppDestination {
 
 export interface AppSource {
   description: string;
-  schema: string;
+  schema: string | AppSourceSchemaFunction;
   function?: AppSourceFunction;
   jobs?: {
     [name: string]: AppSourceJob;
@@ -65,6 +65,10 @@ export interface AppSourceLifecycle {
 }
 
 export interface AppSourceFunction {
+  entry_point: string;
+}
+
+export interface AppSourceSchemaFunction {
   entry_point: string;
 }
 
