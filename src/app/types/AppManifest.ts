@@ -19,6 +19,12 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
+export interface AppSourceJob {
+  entry_point: string;
+  description: string;
+  parameters?: ValueHash;
+}
+
 export interface AppConsumer {
   entry_point: string;
   description: string;
@@ -48,6 +54,9 @@ export interface AppSource {
   description: string;
   schema: string | AppSourceSchemaFunction;
   function?: AppSourceFunction;
+  jobs?: {
+    [name: string]: AppSourceJob;
+  };
   lifecycle?: AppSourceLifecycle;
 }
 
