@@ -17,6 +17,7 @@ import * as glob from 'glob';
 import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import { SourceFunction, SourceConfiguration } from './SourceFunction';
+import { SourceSchemaFunction, SourceSchemaFunctionConfig } from './SourceSchemaFunction';
 import { SourceSchemaObjects } from './types/SourceSchema';
 import { Source } from '../sources/Source';
 import { SourceLifecycle } from './SourceLifecycle';
@@ -111,6 +112,22 @@ export class Runtime {
       return null;
     }
     return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
+  }
+
+  public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
+  (new (config: SourceSchemaFunctionConfig) => T)> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    if (typeof sources[name].schema === 'string') {
+      throw new Error(`Schema defined for source '${name}' is not a function`);
+    }
+    const providerEntryPoint = sources[name].schema.entry_point;
+    if (!providerEntryPoint) {
+      throw new Error(`Source '${name}' doesn't have a schema function`);
+    }
+    return (await this.import(join(this.dirName, 'sources', providerEntryPoint)))[providerEntryPoint];
   }
 
   public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<

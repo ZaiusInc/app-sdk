@@ -205,7 +205,14 @@
                     "$ref": "#/definitions/AppSourceLifecycle"
                 },
                 "schema": {
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/AppSourceSchemaFunction"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 }
             },
             "required": [
@@ -227,6 +234,18 @@
             "type": "object"
         },
         "AppSourceLifecycle": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
+            ],
+            "type": "object"
+        },
+        "AppSourceSchemaFunction": {
             "additionalProperties": false,
             "properties": {
                 "entry_point": {
