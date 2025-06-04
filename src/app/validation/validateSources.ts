@@ -147,12 +147,12 @@ export async function validateSourceJobs(runtime: Runtime, sourceName: string): 
       } else {
         if (typeof (sourceJobClass.prototype.prepare) !== 'function') {
           errors.push(
-            `Job entry point is missing the prepare method: ${source.jobs[name].entry_point}`
+            `SourceJob entry point is missing the prepare method: ${source.jobs[name].entry_point}`
           );
         }
         if (typeof (sourceJobClass.prototype.perform) !== 'function') {
           errors.push(
-            `Job entry point is missing the perform method: ${source.jobs[name].entry_point}`
+            `SourceJob entry point is missing the perform method: ${source.jobs[name].entry_point}`
           );
         }
       }

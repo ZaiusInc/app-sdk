@@ -138,7 +138,7 @@
             ],
             "type": "object"
         },
-        "SourceAppJob": {
+        "AppSourceJob": {
             "additionalProperties": false,
             "properties": {
                 "description": {
@@ -222,7 +222,7 @@
                     "$ref": "#/definitions/AppSourceFunction"
                 },
                 "jobs": {
-                    "$ref": "#/definitions/SourceAppJob"
+                    "$ref": "#/definitions/AppSourceJob"
                 },
                 "lifecycle": {
                     "$ref": "#/definitions/AppSourceLifecycle"
