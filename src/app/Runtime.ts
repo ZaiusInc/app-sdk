@@ -6,6 +6,7 @@ import {join} from 'path';
 import {Channel} from './Channel';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
+import {SourceJob, SourceJobInvocation} from './SourceJob';
 import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
@@ -90,6 +91,21 @@ export class Runtime {
 
     const job = jobs[name];
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
+  }
+
+  public async getSourceJobClass<T extends SourceJob>(sourceName: string, jobName: string):
+  Promise<new (invocation: SourceJobInvocation, source: Source) => T> {
+    const source = this.manifest.sources;
+    if (!source || !source[sourceName]) {
+      throw new Error(`No source named ${sourceName} defined in manifest`);
+    }
+
+    const jobs = source[sourceName].jobs;
+    if (!jobs || !jobs[jobName]) {
+      throw new Error(`No source job named ${jobName} defined in manifest`);
+    }
+    const job = jobs[jobName];
+    return (await this.import(join(this.dirName, 'sources/jobs', job.entry_point)))[job.entry_point];
   }
 
   public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
