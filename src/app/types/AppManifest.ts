@@ -19,6 +19,12 @@ export interface AppJob {
   parameters?: ValueHash;
 }
 
+export interface AppSourceJob {
+  entry_point: string;
+  description: string;
+  parameters?: ValueHash;
+}
+
 export interface AppConsumer {
   entry_point: string;
   description: string;
@@ -42,6 +48,28 @@ export interface AppDestination {
   entry_point: string;
   schema: string;
   description: string;
+}
+
+export interface AppSource {
+  description: string;
+  schema: string | AppSourceSchemaFunction;
+  function?: AppSourceFunction;
+  jobs?: {
+    [name: string]: AppSourceJob;
+  };
+  lifecycle?: AppSourceLifecycle;
+}
+
+export interface AppSourceLifecycle {
+  entry_point: string;
+}
+
+export interface AppSourceFunction {
+  entry_point: string;
+}
+
+export interface AppSourceSchemaFunction {
+  entry_point: string;
 }
 
 export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
@@ -152,6 +180,9 @@ export interface AppManifest {
   };
   destinations?: {
     [name: string]: AppDestination;
+  };
+  sources?: {
+    [name: string]: AppSource;
   };
   channel?: {
     type: ChannelType;

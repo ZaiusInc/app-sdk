@@ -138,6 +138,26 @@
             ],
             "type": "object"
         },
+        "AppSourceJob": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/ValueHash",
+                    "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option."
+                }
+            },
+            "required": [
+                "description",
+                "entry_point"
+            ],
+            "type": "object"
+        },
         "AppLiquidExtension": {
             "additionalProperties": false,
             "properties": {
@@ -191,6 +211,74 @@
                 "node22"
             ],
             "type": "string"
+        },
+        "AppSource": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "function": {
+                    "$ref": "#/definitions/AppSourceFunction"
+                },
+                "jobs": {
+                    "$ref": "#/definitions/AppSourceJob"
+                },
+                "lifecycle": {
+                    "$ref": "#/definitions/AppSourceLifecycle"
+                },
+                "schema": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/AppSourceSchemaFunction"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "description",
+                "schema"
+            ],
+            "type": "object"
+        },
+        "AppSourceFunction": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
+            ],
+            "type": "object"
+        },
+        "AppSourceLifecycle": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
+            ],
+            "type": "object"
+        },
+        "AppSourceSchemaFunction": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
+            ],
+            "type": "object"
         },
         "AttributableMetric": {
             "enum": [
@@ -545,6 +633,12 @@
         },
         "runtime": {
             "$ref": "#/definitions/AppRuntime"
+        },
+        "sources": {
+            "additionalProperties": {
+                "$ref": "#/definitions/AppSource"
+            },
+            "type": "object"
         }
     },
     "required": [

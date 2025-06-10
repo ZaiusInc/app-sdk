@@ -41,6 +41,18 @@ const appManifest = deepFreeze({
       description: 'Does a thing'
     }
   },
+  sources: {
+    bar: {
+      description: 'the bar source',
+      schema: 'barSchema',
+      jobs: {
+        bar: {
+          entry_point: 'Bar',
+          description: 'Bar'
+        }
+      }
+    }
+  },
   liquid_extensions: {
     buzz: {
       entry_point: 'Buzz',
@@ -197,6 +209,30 @@ describe('Runtime', () => {
         await runtime.getJobClass('foo');
       } catch (e: any) {
         expect(e.message).toMatch(/^No job named foo/);
+      }
+    });
+  });
+
+  describe('getSourceJobClass', () => {
+    it('loads the specified module', async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue({Bar: 'Bar'});
+
+      const bar = await runtime.getSourceJobClass('bar', 'bar');
+
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/sources/jobs/Bar');
+      expect(bar).toEqual('Bar');
+
+      importFn.mockRestore();
+    });
+
+    it("throws an error the job isn't in the manifest", async () => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+      try {
+        await runtime.getSourceJobClass('bar', 'foo');
+      } catch (e: any) {
+        expect(e.message).toMatch(/^No source job named foo defined/);
       }
     });
   });

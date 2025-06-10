@@ -16,6 +16,7 @@ import {validateLiquidExtensions} from '../validateLiquidExtensions';
 import {validateMeta} from '../validateMeta';
 import {validateSchemaObject} from '../validateSchemaObject';
 import {validateDestinations} from '../validateDestinations';
+import {validateSources} from '../validateSources';
 
 jest.mock('../validateMeta');
 jest.mock('../validateEnvironment');
@@ -27,6 +28,7 @@ jest.mock('../validateChannel');
 jest.mock('../validateSchemaObject');
 jest.mock('../validateAssets');
 jest.mock('../validateDestinations');
+jest.mock('../validateSources');
 
 const appManifest = deepFreeze({
   meta: {
@@ -59,6 +61,15 @@ const appManifest = deepFreeze({
       entry_point: 'FooDestination',
       description: 'Basic Destination',
       schema: 'asset'
+    }
+  },
+  sources: {
+    foo_source: {
+      description: 'Foo Description',
+      schema: 'asset',
+      function: {
+        entry_point: 'FooSource'
+      }
     }
   },
   outbound_domains: [
@@ -112,6 +123,18 @@ const schemaObjects = deepFreeze({
       description: 'Id of the app',
       primary: true
     }]
+  },
+  'sources/schema/asset.yml': {
+    name: 'asset',
+    display_name: 'Asset',
+    description: 'description',
+    fields: [{
+      name: 'bynder_app_id',
+      type: 'string',
+      display_name: 'Bynder App Id',
+      description: 'Id of the app',
+      primary: true
+    }]
   }
 } as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
@@ -128,6 +151,11 @@ describe('validateApp', () => {
         'destinations': {
           'schema': {
             'asset.yml': jsYaml.dump(schemaObjects['destinations/schema/asset.yml']),
+          }
+        },
+        'sources': {
+          'schema': {
+            'asset.yml': jsYaml.dump(schemaObjects['sources/schema/asset.yml']),
           }
         }
       }
@@ -151,6 +179,7 @@ describe('validateApp', () => {
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
     (validateDestinations as jest.Mock).mockReturnValue([]);
+    (validateSources as jest.Mock).mockReturnValue([]);
   });
 
   it('succeeds with a proper definition', async () => {
@@ -193,10 +222,22 @@ describe('validateApp', () => {
       }
     } as any);
 
+    const getSourceSchema = jest.spyOn(runtime, 'getSourceSchema').mockReturnValue({
+      'sources/schema/asset.yml': {
+        ...schemaObjects['sources/schema/asset.yml'],
+        name: undefined,
+        fields: [{...schemaObjects['sources/schema/asset.yml'].fields![0],
+          type: 'no', display_name: undefined}]
+      }
+    } as any);
+
     expect(await validateApp(runtime)).toEqual([
       "Invalid destinations/schema/asset.yml: must have required property 'name'",
       "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
       'Invalid destinations/schema/asset.yml: fields/0/type must be equal to one of the allowed values',
+      "Invalid sources/schema/asset.yml: must have required property 'name'",
+      "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name'",
+      'Invalid sources/schema/asset.yml: fields/0/type must be equal to one of the allowed values',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
@@ -204,6 +245,7 @@ describe('validateApp', () => {
 
     getSchemaObjects.mockRestore();
     getDestinationSchema.mockRestore();
+    getSourceSchema.mockRestore();
   });
 
   it('captures content errors', async () => {
@@ -217,6 +259,7 @@ describe('validateApp', () => {
     (validateLifecycle as jest.Mock).mockResolvedValue(['lifecycle error 1', 'lifecycle error 2']);
     (validateChannel as jest.Mock).mockResolvedValue(['channel error 1', 'channel error 2']);
     (validateDestinations as jest.Mock).mockResolvedValue(['destination error 1', 'destination error 2']);
+    (validateSources as jest.Mock).mockResolvedValue(['source error 1', 'source error 2']);
     let schemaErrorCounter = 1;
     (validateSchemaObject as jest.Mock)
       .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
@@ -228,6 +271,7 @@ describe('validateApp', () => {
       'functions error 1', 'functions error 2',
       'jobs error 1', 'jobs error 2',
       'destination error 1', 'destination error 2',
+      'source error 1', 'source error 2',
       'liquid error 1', 'liquid error 2',
       'lifecycle error 1', 'lifecycle error 2',
       'channel error 1', 'channel error 2',
@@ -248,5 +292,6 @@ describe('validateApp', () => {
     ]);
     expect(validateAssets).toBeCalledWith(runtime);
     expect(validateDestinations).toBeCalledWith(runtime);
+    expect(validateSources).toBeCalledWith(runtime);
   });
 });

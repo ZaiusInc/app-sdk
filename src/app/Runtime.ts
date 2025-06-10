@@ -6,16 +6,22 @@ import {join} from 'path';
 import {Channel} from './Channel';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
+import {SourceJob, SourceJobInvocation} from './SourceJob';
 import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
 import {AppManifest} from './types';
 import manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects, SchemaObject} from './types/SchemaObject';
+import {SchemaObjects} from './types/SchemaObject';
 import deepFreeze from 'deep-freeze';
 import * as glob from 'glob';
 import {Destination} from './Destination';
-import {DestinationSchema, DestinationSchemaObjects} from './types/DestinationSchema';
+import {DestinationSchemaObjects} from './types/DestinationSchema';
+import { SourceFunction, SourceConfiguration } from './SourceFunction';
+import { SourceSchemaFunction, SourceSchemaFunctionConfig } from './SourceSchemaFunction';
+import { SourceSchemaObjects } from './types/SourceSchema';
+import { Source } from '../sources/Source';
+import { SourceLifecycle } from './SourceLifecycle';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -87,6 +93,21 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
+  public async getSourceJobClass<T extends SourceJob>(sourceName: string, jobName: string):
+  Promise<new (invocation: SourceJobInvocation, source: Source) => T> {
+    const source = this.manifest.sources;
+    if (!source || !source[sourceName]) {
+      throw new Error(`No source named ${sourceName} defined in manifest`);
+    }
+
+    const jobs = source[sourceName].jobs;
+    if (!jobs || !jobs[jobName]) {
+      throw new Error(`No source job named ${jobName} defined in manifest`);
+    }
+    const job = jobs[jobName];
+    return (await this.import(join(this.dirName, 'sources/jobs', job.entry_point)))[job.entry_point];
+  }
+
   public async getDestinationClass<T extends Destination<any>>(name: string): Promise<new () => T> {
     const destinations = this.manifest.destinations;
     if (!destinations || !destinations[name]) {
@@ -94,6 +115,48 @@ export class Runtime {
     }
     const destination = destinations[name];
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
+  }
+
+  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<
+  (new (config: SourceConfiguration) => T) | null> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    const lifecycleEntryPoint = sources[name].lifecycle?.entry_point;
+    if (!lifecycleEntryPoint) {
+      return null;
+    }
+    return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
+  }
+
+  public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
+  (new (config: SourceSchemaFunctionConfig) => T)> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    if (typeof sources[name].schema === 'string') {
+      throw new Error(`Schema defined for source '${name}' is not a function`);
+    }
+    const providerEntryPoint = sources[name].schema.entry_point;
+    if (!providerEntryPoint) {
+      throw new Error(`Source '${name}' doesn't have a schema function`);
+    }
+    return (await this.import(join(this.dirName, 'sources', providerEntryPoint)))[providerEntryPoint];
+  }
+
+  public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
+  new (config: SourceConfiguration, request: Request, source: Source) => T> {
+    const sources = this.manifest.sources;
+    if (!sources || !sources[name]) {
+      throw new Error(`No source '${name}' defined in manifest`);
+    }
+    const functionEntryPoint = sources[name].function?.entry_point;
+    if (!functionEntryPoint) {
+      throw new Error(`Source '${name}' is not a function source`);
+    }
+    return (await this.import(join(this.dirName, 'sources', functionEntryPoint)))[functionEntryPoint];
   }
 
   public async getLiquidExtensionClass<T extends LiquidExtension>(name: string): Promise<new () => T> {
@@ -107,22 +170,23 @@ export class Runtime {
   }
 
   public getSchemaObjects(): SchemaObjects {
-    const schemaObjects: SchemaObjects = {};
-    const files = glob.sync('schema/*.{yml,yaml}', {cwd: this.dirName});
-    if (files.length > 0) {
-      for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as SchemaObject;
-      }
-    }
-    return schemaObjects;
+    return this.getSchema('schema') as SchemaObjects;
   }
 
   public getDestinationSchema(): DestinationSchemaObjects {
-    const schemaObjects: DestinationSchemaObjects = {};
-    const files = glob.sync('destinations/schema/*.{yml,yaml}', {cwd: this.dirName});
+    return this.getSchema('destinations/schema') as DestinationSchemaObjects;
+  }
+
+  public getSourceSchema(): SourceSchemaObjects {
+    return this.getSchema('sources/schema') as SourceSchemaObjects;
+  }
+
+  private getSchema(path: string) {
+    const schemaObjects: any = {};
+    const files = glob.sync(`${path}/*.{yml,yaml}`, { cwd: this.dirName });
     if (files.length > 0) {
       for (const file of files) {
-        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8')) as DestinationSchema;
+        schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8'));
       }
     }
     return schemaObjects;
@@ -145,7 +209,7 @@ export class Runtime {
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
     const manifest = (await import('js-yaml')).load(
       readFileSync(join(dirName, 'app.yml'), 'utf8')
-    ) ;
+    );
 
     if (!skipJsonValidation) {
       const ajv: Ajv = new Ajv({allowUnionTypes: true});
