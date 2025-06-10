@@ -232,7 +232,7 @@ describe('Runtime', () => {
       try {
         await runtime.getSourceJobClass('bar', 'foo');
       } catch (e: any) {
-        expect(e.message).toMatch(/^No job named foo defined/);
+        expect(e.message).toMatch(/^No source job named foo defined/);
       }
     });
   });
