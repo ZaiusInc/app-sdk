@@ -102,7 +102,7 @@ export class Runtime {
 
     const jobs = source[sourceName].jobs;
     if (!jobs || !jobs[jobName]) {
-      throw new Error(`No job named ${jobName} defined in manifest`);
+      throw new Error(`No source job named ${jobName} defined in manifest`);
     }
     const job = jobs[jobName];
     return (await this.import(join(this.dirName, 'sources/jobs', job.entry_point)))[job.entry_point];
