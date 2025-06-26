@@ -53,6 +53,8 @@ export interface LogContext {
   entry_point?: string; // e.g., function:fn_name
   request_id?: string;
   job_id?: string;
+  data_sync_id?: string;
+  source_key?: string;
 }
 
 export interface LoggerOptions {

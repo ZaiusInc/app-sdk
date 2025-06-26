@@ -1,46 +1,46 @@
-import { DestinationSchema, DestinationSchemaField } from '../types/DestinationSchema';
+import { SourceSchema, SourceSchemaField } from '../types/SourceSchema';
 import * as path from 'path';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 
-export function validateDestinationsSchema(
-  destinationSchema: DestinationSchema,
+export function validateSourcesSchema(
+  sourceSchema: SourceSchema,
   file: string
 ): string[] {
-  return new DestinationSchemaValidator(destinationSchema, file).validate();
+  return new SourceSchemaValidator(sourceSchema, file).validate();
 }
 
-class DestinationSchemaValidator {
+class SourceSchemaValidator {
   private readonly errors: string[] = [];
-  private destinationsSchema: DestinationSchema;
+  private sourcesSchema: SourceSchema;
   private file: string;
 
   public constructor(
-    destinationSchema: DestinationSchema,
+    sourceSchema: SourceSchema,
     file: string
   ) {
-    this.destinationsSchema = destinationSchema;
+    this.sourcesSchema = sourceSchema;
     this.file = file;
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.destinationsSchema.name &&
-        path.basename(this.file, '.yaml') !== this.destinationsSchema.name) {
+    if (path.basename(this.file, '.yml') !== this.sourcesSchema.name &&
+        path.basename(this.file, '.yaml') !== this.sourcesSchema.name) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 
-    if (!this.destinationsSchema.name) {
+    if (!this.sourcesSchema.name) {
       this.errors.push(`Invalid ${this.file}: name must be specified`);
     } else {
-      this.enforceNameFormat(this.destinationsSchema.name, 'name');
+      this.enforceNameFormat(this.sourcesSchema.name, 'name');
     }
 
-    if (!this.destinationsSchema.display_name || this.destinationsSchema.display_name.trim().length === 0) {
+    if (!this.sourcesSchema.display_name || this.sourcesSchema.display_name.trim().length === 0) {
       this.errors.push(`Invalid ${this.file}: display_name must be specified`);
     }
 
     let hasPrimaryKey = false;
-    this.destinationsSchema.fields.forEach((field, index) => {
+    this.sourcesSchema.fields.forEach((field, index) => {
       this.validateField(field, index);
       if (field.primary) {
         hasPrimaryKey = true;
@@ -61,7 +61,7 @@ class DestinationSchemaValidator {
     }
   }
 
-  private validateField(field: DestinationSchemaField, index: number) {
+  private validateField(field: SourceSchemaField, index: number) {
     if (!field.name) {
       this.errors.push(`Invalid ${this.file}: fields[${index}].name must be specified`);
     } else {

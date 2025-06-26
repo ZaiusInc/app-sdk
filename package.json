@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -24,7 +24,7 @@
     "build-watch": "tsc -w",
     "lint": "npx eslint 'src/**/*.ts'",
     "test": "jest -i",
-    "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SchemaObject.ts SchemaObject > ./src/app/types/SchemaObject.schema.json && typescript-json-schema --required --noExtraProps src/app/types/DestinationSchema.ts DestinationSchema > ./src/app/types/DestinationSchema.schema.json",
+    "update-schema": "typescript-json-schema --required --noExtraProps tsconfig.json AppManifest > ./src/app/types/AppManifest.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SchemaObject.ts SchemaObject > ./src/app/types/SchemaObject.schema.json && typescript-json-schema --required --noExtraProps src/app/types/DestinationSchema.ts DestinationSchema > ./src/app/types/DestinationSchema.schema.json && typescript-json-schema --required --noExtraProps src/app/types/SourceSchema.ts SourceSchema > ./src/app/types/SourceSchema.schema.json",
     "prepare-readme-export": "node scripts/prepare_readme_export.js",
     "generate-docs": "typedoc && yarn prepare-readme-export"
   },

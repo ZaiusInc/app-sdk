@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "additionalProperties": false,
     "definitions": {
-        "DestinationSchemaField": {
+        "SourceSchemaField": {
             "additionalProperties": false,
             "properties": {
                 "description": {
@@ -50,7 +50,7 @@
         },
         "fields": {
             "items": {
-                "$ref": "#/definitions/DestinationSchemaField"
+                "$ref": "#/definitions/SourceSchemaField"
             },
             "type": "array"
         },
