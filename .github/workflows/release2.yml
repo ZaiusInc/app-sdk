@@ -1,0 +1,15 @@
+name: Release and publish
+
+on:
+  pull_request
+
+jobs:
+  release:
+    uses: ZaiusInc/node-sdk/.github/workflows/reusable-release.yaml@release-npm-test
+    secrets:
+      npmJSToken: ${{ secrets.NPMJS_TOKEN }}
+      githubPackagesToken: ${{ secrets.GHA_PAT }}
+      gitReleasesToken: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+    with:
+      release_to_npm: true
+      release_to_github: false
