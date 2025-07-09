@@ -64,13 +64,32 @@
                     "type": "string"
                 },
                 "schema": {
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/AppDestinationSchemaFunction"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 }
             },
             "required": [
                 "description",
                 "entry_point",
                 "schema"
+            ],
+            "type": "object"
+        },
+        "AppDestinationSchemaFunction": {
+            "additionalProperties": false,
+            "properties": {
+                "entry_point": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "entry_point"
             ],
             "type": "object"
         },
@@ -121,26 +140,6 @@
                 "cron": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
-                "entry_point": {
-                    "type": "string"
-                },
-                "parameters": {
-                    "$ref": "#/definitions/ValueHash",
-                    "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option."
-                }
-            },
-            "required": [
-                "description",
-                "entry_point"
-            ],
-            "type": "object"
-        },
-        "AppSourceJob": {
-            "additionalProperties": false,
-            "properties": {
                 "description": {
                     "type": "string"
                 },
@@ -222,7 +221,10 @@
                     "$ref": "#/definitions/AppSourceFunction"
                 },
                 "jobs": {
-                    "$ref": "#/definitions/AppSourceJob"
+                    "additionalProperties": {
+                        "$ref": "#/definitions/AppSourceJob"
+                    },
+                    "type": "object"
                 },
                 "lifecycle": {
                     "$ref": "#/definitions/AppSourceLifecycle"
@@ -252,6 +254,26 @@
                 }
             },
             "required": [
+                "entry_point"
+            ],
+            "type": "object"
+        },
+        "AppSourceJob": {
+            "additionalProperties": false,
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "entry_point": {
+                    "type": "string"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/ValueHash",
+                    "description": "An object with some restrictions. An interface that follows the ValueHash interface\ncan be safely written to any storage option."
+                }
+            },
+            "required": [
+                "description",
                 "entry_point"
             ],
             "type": "object"
