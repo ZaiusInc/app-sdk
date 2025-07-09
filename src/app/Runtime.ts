@@ -22,6 +22,7 @@ import { SourceSchemaFunction, SourceSchemaFunctionConfig } from './SourceSchema
 import { SourceSchemaObjects } from './types/SourceSchema';
 import { Source } from '../sources/Source';
 import { SourceLifecycle } from './SourceLifecycle';
+import { DestinationSchemaFunction, DestinationSchemaFunctionConfig } from './DestinationSchemaFunction';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -128,6 +129,22 @@ export class Runtime {
       return null;
     }
     return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
+  }
+
+  public async getDestinationSchemaFunctionClass<T extends DestinationSchemaFunction>(name: string): Promise<
+  (new (config: DestinationSchemaFunctionConfig) => T)> {
+    const destinations = this.manifest.destinations;
+    if (!destinations || !destinations[name]) {
+      throw new Error(`No destination '${name}' defined in manifest`);
+    }
+    if (typeof destinations[name].schema === 'string') {
+      throw new Error(`Schema defined for destination '${name}' is not a function`);
+    }
+    const providerEntryPoint = destinations[name].schema.entry_point;
+    if (!providerEntryPoint) {
+      throw new Error(`destination '${name}' doesn't have a schema function`);
+    }
+    return (await this.import(join(this.dirName, 'destinations', providerEntryPoint)))[providerEntryPoint];
   }
 
   public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
