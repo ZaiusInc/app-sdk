@@ -102,8 +102,12 @@ async function validateLifecycle(runtime: Runtime, name: string) {
 }
 
 async function validateFunction(runtime: Runtime, name: string) {
-  const errors: string[] = [];
   const source = runtime.manifest.sources?.[name];
+  if (!source?.function) {
+    return [];
+  }
+
+  const errors: string[] = [];
   let sourceClass = null;
   let errorMessage: string | null = null;
   try {
