@@ -129,6 +129,17 @@ describe('validateSources', () => {
       expect(result).toContain('Error loading SourceFunction entry point invalidFunctionEntry. Error: not found');
     });
 
+    it('should return no errors if function is not defined', async () => {
+      const runtime: any = getRuntime('noFunction', {
+        schema: 'validSchema'
+      });
+
+      existsSyncMock.mockReturnValueOnce(true);
+      const result = await validateSources(runtime);
+
+      expect(result).toEqual([]);
+    });
+
     it('should return error when source lifecycle cannot be loaded', async () => {
       const runtime: any = getRuntime('missingLifecycle', {
         function: {
@@ -311,9 +322,6 @@ describe('validateSources', () => {
   describe('validateJobs', () => {
     it('succeeds with a proper definition', async () => {
       const runtime: any = getRuntime('validSourceJobs', {
-        function: {
-          entry_point: 'validSourceFunctionClass'
-        },
         jobs: {
           bar: {
             entry_point: 'ValidSourceJob'
