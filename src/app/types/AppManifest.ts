@@ -46,7 +46,7 @@ export interface AppLiquidExtension {
 
 export interface AppDestination {
   entry_point: string;
-  schema: string;
+  schema: string | AppDestinationSchemaFunction;
   description: string;
 }
 
@@ -69,6 +69,10 @@ export interface AppSourceFunction {
 }
 
 export interface AppSourceSchemaFunction {
+  entry_point: string;
+}
+
+export interface AppDestinationSchemaFunction {
   entry_point: string;
 }
 
