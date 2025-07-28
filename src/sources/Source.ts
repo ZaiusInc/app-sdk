@@ -20,7 +20,7 @@ export interface Source {
   /**
    * Emit data to be processed and send to the destination.
    * @param data - SourceData the data to be emitted
-   * @returns A SourceResponse wiht success/failure and optional message in case
+   * @returns A SourceResponse with success/failure and optional message in case
    *          of failure.
    */
   emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
