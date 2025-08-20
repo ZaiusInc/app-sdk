@@ -10,6 +10,10 @@ export interface DestinationSchemaField {
   name: string;
   display_name: string;
   description: string;
+  /**
+   * Field type - can be a primitive type, custom type reference, or array syntax
+   * @pattern ^(boolean|float|int|long|string|\w+|\[\w+\])$
+   */
   type: string;
   primary?: boolean;
   format?: 'url';

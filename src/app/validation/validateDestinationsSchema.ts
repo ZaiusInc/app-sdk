@@ -113,7 +113,7 @@ class DestinationSchemaValidator {
   private validateCustomTypeReference(field: DestinationSchemaField, pathPrefix: string) {
     const customTypes = (this.destinationsSchema.custom_types || []).map((ct: DestinationSchemaCustomType) => ct.name);
     const customTypeMatch = field.type.match(/^\w+$/);
-    if (customTypeMatch && !['boolean', 'float', 'int', 'long', 'string', 'object', 'array'].includes(field.type)) {
+    if (customTypeMatch && !['boolean', 'float', 'int', 'long', 'string'].includes(field.type)) {
       if (!customTypes.includes(field.type)) {
         this.errors.push(
           `Invalid ${this.file}: ${pathPrefix}.type '${field.type}' does not match any custom_types name`

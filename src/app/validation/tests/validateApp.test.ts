@@ -266,8 +266,12 @@ describe('validateApp', () => {
     expect(await validateApp(runtime)).toEqual([
       "Invalid destinations/schema/asset.yml: must have required property 'name'",
       "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
+      "Invalid destinations/schema/asset.yml: fields/0/type must match pattern " +
+      "\"^(boolean|float|int|long|string|\\w+|\\[\\w+\\])$\"",
       "Invalid sources/schema/asset.yml: must have required property 'name'",
       "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name'",
+      "Invalid sources/schema/asset.yml: fields/0/type must match pattern " +
+      "\"^(boolean|float|int|long|string|\\w+|\\[\\w+\\])$\"",
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
