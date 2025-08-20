@@ -22,14 +22,38 @@
                     "type": "boolean"
                 },
                 "type": {
-                    "enum": [
-                        "boolean",
-                        "float",
-                        "int",
-                        "long",
-                        "string"
-                    ],
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "enum": [
+                                "boolean",
+                                "float",
+                                "int",
+                                "long",
+                                "string"
+                            ],
+                            "type": "string",
+                            "description": "Primitive types. For custom types, use the name defined in custom_types. Application must verify custom type references."
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^\\w+$",
+                            "description": "Custom type reference. Must match a name in custom_types."
+                        },
+                        {
+                            "type": "string",
+                            "pattern": "^\\[\\w+\\]$",
+                            "description": "Array type. For arrays of custom types, the type inside brackets must match a custom_types name."
+                        }
+                    ]
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DestinationSchemaField"
+                    }
+                },
+                "items": {
+                    "$ref": "#/definitions/DestinationSchemaField"
                 }
             },
             "required": [
@@ -56,6 +80,35 @@
         },
         "name": {
             "type": "string"
+        },
+        "custom_types": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/DestinationSchemaField"
+                        }
+                    }
+                },
+                "required": [
+                    "name",
+                    "description",
+                    "display_name",
+                    "fields"
+                ]
+            }
         }
     },
     "required": [

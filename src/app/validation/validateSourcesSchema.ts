@@ -1,4 +1,4 @@
-import { SourceSchema, SourceSchemaField } from '../types/SourceSchema';
+import { SourceSchemaCustomType, SourceSchema, SourceSchemaField } from '../types';
 import * as path from 'path';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
@@ -49,6 +49,13 @@ class SourceSchemaValidator {
     if (!hasPrimaryKey) {
       this.errors.push(`Invalid ${this.file}: fields must contain one primary key`);
     }
+
+    if (this.sourcesSchema.custom_types) {
+      this.sourcesSchema.custom_types.forEach((customType, index) => {
+        this.validateCustomType(customType, index);
+      });
+    }
+
     return this.errors;
   }
 
@@ -73,6 +80,73 @@ class SourceSchemaValidator {
     }
     if (!field.description || field.description.trim().length === 0) {
       this.errors.push(`Invalid ${this.file}: fields[${index}].description must be specified`);
+    }
+    this.validateCustomTypeReference(field, index);
+  }
+
+  private validateCustomType(customType: SourceSchemaCustomType, customTypeIndex: number) {
+    if (!customType.name) {
+      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].name must be specified`);
+    } else {
+      this.enforceNameFormat(customType.name, `custom_types[${customTypeIndex}].name`);
+    }
+
+    if (!customType.display_name || customType.display_name.trim().length === 0) {
+      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].display_name must be specified`);
+    }
+
+    if (!customType.description || customType.description.trim().length === 0) {
+      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].description must be specified`);
+    }
+
+    if (customType.fields && Array.isArray(customType.fields)) {
+      customType.fields.forEach((field: SourceSchemaField, fieldIndex: number) => {
+        this.validateCustomTypeField(field, customTypeIndex, fieldIndex);
+      });
+    }
+  }
+
+  private validateCustomTypeField(field: SourceSchemaField, customTypeIndex: number, fieldIndex: number) {
+    if (!field.name) {
+      this.errors.push(
+        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].name must be specified`
+      );
+    } else {
+      this.enforceNameFormat(field.name, `custom_types[${customTypeIndex}].fields[${fieldIndex}].name`);
+    }
+
+    if (!field.display_name || field.display_name.trim().length === 0) {
+      this.errors.push(
+        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].display_name must be specified`
+      );
+    }
+
+    if (!field.description || field.description.trim().length === 0) {
+      this.errors.push(
+        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].description must be specified`
+      );
+    }
+  }
+
+  private validateCustomTypeReference(field: SourceSchemaField, index: number) {
+    const customTypes = (this.sourcesSchema.custom_types || []).map((ct: SourceSchemaCustomType) => ct.name);
+    const customTypeMatch = field.type.match(/^\w+$/);
+    if (customTypeMatch && !['boolean', 'float', 'int', 'long', 'string'].includes(field.type)) {
+      if (!customTypes.includes(field.type)) {
+        this.errors.push(
+          `Invalid ${this.file}: fields[${index}].type '${field.type}' does not match any custom_types name`
+        );
+      }
+    }
+
+    const arrayTypeMatch = field.type.match(/^\[(\w+)\]$/);
+    if (arrayTypeMatch) {
+      const arrayType = arrayTypeMatch[1];
+      if (!customTypes.includes(arrayType)) {
+        this.errors.push(
+          `Invalid ${this.file}: fields[${index}].type '${field.type}' array type does not match any custom_types name`
+        );
+      }
     }
   }
 }
