@@ -6,24 +6,11 @@ export interface SourceSchema {
   custom_types?: SourceSchemaCustomType[];
 }
 
-export type SourceSchemaFieldType =
-  | 'string'
-  | 'boolean'
-  | 'int'
-  | 'float'
-  | 'long'
-  | '[string]'
-  | '[boolean]'
-  | '[int]'
-  | '[float]'
-  | '[long]'
-  | string; // Allow custom types as strings
-
 export interface SourceSchemaField {
   name: string;
   display_name: string;
   description: string;
-  type: SourceSchemaFieldType;
+  type: string;
   primary?: boolean;
   format?: 'url';
 }

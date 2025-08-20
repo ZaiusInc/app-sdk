@@ -6,24 +6,11 @@ export interface DestinationSchema {
   custom_types?: DestinationSchemaCustomType[];
 }
 
-export type DestinationSchemaFieldType =
-  | 'string'
-  | 'boolean'
-  | 'int'
-  | 'float'
-  | 'long'
-  | '[string]'
-  | '[boolean]'
-  | '[int]'
-  | '[float]'
-  | '[long]'
-  | string; // Allow custom types as strings
-
 export interface DestinationSchemaField {
   name: string;
   display_name: string;
   description: string;
-  type: DestinationSchemaFieldType;
+  type: string;
   primary?: boolean;
   format?: 'url';
 }

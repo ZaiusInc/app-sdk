@@ -142,7 +142,7 @@ class SourceSchemaValidator {
     const arrayTypeMatch = field.type.match(/^\[(\w+)\]$/);
     if (arrayTypeMatch) {
       const arrayType = arrayTypeMatch[1];
-      if (!customTypes.includes(arrayType)) {
+      if (!['boolean', 'float', 'int', 'long', 'string'].includes(arrayType) && !customTypes.includes(arrayType)) {
         this.errors.push(
           `Invalid ${this.file}: fields[${index}].type '${field.type}' array type does not match any custom_types name`
         );
