@@ -41,7 +41,7 @@ class SourceSchemaValidator {
 
     let hasPrimaryKey = false;
     this.sourcesSchema.fields.forEach((field, index) => {
-      this.validateField(field, index);
+      this.validateField(field, `fields[${index}]`);
       if (field.primary) {
         hasPrimaryKey = true;
       }
@@ -68,73 +68,55 @@ class SourceSchemaValidator {
     }
   }
 
-  private validateField(field: SourceSchemaField, index: number) {
+  private validateField(field: SourceSchemaField, pathPrefix: string) {
     if (!field.name) {
-      this.errors.push(`Invalid ${this.file}: fields[${index}].name must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.name must be specified`);
     } else {
-      this.enforceNameFormat(field.name, `fields[${index}].name`);
+      this.enforceNameFormat(field.name, `${pathPrefix}.name`);
     }
 
     if (!field.display_name || field.display_name.trim().length === 0) {
-      this.errors.push(`Invalid ${this.file}: fields[${index}].display_name must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.display_name must be specified`);
     }
+
     if (!field.description || field.description.trim().length === 0) {
-      this.errors.push(`Invalid ${this.file}: fields[${index}].description must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.description must be specified`);
     }
-    this.validateCustomTypeReference(field, index);
+
+    this.validateCustomTypeReference(field, pathPrefix);
   }
 
   private validateCustomType(customType: SourceSchemaCustomType, customTypeIndex: number) {
+    const pathPrefix = `custom_types[${customTypeIndex}]`;
+
     if (!customType.name) {
-      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].name must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.name must be specified`);
     } else {
-      this.enforceNameFormat(customType.name, `custom_types[${customTypeIndex}].name`);
+      this.enforceNameFormat(customType.name, `${pathPrefix}.name`);
     }
 
     if (!customType.display_name || customType.display_name.trim().length === 0) {
-      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].display_name must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.display_name must be specified`);
     }
 
     if (!customType.description || customType.description.trim().length === 0) {
-      this.errors.push(`Invalid ${this.file}: custom_types[${customTypeIndex}].description must be specified`);
+      this.errors.push(`Invalid ${this.file}: ${pathPrefix}.description must be specified`);
     }
 
     if (customType.fields && Array.isArray(customType.fields)) {
       customType.fields.forEach((field: SourceSchemaField, fieldIndex: number) => {
-        this.validateCustomTypeField(field, customTypeIndex, fieldIndex);
+        this.validateField(field, `${pathPrefix}.fields[${fieldIndex}]`);
       });
     }
   }
 
-  private validateCustomTypeField(field: SourceSchemaField, customTypeIndex: number, fieldIndex: number) {
-    if (!field.name) {
-      this.errors.push(
-        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].name must be specified`
-      );
-    } else {
-      this.enforceNameFormat(field.name, `custom_types[${customTypeIndex}].fields[${fieldIndex}].name`);
-    }
-
-    if (!field.display_name || field.display_name.trim().length === 0) {
-      this.errors.push(
-        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].display_name must be specified`
-      );
-    }
-
-    if (!field.description || field.description.trim().length === 0) {
-      this.errors.push(
-        `Invalid ${this.file}: custom_types[${customTypeIndex}].fields[${fieldIndex}].description must be specified`
-      );
-    }
-  }
-
-  private validateCustomTypeReference(field: SourceSchemaField, index: number) {
+  private validateCustomTypeReference(field: SourceSchemaField, pathPrefix: string) {
     const customTypes = (this.sourcesSchema.custom_types || []).map((ct: SourceSchemaCustomType) => ct.name);
     const customTypeMatch = field.type.match(/^\w+$/);
-    if (customTypeMatch && !['boolean', 'float', 'int', 'long', 'string'].includes(field.type)) {
+    if (customTypeMatch && !['boolean', 'float', 'int', 'long', 'string', 'object', 'array'].includes(field.type)) {
       if (!customTypes.includes(field.type)) {
         this.errors.push(
-          `Invalid ${this.file}: fields[${index}].type '${field.type}' does not match any custom_types name`
+          `Invalid ${this.file}: ${pathPrefix}.type '${field.type}' does not match any custom_types name`
         );
       }
     }
@@ -144,7 +126,7 @@ class SourceSchemaValidator {
       const arrayType = arrayTypeMatch[1];
       if (!['boolean', 'float', 'int', 'long', 'string'].includes(arrayType) && !customTypes.includes(arrayType)) {
         this.errors.push(
-          `Invalid ${this.file}: fields[${index}].type '${field.type}' array type does not match any custom_types name`
+          `Invalid ${this.file}: ${pathPrefix}.type '${field.type}' array type does not match any custom_types name`
         );
       }
     }
