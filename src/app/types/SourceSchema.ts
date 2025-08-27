@@ -12,7 +12,7 @@ export interface SourceSchemaField {
   description: string;
   /**
    * Field type - can be a primitive type, custom type reference, or array syntax
-   * @pattern ^(boolean|float|int|long|string|\w+|\[\w+\])$
+   * @pattern ^(string|integer|boolean|decimal|\w+|\[\w+\])$
    */
   type: string;
   primary?: boolean;
