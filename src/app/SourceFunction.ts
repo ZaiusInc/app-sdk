@@ -1,11 +1,11 @@
-import { Source } from '../sources/Source';
-import { Request } from './lib/Request';
-import { Response } from './lib/Response';
+import {Source} from '../sources/Source';
+import {Request} from './lib/Request';
+import {Response} from './lib/Response';
 
 export interface SourceConfiguration {
   dataSyncId: string;
   sourceKey: string;
-  schema: string | { entry_point: string };
+  schema: string | {entry_point: string};
   webhookUrl?: string;
 }
 

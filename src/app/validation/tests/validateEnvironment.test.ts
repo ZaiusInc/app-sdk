@@ -71,7 +71,7 @@ describe('validateEnvironment', () => {
 
     expect(validateEnvironment(runtime)).toEqual([
       'Invalid app.yml: environment.APP_ENV_FOO is listed more than once',
-      'Invalid app.yml: environment.APP_ENV_BUZZ is listed more than once',
+      'Invalid app.yml: environment.APP_ENV_BUZZ is listed more than once'
     ]);
   });
 

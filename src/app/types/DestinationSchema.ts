@@ -17,4 +17,3 @@ export interface DestinationSchemaField {
 export interface DestinationSchemaObjects {
   [file: string]: DestinationSchema;
 }
-

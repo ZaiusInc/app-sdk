@@ -16,9 +16,9 @@ import {validateAssets} from './validateAssets';
 import {validateOutboundDomains} from './validateOutboundDomains';
 import * as destinationSchema from '../types/DestinationSchema.schema.json';
 import * as sourceSchema from '../types/SourceSchema.schema.json';
-import { validateDestinationsSchema } from './validateDestinationsSchema';
-import { validateSources } from './validateSources';
-import { validateSourcesSchema } from './validateSourcesSchema';
+import {validateDestinationsSchema} from './validateDestinationsSchema';
+import {validateSources} from './validateSources';
+import {validateSourcesSchema} from './validateSourcesSchema';
 
 /**
  * Validates that all of the required pieces of the app are accounted for.
@@ -32,7 +32,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   if (!ajv.validate(manifestSchema, runtime.manifest)) {
     ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {
-    errors = errors.concat(await validateMeta(runtime))
+    errors = errors
+      .concat(await validateMeta(runtime))
       .concat(validateEnvironment(runtime))
       .concat(await validateFunctions(runtime))
       .concat(await validateJobs(runtime))

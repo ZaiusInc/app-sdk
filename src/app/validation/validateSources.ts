@@ -1,13 +1,18 @@
-import { SourceFunction } from '../SourceFunction';
-import { SourceSchemaFunction } from '../SourceSchemaFunction';
-import { Runtime } from '../Runtime';
+import {SourceFunction} from '../SourceFunction';
+import {SourceSchemaFunction} from '../SourceSchemaFunction';
+import {Runtime} from '../Runtime';
 import * as fs from 'fs';
-import { join } from 'path';
-import { SourceLifecycle } from '../SourceLifecycle';
+import {join} from 'path';
+import {SourceLifecycle} from '../SourceLifecycle';
 import {SourceJob} from '../SourceJob';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
-  'onSourceCreate', 'onSourceUpdate', 'onSourceDelete', 'onSourceEnable', 'onSourcePause'];
+  'onSourceCreate',
+  'onSourceUpdate',
+  'onSourceDelete',
+  'onSourceEnable',
+  'onSourcePause'
+];
 
 export async function validateSources(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -51,11 +56,11 @@ async function validateSchema(runtime: Runtime, name: string) {
       if (sourceSchemaFunction) {
         if (!(sourceSchemaFunction.prototype instanceof SourceSchemaFunction)) {
           errors.push(
-            'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: ' + `${schema.entry_point}`,
+            'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: ' + `${schema.entry_point}`
           );
         } else if (typeof (sourceSchemaFunction.prototype as any)['getSourcesSchema'] !== 'function') {
           errors.push(
-            'SourceSchemaFunction entry point is missing the getSourcesSchema method: ' + `${schema.entry_point}`,
+            'SourceSchemaFunction entry point is missing the getSourcesSchema method: ' + `${schema.entry_point}`
           );
         }
       }
@@ -84,15 +89,11 @@ async function validateLifecycle(runtime: Runtime, name: string) {
     errors.push(`Error loading SourceLifecycle entry point ${name}. ${errorMessage}`);
   } else if (lifecycleClass) {
     if (!(lifecycleClass.prototype instanceof SourceLifecycle)) {
-      errors.push(
-        `SourceLifecycle entry point does not extend App.SourceLifecycle: ${source.lifecycle?.entry_point}`
-      );
+      errors.push(`SourceLifecycle entry point does not extend App.SourceLifecycle: ${source.lifecycle?.entry_point}`);
     } else {
       for (const method of SOURCE_FUNCTION_LIFECYCLE_METHODS) {
-        if (typeof ((lifecycleClass.prototype as any)[method]) !== 'function') {
-          errors.push(
-            `SourceLifecycle entry point is missing the ${method} method: ${source.lifecycle?.entry_point}`
-          );
+        if (typeof (lifecycleClass.prototype as any)[method] !== 'function') {
+          errors.push(`SourceLifecycle entry point is missing the ${method} method: ${source.lifecycle?.entry_point}`);
         }
       }
     }
@@ -118,13 +119,9 @@ async function validateFunction(runtime: Runtime, name: string) {
   if (!source || !sourceClass) {
     errors.push(`Error loading SourceFunction entry point ${name}. ${errorMessage}`);
   } else if (!(sourceClass.prototype instanceof SourceFunction)) {
-    errors.push(
-      `SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`
-    );
-  } else if (typeof ((sourceClass.prototype as any)['perform']) !== 'function') {
-    errors.push(
-      `SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`
-    );
+    errors.push(`SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`);
+  } else if (typeof (sourceClass.prototype as any)['perform'] !== 'function') {
+    errors.push(`SourceFunction entry point is missing the perform method: ${source.function?.entry_point}`);
   }
   return errors;
 }
@@ -145,19 +142,13 @@ export async function validateSourceJobs(runtime: Runtime, sourceName: string): 
       if (!sourceJobClass) {
         errors.push(`Error loading job entry point ${name}. ${errorMessage}`);
       } else if (!(sourceJobClass.prototype instanceof SourceJob)) {
-        errors.push(
-          `SourceJob entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`
-        );
+        errors.push(`SourceJob entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`);
       } else {
-        if (typeof (sourceJobClass.prototype.prepare) !== 'function') {
-          errors.push(
-            `SourceJob entry point is missing the prepare method: ${source.jobs[name].entry_point}`
-          );
+        if (typeof sourceJobClass.prototype.prepare !== 'function') {
+          errors.push(`SourceJob entry point is missing the prepare method: ${source.jobs[name].entry_point}`);
         }
-        if (typeof (sourceJobClass.prototype.perform) !== 'function') {
-          errors.push(
-            `SourceJob entry point is missing the perform method: ${source.jobs[name].entry_point}`
-          );
+        if (typeof sourceJobClass.prototype.perform !== 'function') {
+          errors.push(`SourceJob entry point is missing the perform method: ${source.jobs[name].entry_point}`);
         }
       }
     }

@@ -79,7 +79,8 @@ class ProperGlobalFoo extends GlobalFunction {
 describe('validateFunctions', () => {
   it('succeeds with a proper definition', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
     const errors = await validateFunctions(runtime);
@@ -93,67 +94,67 @@ describe('validateFunctions', () => {
 
   it('detects missing function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockRejectedValue(new FunctionClassNotFoundError('not found'));
 
-    expect(await validateFunctions(runtime))
-      .toEqual([
-        'Error loading function class foo. Error: not found',
-        'Error loading function class global_foo. Error: not found']
-      );
+    expect(await validateFunctions(runtime)).toEqual([
+      'Error loading function class foo. Error: not found',
+      'Error loading function class global_foo. Error: not found'
+    ]);
 
     getFunctionClass.mockRestore();
   });
 
   it('detects loading errors', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockRejectedValue(new Error('dependent module not found'));
 
-    expect(await validateFunctions(runtime))
-      .toEqual(['Failed to load function class foo.  Error was: dependent module not found']);
+    expect(await validateFunctions(runtime)).toEqual([
+      'Failed to load function class foo.  Error was: dependent module not found'
+    ]);
 
     getFunctionClass.mockRestore();
   });
 
   it('detects non-extended function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
-      .mockResolvedValue(NonExtendedFoo as any);
+    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass').mockResolvedValue(NonExtendedFoo as any);
 
-    expect(await validateFunctions(runtime))
-      .toEqual([
-        'Function entry point does not extend App.Function: Foo',
-        'Global Function entry point does not extend App.GlobalFunction: GlobalFoo'
-      ]);
+    expect(await validateFunctions(runtime)).toEqual([
+      'Function entry point does not extend App.Function: Foo',
+      'Global Function entry point does not extend App.GlobalFunction: GlobalFoo'
+    ]);
 
     getFunctionClass.mockRestore();
   });
 
   it('detects global functions implementing functions and vis versa', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperGlobalFoo : ProperFoo));
 
-    expect(await validateFunctions(runtime))
-      .toEqual([
-        'Function entry point does not extend App.Function: Foo',
-        'Global Function entry point does not extend App.GlobalFunction: GlobalFoo'
-      ]);
+    expect(await validateFunctions(runtime)).toEqual([
+      'Function entry point does not extend App.Function: Foo',
+      'Global Function entry point does not extend App.GlobalFunction: GlobalFoo'
+    ]);
 
     getFunctionClass.mockRestore();
   });
 
   it('detects partial function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? PartialFoo : PartialGlobalFoo) as Promise<any>);
 
-    expect(await validateFunctions(runtime))
-      .toEqual([
-        'Function entry point is missing the perform method: Foo',
-        'Function entry point is missing the perform method: GlobalFoo'
-      ]);
+    expect(await validateFunctions(runtime)).toEqual([
+      'Function entry point is missing the perform method: Foo',
+      'Function entry point is missing the perform method: GlobalFoo'
+    ]);
 
     getFunctionClass.mockRestore();
   });
@@ -162,11 +163,11 @@ describe('validateFunctions', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
     runtime.manifest.functions!.global_foo.installation_resolution = {type: 'HEADER', key: 'foo'};
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
-    expect(await validateFunctions(runtime))
-      .toEqual(['Global functions cannot define a installation_resolution']);
+    expect(await validateFunctions(runtime)).toEqual(['Global functions cannot define a installation_resolution']);
     getFunctionClass.mockRestore();
   });
 
@@ -174,17 +175,16 @@ describe('validateFunctions', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
     runtime.manifest.functions!.foo.installation_resolution = {
-      type: 'JSON_BODY_FIELD', key: '/test/foo'
+      type: 'JSON_BODY_FIELD',
+      key: '/test/foo'
     };
-    const getFunctionClass = jest.spyOn(Runtime.prototype, 'getFunctionClass')
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
-    expect(await validateFunctions(runtime))
-      .toEqual([
-        'Invalid JSON path expression: Lexical error on line 1. Unrecognized text.\n' +
-        '/test/foo\n' +
-        '^'
-      ]);
+    expect(await validateFunctions(runtime)).toEqual([
+      'Invalid JSON path expression: Lexical error on line 1. Unrecognized text.\n' + '/test/foo\n' + '^'
+    ]);
     getFunctionClass.mockRestore();
   });
 });

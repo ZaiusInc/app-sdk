@@ -39,18 +39,18 @@ sections:
 function appDir(): any {
   return {
     'path/to/app/dir': {
-      'dist': { },
-      'assets': {
-        'directory': {
+      dist: {},
+      assets: {
+        directory: {
           'overview.md': '## Overview'
         },
         'icon.svg': '0110',
         'logo.svg': '0101'
       },
-      'forms': {
+      forms: {
         'settings.yml': formContent
       }
-    },
+    }
   };
 }
 
@@ -81,10 +81,12 @@ function channelAppDir(): any {
 }
 
 async function expectError(error: string | string[], manifest?: AppManifest) {
-  const runtime = Runtime.fromJson(JSON.stringify({
-    appManifest: manifest || appManifest,
-    dirName: 'path/to/app/dir/dist'
-  }));
+  const runtime = Runtime.fromJson(
+    JSON.stringify({
+      appManifest: manifest || appManifest,
+      dirName: 'path/to/app/dir/dist'
+    })
+  );
   expect(await validateAssets(runtime)).toEqual(error instanceof Array ? error : [error]);
 }
 
@@ -93,7 +95,7 @@ describe('validateAssets', () => {
     mockFs.restore();
   });
 
-  it('succeeds when all required assets are available',  async () => {
+  it('succeeds when all required assets are available', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: 'path/to/app/dir/dist'}));
     mockFs(appDir());
     expect(await validateAssets(runtime)).toEqual([]);
@@ -152,11 +154,13 @@ describe('validateAssets', () => {
   });
 
   describe('channel app', () => {
-    it('succeeds when all required assets are available',  async () => {
-      const runtime = Runtime.fromJson(JSON.stringify({
-        appManifest: channelAppManifest,
-        dirName: 'path/to/app/dir/dist'
-      }));
+    it('succeeds when all required assets are available', async () => {
+      const runtime = Runtime.fromJson(
+        JSON.stringify({
+          appManifest: channelAppManifest,
+          dirName: 'path/to/app/dir/dist'
+        })
+      );
       mockFs(channelAppDir());
       expect(await validateAssets(runtime)).toEqual([]);
     });
@@ -166,10 +170,13 @@ describe('validateAssets', () => {
       delete missingAssets['path/to/app/dir']['forms']['content-settings.yml'];
       delete missingAssets['path/to/app/dir']['forms']['content-template.yml'];
       mockFs(missingAssets);
-      await expectError([
-        'Required file forms/content-settings.yml is missing.',
-        'Required file forms/content-template.yml is missing.'
-      ], channelAppManifest);
+      await expectError(
+        [
+          'Required file forms/content-settings.yml is missing.',
+          'Required file forms/content-template.yml is missing.'
+        ],
+        channelAppManifest
+      );
     });
 
     it('detects schema errors in content forms', async () => {
@@ -177,15 +184,18 @@ describe('validateAssets', () => {
       badForms['path/to/app/dir']['forms']['content-settings.yml'] = 'something: wrong';
       badForms['path/to/app/dir']['forms']['content-template.yml'] = 'sections:\n  - elements:\n    - type: text';
       mockFs(badForms);
-      await expectError([
-        "Invalid forms/content-settings.yml: must have required property 'sections'",
-        'Invalid forms/content-settings.yml: must NOT have additional properties',
-        "Invalid forms/content-template.yml: sections[0] must have required property 'key'",
-        "Invalid forms/content-template.yml: sections[0] must have required property 'label'",
-        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'help'",
-        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'key'",
-        "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'label'"
-      ], channelAppManifest);
+      await expectError(
+        [
+          "Invalid forms/content-settings.yml: must have required property 'sections'",
+          'Invalid forms/content-settings.yml: must NOT have additional properties',
+          "Invalid forms/content-template.yml: sections[0] must have required property 'key'",
+          "Invalid forms/content-template.yml: sections[0] must have required property 'label'",
+          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'help'",
+          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'key'",
+          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'label'"
+        ],
+        channelAppManifest
+      );
     });
   });
 });

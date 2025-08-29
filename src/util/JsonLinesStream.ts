@@ -36,17 +36,11 @@ export class JsonLinesStream<T> extends FileStream<T, Options> {
    * @param processor the row processor
    * @param options options to provide the JsonLinesParser {@link Options}
    */
-  public static fromUrl<T>(
-    url: string,
-    processor: FileRowProcessor<T>,
-    options: Options = {}
-  ): JsonLinesStream<T> {
+  public static fromUrl<T>(url: string, processor: FileRowProcessor<T>, options: Options = {}): JsonLinesStream<T> {
     const builder: JsonLineReadableStreamBuilder = async () => {
       const response = await fetch(url);
       const pipeline = response.body;
-      return /\.gz$/.test(new URL(url).pathname)
-        ? pipeline.pipe(zlib.createGunzip())
-        : pipeline;
+      return /\.gz$/.test(new URL(url).pathname) ? pipeline.pipe(zlib.createGunzip()) : pipeline;
     };
 
     return new JsonLinesStream(builder, processor, options);

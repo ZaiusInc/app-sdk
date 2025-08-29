@@ -2,7 +2,8 @@ import 'jest';
 import {
   BaseKVStore,
   initializeStores,
-  LocalKVStore, resetLocalKvStore,
+  LocalKVStore,
+  resetLocalKvStore,
   resetLocalSecretsStore,
   resetLocalSettingsStore,
   resetLocalStores,
@@ -14,11 +15,9 @@ import {OCPContext} from '../../types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class SampleStore implements BaseKVStore {
-}
+class SampleStore implements BaseKVStore {}
 
 describe('storage', () => {
-
   function runWithAsyncLocalStore(code: () => void) {
     const ocpContextStorage = new AsyncLocalStorage<OCPContext>();
     global.ocpContextStorage = ocpContextStorage;

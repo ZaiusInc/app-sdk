@@ -64,37 +64,46 @@ const appManifest = deepFreeze({
 const schemaObjects = deepFreeze({
   'schema/events.yml': {
     name: 'events',
-    fields: [{
-      name: 'my_app_coupon_id',
-      type: 'string',
-      display_name: 'My App Coupon ID',
-      description: 'The coupon associated with this event'
-    }],
-    relations: [{
-      name: 'my_app_coupon',
-      display_name: 'My App Coupon',
-      child_object: 'my_app_coupons',
-      join_fields: [{
-        parent: 'my_app_coupon_id',
-        child: 'coupon_id'
-      }]
-    }]
+    fields: [
+      {
+        name: 'my_app_coupon_id',
+        type: 'string',
+        display_name: 'My App Coupon ID',
+        description: 'The coupon associated with this event'
+      }
+    ],
+    relations: [
+      {
+        name: 'my_app_coupon',
+        display_name: 'My App Coupon',
+        child_object: 'my_app_coupons',
+        join_fields: [
+          {
+            parent: 'my_app_coupon_id',
+            child: 'coupon_id'
+          }
+        ]
+      }
+    ]
   },
   'schema/my_app_coupons.yaml': {
     name: 'my_app_coupons',
     display_name: 'My App Coupons',
-    fields: [{
-      name: 'coupon_id',
-      type: 'string',
-      display_name: 'Coupon ID',
-      description: 'The Coupon ID',
-      primary: true
-    }, {
-      name: 'percent_off',
-      type: 'number',
-      display_name: 'Percent Off',
-      description: 'Percentage discount'
-    }]
+    fields: [
+      {
+        name: 'coupon_id',
+        type: 'string',
+        display_name: 'Coupon ID',
+        description: 'The Coupon ID',
+        primary: true
+      },
+      {
+        name: 'percent_off',
+        type: 'number',
+        display_name: 'Percent Off',
+        description: 'Percentage discount'
+      }
+    ]
   }
 } as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
@@ -103,7 +112,7 @@ describe('Runtime', () => {
     mockFs({
       '/tmp/foo': {
         'app.yml': JSON.stringify(appManifest),
-        'schema': {
+        schema: {
           'events.yml': JSON.stringify(schemaObjects['schema/events.yml']),
           'my_app_coupons.yaml': JSON.stringify(schemaObjects['schema/my_app_coupons.yaml']),
           'something_else.yml.txt': 'something else'
@@ -299,7 +308,7 @@ describe('Runtime', () => {
       const result = runtime.getSchemaObjects();
       expect(readFileSyncFn.mock.calls).toEqual([
         ['/tmp/foo/schema/my_app_coupons.yaml', 'utf8'],
-        ['/tmp/foo/schema/events.yml', 'utf8'],
+        ['/tmp/foo/schema/events.yml', 'utf8']
       ]);
       expect(result).toEqual(schemaObjects);
 

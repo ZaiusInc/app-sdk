@@ -4,7 +4,11 @@ import {Headers} from '../Headers';
 describe('Headers', () => {
   let headers!: Headers;
   beforeEach(() => {
-    headers = new Headers([['content-type', 'text/plain'], ['x-test', 'test'], ['x-test', 'test2']]);
+    headers = new Headers([
+      ['content-type', 'text/plain'],
+      ['x-test', 'test'],
+      ['x-test', 'test2']
+    ]);
   });
 
   describe('constructor', () => {
@@ -26,7 +30,10 @@ describe('Headers', () => {
     });
 
     it('combines headers with the same key', () => {
-      headers.addFromArray([['cache-control', 'no-cache'], ['cache-control', 'no-store']]);
+      headers.addFromArray([
+        ['cache-control', 'no-cache'],
+        ['cache-control', 'no-store']
+      ]);
       expect(headers.get('cache-control')).toEqual('no-cache,no-store');
     });
   });
@@ -51,12 +58,22 @@ describe('Headers', () => {
 
   describe('toArray', () => {
     it('generates an array of kv pairs for the headers', () => {
-      expect(headers.toArray()).toEqual([['content-type', 'text/plain'], ['x-test', 'test,test2']]);
+      expect(headers.toArray()).toEqual([
+        ['content-type', 'text/plain'],
+        ['x-test', 'test,test2']
+      ]);
     });
 
     it('converts keys to lowercase', () => {
-      headers = new Headers([['Content-Type', 'text/plain'], ['x-Test', 'test'], ['x-test', 'test2']]);
-      expect(headers.toArray()).toEqual([['content-type', 'text/plain'], ['x-test', 'test,test2']]);
+      headers = new Headers([
+        ['Content-Type', 'text/plain'],
+        ['x-Test', 'test'],
+        ['x-test', 'test2']
+      ]);
+      expect(headers.toArray()).toEqual([
+        ['content-type', 'text/plain'],
+        ['x-test', 'test,test2']
+      ]);
     });
   });
 

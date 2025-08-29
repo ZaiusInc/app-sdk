@@ -1,12 +1,19 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-unsafe-call */
-import { SourceFunction } from '../../SourceFunction';
-import { SourceSchemaFunction } from '../../SourceSchemaFunction';
-import { SourceCreateResponse, SourceDeleteResponse, SourceEnableResponse, SourceLifecycle, SourcePauseResponse, SourceUpdateResponse } from '../../SourceLifecycle';
-import { Response } from '../../lib';
-import { SourceSchema } from '../../types';
-import { validateSources } from '../validateSources';
-import { SourceJob, SourceJobStatus } from '../../SourceJob';
-import { ValueHash } from '../../../store';
+import {SourceFunction} from '../../SourceFunction';
+import {SourceSchemaFunction} from '../../SourceSchemaFunction';
+import {
+  SourceCreateResponse,
+  SourceDeleteResponse,
+  SourceEnableResponse,
+  SourceLifecycle,
+  SourcePauseResponse,
+  SourceUpdateResponse
+} from '../../SourceLifecycle';
+import {Response} from '../../lib';
+import {SourceSchema} from '../../types';
+import {validateSources} from '../validateSources';
+import {SourceJob, SourceJobStatus} from '../../SourceJob';
+import {ValueHash} from '../../../store';
 
 // Mock fs module
 jest.mock('fs', () => {
@@ -39,9 +46,9 @@ class ValidSourceSchemaFunction extends SourceSchemaFunction {
           type: 'string',
           display_name: 'Hub Shakedown Name',
           description: 'The name',
-          primary: true,
-        },
-      ],
+          primary: true
+        }
+      ]
     });
   }
 }
@@ -89,7 +96,7 @@ class ProperBar extends SourceJob {
 
 jest.mock('path', () => ({
   ...jest.requireActual('path'),
-  join: jest.fn().mockReturnValue('mocked'),
+  join: jest.fn().mockReturnValue('mocked')
 }));
 
 const getRuntime = (name: string, config: object) => ({
@@ -104,13 +111,11 @@ const getRuntime = (name: string, config: object) => ({
 });
 
 describe('validateSources', () => {
-
   afterEach(() => {
     jest.resetAllMocks();
   });
 
   describe('basic validation', () => {
-
     it('should return error when source function cannot be loaded', async () => {
       const runtime: any = getRuntime('invalidFunctionEntry', {
         function: {
@@ -118,7 +123,8 @@ describe('validateSources', () => {
         },
         schema: 'validSchema'
       });
-      const getSourceFunctionClass = jest.spyOn(runtime, 'getSourceFunctionClass')
+      const getSourceFunctionClass = jest
+        .spyOn(runtime, 'getSourceFunctionClass')
         .mockRejectedValue(new Error('not found'));
       existsSyncMock.mockReturnValueOnce(true);
 
@@ -150,7 +156,8 @@ describe('validateSources', () => {
           entry_point: 'dne'
         }
       });
-      const getSourceLifecycleClass = jest.spyOn(runtime, 'getSourceLifecycleClass')
+      const getSourceLifecycleClass = jest
+        .spyOn(runtime, 'getSourceLifecycleClass')
         .mockRejectedValue(new Error('not found'));
       existsSyncMock.mockReturnValueOnce(true);
 
@@ -209,7 +216,7 @@ describe('validateSources', () => {
       const validRuntime: any = {
         manifest: {
           sources: {
-            'validSource': {
+            validSource: {
               entry_point: 'validSourceClass',
               schema: 'validSchema'
             }
@@ -232,14 +239,14 @@ describe('validateSources', () => {
             validSource: {
               entry_point: 'validSourceClass',
               schema: {
-                entry_point: 'ValidSourceSchemaFunction',
-              },
-            },
-          },
+                entry_point: 'ValidSourceSchemaFunction'
+              }
+            }
+          }
         },
         getSourceFunctionClass: () => ValidSourceFunction,
         getSourceLifecycleClass: () => ValidSourceLifecycle,
-        getSourceSchemaFunctionClass: () => ValidSourceSchemaFunction,
+        getSourceSchemaFunctionClass: () => ValidSourceSchemaFunction
       };
 
       existsSyncMock.mockReturnValueOnce(true);
@@ -255,14 +262,14 @@ describe('validateSources', () => {
             validSource: {
               entry_point: 'validSourceClass',
               schema: {
-                entry_point: 'InvalidSourceSchemaFunction',
-              },
-            },
-          },
+                entry_point: 'InvalidSourceSchemaFunction'
+              }
+            }
+          }
         },
         getSourceFunctionClass: () => ValidSourceFunction,
         getSourceLifecycleClass: () => ValidSourceLifecycle,
-        getSourceSchemaFunctionClass: () => InvalidSourceSchemaFunction,
+        getSourceSchemaFunctionClass: () => InvalidSourceSchemaFunction
       };
 
       existsSyncMock.mockReturnValueOnce(true);
@@ -270,25 +277,19 @@ describe('validateSources', () => {
       const result = await validateSources(validRuntime);
       expect(result.length).toEqual(1);
       expect(result).toContain(
-        'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: InvalidSourceSchemaFunction',
+        'SourceSchemaFunction entry point does not extend App.SourceSchemaFunction: InvalidSourceSchemaFunction'
       );
     });
   });
 
   describe('validate source lifecycle', () => {
     function getSourceLifecycleClassMissingMethod(methodName: string): typeof SourceLifecycle {
-      class ModifiedSource extends ValidSourceLifecycle { }
+      class ModifiedSource extends ValidSourceLifecycle {}
       Object.defineProperty(ModifiedSource.prototype, methodName, {});
       return ModifiedSource;
     }
 
-    const requiredMethods = [
-      'onSourceCreate',
-      'onSourceUpdate',
-      'onSourceDelete',
-      'onSourceEnable',
-      'onSourcePause'
-    ];
+    const requiredMethods = ['onSourceCreate', 'onSourceUpdate', 'onSourceDelete', 'onSourceEnable', 'onSourcePause'];
 
     requiredMethods.forEach((method) => {
       it(`should return error when source is missing the ${method} method`, async () => {
@@ -297,7 +298,7 @@ describe('validateSources', () => {
         const runtime: any = {
           manifest: {
             sources: {
-              'testSource': {
+              testSource: {
                 lifecycle: {
                   entry_point: 'testSourceClass'
                 },
@@ -346,8 +347,7 @@ describe('validateSources', () => {
         },
         schema: 'validSchema'
       });
-      const getSourceJobClass = jest.spyOn(runtime, 'getSourceJobClass')
-        .mockRejectedValue(new Error('not found'));
+      const getSourceJobClass = jest.spyOn(runtime, 'getSourceJobClass').mockRejectedValue(new Error('not found'));
 
       const result = await validateSources(runtime);
       getSourceJobClass.mockRestore();
@@ -371,5 +371,4 @@ describe('validateSources', () => {
       expect(errors).toContain('SourceJob entry point does not extend App.SourceJob: InvalidSourceJob');
     });
   });
-
 });

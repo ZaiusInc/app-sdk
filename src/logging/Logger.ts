@@ -67,7 +67,7 @@ export const LOG_LEVELS = {
   [LogLevel.Info]: 'info',
   [LogLevel.Warn]: 'warn',
   [LogLevel.Error]: 'error',
-  [LogLevel.NEVER]: 'NEVER',
+  [LogLevel.NEVER]: 'NEVER'
 };
 
 export const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
@@ -78,10 +78,7 @@ export const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
   NEVER: LogLevel.NEVER
 };
 
-const visibilityValues = new Set([
-  LogVisibility.Zaius,
-  LogVisibility.Developer
-]);
+const visibilityValues = new Set([LogVisibility.Zaius, LogVisibility.Developer]);
 
 const INSPECT_OPTIONS = {
   depth: 5,
@@ -204,15 +201,12 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    this.maxLineLength = Math.min(
-      options.maxLineLength || MAX_LINE_LENGTH,
-      MAX_LINE_LENGTH
-    );
+    this.maxLineLength = Math.min(options.maxLineLength || MAX_LINE_LENGTH, MAX_LINE_LENGTH);
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
   }
 
   private getLogLevel(): LogLevel {
-    return getLogLevel() ||  DEFAULT_LOG_LEVEL;
+    return getLogLevel() || DEFAULT_LOG_LEVEL;
   }
 
   public debug(...args: any[]) {
@@ -273,14 +267,16 @@ export class Logger implements ILogger {
       }
     }
 
-    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
-      time,
-      level: LOG_LEVELS[logLevel],
-      message: this.truncateMessage(args.join(' ')),
-      stacktrace,
-      audience: visibility,
-      context: getLogContext(),
-    } as LogMessage) + '\n');
+    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(
+      JSON.stringify({
+        time,
+        level: LOG_LEVELS[logLevel],
+        message: this.truncateMessage(args.join(' ')),
+        stacktrace,
+        audience: visibility,
+        context: getLogContext()
+      } as LogMessage) + '\n'
+    );
   }
 
   private truncateMessage(message: string): string {

@@ -58,8 +58,10 @@ describe('LocalKVStore', () => {
   describe('patch', () => {
     it('updates an existing value', async () => {
       expect(await store.patch('foo', {baz: 'baz'})).toEqual({bar: 'bar'});
-      expect(await store.patch('foo', (previous: any) => ({...previous, foo: 'foo'})))
-        .toEqual({bar: 'bar', baz: 'baz'});
+      expect(await store.patch('foo', (previous: any) => ({...previous, foo: 'foo'}))).toEqual({
+        bar: 'bar',
+        baz: 'baz'
+      });
       expect(await store.get('foo')).toEqual({foo: 'foo', bar: 'bar', baz: 'baz'});
     });
 
@@ -70,9 +72,11 @@ describe('LocalKVStore', () => {
     });
 
     it('properly surfaces errors thrown in a function patch', async () => {
-      await expect(store.patch('foo', () => {
-        throw new Error('nah');
-      })).rejects.toThrowError('nah');
+      await expect(
+        store.patch('foo', () => {
+          throw new Error('nah');
+        })
+      ).rejects.toThrowError('nah');
     });
   });
 

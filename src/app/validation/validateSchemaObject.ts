@@ -29,8 +29,9 @@ class SchemaObjectValidator {
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.schemaObject.name
-          && path.basename(this.file, '.yaml') !== this.schemaObject.name
+    if (
+      path.basename(this.file, '.yml') !== this.schemaObject.name &&
+      path.basename(this.file, '.yaml') !== this.schemaObject.name
     ) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
@@ -163,7 +164,7 @@ class SchemaObjectValidator {
     } else if (!identifier.display_name.endsWith(IDENTIFIER_SUFFIXES[suffix])) {
       this.errors.push(
         `Invalid ${this.file}: identifiers[${index}].display_name must end with "${IDENTIFIER_SUFFIXES[suffix]}" to ` +
-        `match name suffix "${suffix}"`
+          `match name suffix "${suffix}"`
       );
     }
   }

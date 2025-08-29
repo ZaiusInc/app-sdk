@@ -1,12 +1,9 @@
-import { SourceSchema, SourceSchemaField } from '../types/SourceSchema';
+import {SourceSchema, SourceSchemaField} from '../types/SourceSchema';
 import * as path from 'path';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 
-export function validateSourcesSchema(
-  sourceSchema: SourceSchema,
-  file: string
-): string[] {
+export function validateSourcesSchema(sourceSchema: SourceSchema, file: string): string[] {
   return new SourceSchemaValidator(sourceSchema, file).validate();
 }
 
@@ -15,17 +12,16 @@ class SourceSchemaValidator {
   private sourcesSchema: SourceSchema;
   private file: string;
 
-  public constructor(
-    sourceSchema: SourceSchema,
-    file: string
-  ) {
+  public constructor(sourceSchema: SourceSchema, file: string) {
     this.sourcesSchema = sourceSchema;
     this.file = file;
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.sourcesSchema.name &&
-        path.basename(this.file, '.yaml') !== this.sourcesSchema.name) {
+    if (
+      path.basename(this.file, '.yml') !== this.sourcesSchema.name &&
+      path.basename(this.file, '.yaml') !== this.sourcesSchema.name
+    ) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 

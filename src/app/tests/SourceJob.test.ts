@@ -3,9 +3,7 @@ import {ValueHash} from '../..';
 import {SourceJob, SourceJobStatus} from '../SourceJob';
 
 class MyJob extends SourceJob {
-  public async prepare(
-    _params: ValueHash, _status?: SourceJobStatus, _resuming?: boolean
-  ): Promise<SourceJobStatus> {
+  public async prepare(_params: ValueHash, _status?: SourceJobStatus, _resuming?: boolean): Promise<SourceJobStatus> {
     return {state: {}, complete: false};
   }
 

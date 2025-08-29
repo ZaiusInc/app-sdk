@@ -58,8 +58,7 @@ export abstract class Job {
    */
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: 6138 declared but never read
-  public constructor(protected invocation: JobInvocation) {
-  }
+  public constructor(protected invocation: JobInvocation) {}
 
   /**
    * Prepares to run a job. Prepare is called at the start of a job

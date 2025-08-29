@@ -20,21 +20,16 @@ describe('validateOutboundDomains', () => {
       ['example.*.zaius.com'],
       ['Invalid app.yml: outbound_domains[0] "example.*.zaius.com" wildcard is only allowed for final subdomain']
     ],
-    [
-      ['*.zaius.com:1234a'],
-      ['Invalid app.yml: outbound_domains[0] "*.zaius.com:1234a" URL is malformed']
-    ],
-    [
-      ['1!dotcom'],
-      ['Invalid app.yml: outbound_domains[0] "1!dotcom" hostname must be valid']
-    ],
+    [['*.zaius.com:1234a'], ['Invalid app.yml: outbound_domains[0] "*.zaius.com:1234a" URL is malformed']],
+    [['1!dotcom'], ['Invalid app.yml: outbound_domains[0] "1!dotcom" hostname must be valid']],
     [
       ['https://*.zaius.com:1234a'],
       ['Invalid app.yml: outbound_domains[0] "https://*.zaius.com:1234a" URL is malformed']
     ],
     [
       ['https://*.zaius.com/foo'],
-      ['Invalid app.yml: outbound_domains[0] "https://*.zaius.com/foo" paths are not allowed']],
+      ['Invalid app.yml: outbound_domains[0] "https://*.zaius.com/foo" paths are not allowed']
+    ],
     [
       ['https://*.zaius.com/foo?bar'],
       [

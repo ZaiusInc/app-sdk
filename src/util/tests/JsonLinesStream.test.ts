@@ -14,7 +14,10 @@ interface Row {
 }
 
 class TestJsonLinesRowProcessor implements FileRowProcessor<Row> {
-  public constructor(private completed = false, private readRows: Row[] = []) { }
+  public constructor(
+    private completed = false,
+    private readRows: Row[] = []
+  ) {}
 
   public get isCompleted() {
     return this.completed;
@@ -79,10 +82,7 @@ describe('JsonLinesStream', () => {
     readable.push(null);
 
     const processor = new TestJsonLinesRowProcessor();
-    await processAndVerify(
-      JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}),
-      processor
-    );
+    await processAndVerify(JsonLinesStream.fromStream(readable, processor, {tabularFormat: true}), processor);
   });
 
   it('builds instances processes from a stream', async () => {
@@ -91,16 +91,11 @@ describe('JsonLinesStream', () => {
     readable.push(null);
 
     const processor = new TestJsonLinesRowProcessor();
-    await processAndVerify(
-      JsonLinesStream.fromStream(readable, processor),
-      processor
-    );
+    await processAndVerify(JsonLinesStream.fromStream(readable, processor), processor);
   });
 
   it('builds instances processes from a url - tabular format', async () => {
-    nock('https://zaius.app.sdk')
-      .get('/csv')
-      .reply(200, '["col1","col2","col3"]\n["val1","val2","val3"]\n');
+    nock('https://zaius.app.sdk').get('/csv').reply(200, '["col1","col2","col3"]\n["val1","val2","val3"]\n');
 
     const processor = new TestJsonLinesRowProcessor();
     await processAndVerify(
@@ -110,15 +105,10 @@ describe('JsonLinesStream', () => {
   });
 
   it('builds instances processes from a url', async () => {
-    nock('https://zaius.app.sdk')
-      .get('/csv')
-      .reply(200, '{"col1":"val1","col2":"val2","col3":"val3"}\n');
+    nock('https://zaius.app.sdk').get('/csv').reply(200, '{"col1":"val1","col2":"val2","col3":"val3"}\n');
 
     const processor = new TestJsonLinesRowProcessor();
-    await processAndVerify(
-      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor),
-      processor
-    );
+    await processAndVerify(JsonLinesStream.fromUrl('https://zaius.app.sdk/csv', processor), processor);
   });
 
   it('builds instances processes from a url - gzip format', async () => {
@@ -126,10 +116,7 @@ describe('JsonLinesStream', () => {
       .get('/csv.gz')
       .reply(200, zlib.gzipSync('{"col1":"val1","col2":"val2","col3":"val3"}\n'));
     const processor = new TestJsonLinesRowProcessor();
-    await processAndVerify(
-      JsonLinesStream.fromUrl('https://zaius.app.sdk/csv.gz', processor),
-      processor
-    );
+    await processAndVerify(JsonLinesStream.fromUrl('https://zaius.app.sdk/csv.gz', processor), processor);
   });
 
   it('should pause and resume', async () => {
@@ -193,9 +180,7 @@ describe('JsonLinesStream', () => {
   });
 
   it('should throw error for broken stream', async () => {
-    nock('https://zaius.app.sdk')
-      .get('/csv')
-      .replyWithError('streaming error');
+    nock('https://zaius.app.sdk').get('/csv').replyWithError('streaming error');
 
     const processor = new TestJsonLinesRowProcessor();
     await processAndVerifyError(
@@ -229,14 +214,7 @@ describe('JsonLinesStream', () => {
     const processor = new FailingProcessJsonLinesRowProcessor();
     const stream = JsonLinesStream.fromStream(readable, processor, {tabularFormat: true});
 
-    await processAndVerifyError(
-      stream,
-      processor,
-      'process failed'
-    );
-    await processAndVerify(
-      stream,
-      processor
-    );
+    await processAndVerifyError(stream, processor, 'process failed');
+    await processAndVerify(stream, processor);
   });
 });

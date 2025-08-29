@@ -94,7 +94,8 @@ describe('validateLifecycle', () => {
 
   it('detects missing lifecycle implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLifecycleClass = jest.spyOn(Runtime.prototype, 'getLifecycleClass')
+    const getLifecycleClass = jest
+      .spyOn(Runtime.prototype, 'getLifecycleClass')
       .mockRejectedValue(new Error('not found'));
 
     expect(await validateLifecycle(runtime)).toEqual(['Error loading Lifecycle implementation. Error: not found']);
@@ -104,7 +105,8 @@ describe('validateLifecycle', () => {
 
   it('detects non-extended lifecycle implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLifecycleClass = jest.spyOn(Runtime.prototype, 'getLifecycleClass')
+    const getLifecycleClass = jest
+      .spyOn(Runtime.prototype, 'getLifecycleClass')
       .mockResolvedValue(NonExtendedLifecycle as any);
 
     expect(await validateLifecycle(runtime)).toEqual(['Lifecycle implementation does not extend App.Lifecycle']);
@@ -114,7 +116,8 @@ describe('validateLifecycle', () => {
 
   it('detects partial lifecycle implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLifecycleClass = jest.spyOn(Runtime.prototype, 'getLifecycleClass')
+    const getLifecycleClass = jest
+      .spyOn(Runtime.prototype, 'getLifecycleClass')
       .mockResolvedValue(PartialLifecycle as any);
 
     expect(await validateLifecycle(runtime)).toEqual([

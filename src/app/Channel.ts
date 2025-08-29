@@ -44,9 +44,7 @@ export abstract class Channel {
    * @param options additional options
    * @returns result of the operation
    */
-  public abstract validate(
-    content: CampaignContent, options: ChannelValidateOptions
-  ): Promise<ChannelContentResult>;
+  public abstract validate(content: CampaignContent, options: ChannelValidateOptions): Promise<ChannelContentResult>;
 
   /**
    * Publishes the given content. This is the place to perform any necessary transformations between the given template
@@ -67,7 +65,9 @@ export abstract class Channel {
    * @returns result of the operation
    */
   public abstract publish(
-    contentKey: string, content: CampaignContent, options: ChannelPublishOptions
+    contentKey: string,
+    content: CampaignContent,
+    options: ChannelPublishOptions
   ): Promise<ChannelContentResult>;
 
   /**
@@ -84,7 +84,9 @@ export abstract class Channel {
    * @returns result of the operation
    */
   public async prepare?(
-    contentKey: string, tracking: CampaignTracking, options: ChannelPrepareOptions
+    contentKey: string,
+    tracking: CampaignTracking,
+    options: ChannelPrepareOptions
   ): Promise<ChannelPrepareResult>;
 
   /**

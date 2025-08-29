@@ -72,28 +72,31 @@ export class LocalKVStore implements KVStore {
     key: string,
     fieldAmounts: {[field: string]: number}
   ): Promise<{[field: string]: number}> {
-    return filterFields(await this.store.atomicPatch(key, (previous, _options) => {
-      const fields = Object.keys(fieldAmounts);
-      for (const field of fields) {
-        if (typeof fieldAmounts[field] !== 'number') {
-          throw new Error(`Cannot increment by non-numeric value for field ${key}.${field}`);
+    return filterFields(
+      await this.store.atomicPatch(key, (previous, _options) => {
+        const fields = Object.keys(fieldAmounts);
+        for (const field of fields) {
+          if (typeof fieldAmounts[field] !== 'number') {
+            throw new Error(`Cannot increment by non-numeric value for field ${key}.${field}`);
+          }
+          const value = previous[field];
+          if (value == null) {
+            previous[field] = fieldAmounts[field];
+          } else if (typeof value === 'number' || Number(value).toString() === value) {
+            previous[field] = Number(value) + fieldAmounts[field];
+          } else {
+            throw new Error(`Cannot increment non-numeric value at ${key}.${field}. Value is type ${typeof value}.`);
+          }
         }
-        const value = previous[field];
-        if (value == null) {
-          previous[field] = fieldAmounts[field];
-        } else if (typeof value === 'number' || Number(value).toString() === value) {
-          previous[field] = Number(value) + fieldAmounts[field];
-        } else {
-          throw new Error(`Cannot increment non-numeric value at ${key}.${field}. Value is type ${typeof value}.`);
-        }
-      }
-      return previous;
-    }), Object.keys(fieldAmounts));
+        return previous;
+      }),
+      Object.keys(fieldAmounts)
+    );
   }
 
   public async shift<T extends Value>(key: string, field: string): Promise<T | undefined> {
     const result = await this.shiftMulti(key, {[field]: 1});
-    return result[field] ? result[field][0] as T : undefined;
+    return result[field] ? (result[field][0] as T) : undefined;
   }
 
   public async shiftMulti<T extends KVValue>(key: string, fieldCounts: MultiValue<number>): Promise<MultiValue<T[]>> {
@@ -130,7 +133,7 @@ export class LocalKVStore implements KVStore {
 
   public async peek<T extends KVValue>(key: string, field: string): Promise<T | undefined> {
     const result = await this.peekMulti(key, {[field]: 1});
-    return result[field] ? result[field][0] as T : undefined;
+    return result[field] ? (result[field][0] as T) : undefined;
   }
 
   public async peekMulti<T extends KVValue>(key: string, fieldCounts: MultiValue<number>): Promise<MultiValue<T[]>> {
@@ -286,7 +289,7 @@ export class LocalKVStore implements KVStore {
     fieldValues: MultiValue<T>,
     operation: (current: KVValue[] | undefined, field: string) => KVValue[] | undefined
   ) {
-    (await this.store.atomicPatch<KVHash>(key, (current, _options) => {
+    await this.store.atomicPatch<KVHash>(key, (current, _options) => {
       const fields = Object.keys(fieldValues);
       for (const field of fields) {
         const value = current[field];
@@ -298,7 +301,7 @@ export class LocalKVStore implements KVStore {
         }
       }
       return current;
-    }));
+    });
   }
 
   private async performSetOperation<T extends string | number>(
@@ -306,7 +309,7 @@ export class LocalKVStore implements KVStore {
     fieldValues: MultiValue<string[] | number[]>,
     operation: (current: Set<T> | undefined, field: string) => Set<T> | undefined
   ) {
-    (await this.store.atomicPatch<KVHash>(key, (current, _options) => {
+    await this.store.atomicPatch<KVHash>(key, (current, _options) => {
       const fields = Object.keys(fieldValues);
       for (const field of fields) {
         if (!Array.isArray(fieldValues[field])) {
@@ -321,7 +324,7 @@ export class LocalKVStore implements KVStore {
         }
       }
       return current;
-    }));
+    });
   }
 
   private async patchWithRetry<T extends KVHash>(key: string, updater: KVPatchUpdater<T>, retries = 5): Promise<T> {

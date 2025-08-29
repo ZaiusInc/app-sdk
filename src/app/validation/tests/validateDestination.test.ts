@@ -30,9 +30,9 @@ class ValidDestinationSchemaFunction extends DestinationSchemaFunction {
           type: 'string',
           display_name: 'Hub Shakedown Name',
           description: 'The name',
-          primary: true,
-        },
-      ],
+          primary: true
+        }
+      ]
     });
   }
 }
@@ -48,8 +48,8 @@ jest.mock('fs', () => {
   return {
     existsSync: originalExistsSyncMock,
     mocks: {
-      existsSyncMock: originalExistsSyncMock,
-    },
+      existsSyncMock: originalExistsSyncMock
+    }
   };
 });
 
@@ -58,7 +58,7 @@ const existsSyncMock: jest.Mock = mockedModule.mocks.existsSyncMock;
 
 jest.mock('path', () => ({
   ...jest.requireActual('path'),
-  join: jest.fn().mockReturnValue('mocked'),
+  join: jest.fn().mockReturnValue('mocked')
 }));
 
 describe('validateDestination', () => {
@@ -71,18 +71,18 @@ describe('validateDestination', () => {
       destinations: {
         validDestination: {
           entry_point: 'validDestinationClass',
-          schema: 'validSchema',
+          schema: 'validSchema'
         },
         missingSchema: {
-          entry_point: 'missingSchemaClass',
+          entry_point: 'missingSchemaClass'
         },
         invalidSchema: {
           entry_point: 'invalidSchemaClass',
-          schema: 123,
-        },
-      },
+          schema: 123
+        }
+      }
     },
-    getDestinationClass: jest.fn(),
+    getDestinationClass: jest.fn()
   };
 
   it('should return error when destination cannot be loaded', async () => {
@@ -110,11 +110,11 @@ describe('validateDestination', () => {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
-            schema: 'validSchema',
-          },
-        },
+            schema: 'validSchema'
+          }
+        }
       },
-      getDestinationClass: () => ValidDestination,
+      getDestinationClass: () => ValidDestination
     };
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
@@ -128,11 +128,11 @@ describe('validateDestination', () => {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
-            schema: 'validSchema',
-          },
-        },
+            schema: 'validSchema'
+          }
+        }
       },
-      getDestinationClass: () => ValidDestination,
+      getDestinationClass: () => ValidDestination
     };
 
     existsSyncMock.mockReturnValueOnce(false);
@@ -147,13 +147,13 @@ describe('validateDestination', () => {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: {
-              entry_point: 'ValidDestinationSchemaFunction',
-            },
-          },
-        },
+              entry_point: 'ValidDestinationSchemaFunction'
+            }
+          }
+        }
       },
       getDestinationClass: () => ValidDestination,
-      getDestinationSchemaFunctionClass: () => ValidDestinationSchemaFunction,
+      getDestinationSchemaFunctionClass: () => ValidDestinationSchemaFunction
     };
 
     const result = await validateDestinations(validRuntime);
@@ -167,20 +167,20 @@ describe('validateDestination', () => {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: {
-              entry_point: 'InvalidDestinationSchemaFunction',
-            },
-          },
-        },
+              entry_point: 'InvalidDestinationSchemaFunction'
+            }
+          }
+        }
       },
       getDestinationClass: () => ValidDestination,
-      getDestinationSchemaFunctionClass: () => InvalidDestinationSchemaFunction,
+      getDestinationSchemaFunctionClass: () => InvalidDestinationSchemaFunction
     };
 
     const result = await validateDestinations(runtime);
     expect(result.length).toEqual(1);
     expect(result).toContain(
       'DestinationSchemaFunction entry point does not extend ' +
-        'App.DestinationSchemaFunction: InvalidDestinationSchemaFunction',
+        'App.DestinationSchemaFunction: InvalidDestinationSchemaFunction'
     );
   });
 });

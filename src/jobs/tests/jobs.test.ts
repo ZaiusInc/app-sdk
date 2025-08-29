@@ -32,7 +32,6 @@ describe('jobs', () => {
 
   describe('async local store configured', () => {
     it('uses local job Api if not configured', async () => {
-
       const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
 
       expect(() => jobs.trigger('foot', {})).toThrow();

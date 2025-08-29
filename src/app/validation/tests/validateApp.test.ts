@@ -72,69 +72,80 @@ const appManifest = deepFreeze({
       }
     }
   },
-  outbound_domains: [
-    'foo.zaius.com'
-  ]
+  outbound_domains: ['foo.zaius.com']
 } as AppManifest);
 
 const schemaObjects = deepFreeze({
   'schema/events.yml': {
     name: 'events',
-    fields: [{
-      name: 'my_app_coupon_id',
-      type: 'string',
-      display_name: 'My App Coupon ID',
-      description: 'The coupon associated with this event'
-    }],
-    relations: [{
-      name: 'my_app_coupon',
-      display_name: 'My App Coupon',
-      child_object: 'my_app_coupons',
-      join_fields: [{
-        parent: 'my_app_coupon_id',
-        child: 'coupon_id'
-      }]
-    }]
+    fields: [
+      {
+        name: 'my_app_coupon_id',
+        type: 'string',
+        display_name: 'My App Coupon ID',
+        description: 'The coupon associated with this event'
+      }
+    ],
+    relations: [
+      {
+        name: 'my_app_coupon',
+        display_name: 'My App Coupon',
+        child_object: 'my_app_coupons',
+        join_fields: [
+          {
+            parent: 'my_app_coupon_id',
+            child: 'coupon_id'
+          }
+        ]
+      }
+    ]
   },
   'schema/my_app_coupons.yml': {
     name: 'my_app_coupons',
     display_name: 'My App Coupons',
-    fields: [{
-      name: 'coupon_id',
-      type: 'string',
-      display_name: 'Coupon ID',
-      description: 'The Coupon ID',
-      primary: true
-    }, {
-      name: 'percent_off',
-      type: 'number',
-      display_name: 'Percent Off',
-      description: 'Percentage discount'
-    }]
+    fields: [
+      {
+        name: 'coupon_id',
+        type: 'string',
+        display_name: 'Coupon ID',
+        description: 'The Coupon ID',
+        primary: true
+      },
+      {
+        name: 'percent_off',
+        type: 'number',
+        display_name: 'Percent Off',
+        description: 'Percentage discount'
+      }
+    ]
   },
   'destinations/schema/asset.yml': {
     name: 'asset',
     display_name: 'Asset',
     description: 'description',
-    fields: [{
-      name: 'bynder_app_id',
-      type: 'string',
-      display_name: 'Bynder App Id',
-      description: 'Id of the app',
-      primary: true
-    }]
+    fields: [
+      {
+        name: 'bynder_app_id',
+        type: 'string',
+        display_name: 'Bynder App Id',
+        description: 'Id of the app',
+        primary: true
+      }
+    ]
   },
   'sources/schema/asset.yml': {
     name: 'asset',
     display_name: 'Asset',
     description: 'description',
-    fields: [{
-      name: 'bynder_app_id',
-      type: 'string',
-      display_name: 'Bynder App Id',
-      description: 'Id of the app',
-      primary: true
-    }]
+    fields: [
+      {
+        name: 'bynder_app_id',
+        type: 'string',
+        display_name: 'Bynder App Id',
+        description: 'Id of the app',
+        primary: true
+      }
+    ]
   }
 } as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
@@ -143,19 +154,19 @@ describe('validateApp', () => {
     mockFs({
       '/tmp/foo': {
         'app.yml': jsYaml.dump(appManifest),
-        'schema': {
+        schema: {
           'events.yml': jsYaml.dump(schemaObjects['schema/events.yml']),
           'my_app_coupons.yml': jsYaml.dump(schemaObjects['schema/my_app_coupons.yml']),
           'something_else.yml.txt': 'something else'
         },
-        'destinations': {
-          'schema': {
-            'asset.yml': jsYaml.dump(schemaObjects['destinations/schema/asset.yml']),
+        destinations: {
+          schema: {
+            'asset.yml': jsYaml.dump(schemaObjects['destinations/schema/asset.yml'])
           }
         },
-        'sources': {
-          'schema': {
-            'asset.yml': jsYaml.dump(schemaObjects['sources/schema/asset.yml']),
+        sources: {
+          schema: {
+            'asset.yml': jsYaml.dump(schemaObjects['sources/schema/asset.yml'])
           }
         }
       }
@@ -217,8 +228,7 @@ describe('validateApp', () => {
       'destinations/schema/asset.yml': {
         ...schemaObjects['destinations/schema/asset.yml'],
         name: undefined,
-        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0],
-          type: 'no', display_name: undefined}]
+        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0], type: 'no', display_name: undefined}]
       }
     } as any);
 
@@ -226,8 +236,7 @@ describe('validateApp', () => {
       'sources/schema/asset.yml': {
         ...schemaObjects['sources/schema/asset.yml'],
         name: undefined,
-        fields: [{...schemaObjects['sources/schema/asset.yml'].fields![0],
-          type: 'no', display_name: undefined}]
+        fields: [{...schemaObjects['sources/schema/asset.yml'].fields![0], type: 'no', display_name: undefined}]
       }
     } as any);
 
@@ -261,23 +270,37 @@ describe('validateApp', () => {
     (validateDestinations as jest.Mock).mockResolvedValue(['destination error 1', 'destination error 2']);
     (validateSources as jest.Mock).mockResolvedValue(['source error 1', 'source error 2']);
     let schemaErrorCounter = 1;
-    (validateSchemaObject as jest.Mock)
-      .mockImplementation(() => [`schema error ${schemaErrorCounter++}`, `schema error ${schemaErrorCounter++}`]);
+    (validateSchemaObject as jest.Mock).mockImplementation(() => [
+      `schema error ${schemaErrorCounter++}`,
+      `schema error ${schemaErrorCounter++}`
+    ]);
     (validateAssets as jest.Mock).mockResolvedValue(['asset error 1', 'asset error 2']);
 
     expect(await validateApp(runtime, ['events', 'customers'])).toEqual([
-      'meta error 1', 'meta error 2',
-      'environment error 1', 'environment error 2',
-      'functions error 1', 'functions error 2',
-      'jobs error 1', 'jobs error 2',
-      'destination error 1', 'destination error 2',
-      'source error 1', 'source error 2',
-      'liquid error 1', 'liquid error 2',
-      'lifecycle error 1', 'lifecycle error 2',
-      'channel error 1', 'channel error 2',
-      'asset error 1', 'asset error 2',
-      'schema error 1', 'schema error 2',
-      'schema error 3', 'schema error 4'
+      'meta error 1',
+      'meta error 2',
+      'environment error 1',
+      'environment error 2',
+      'functions error 1',
+      'functions error 2',
+      'jobs error 1',
+      'jobs error 2',
+      'destination error 1',
+      'destination error 2',
+      'source error 1',
+      'source error 2',
+      'liquid error 1',
+      'liquid error 2',
+      'lifecycle error 1',
+      'lifecycle error 2',
+      'channel error 1',
+      'channel error 2',
+      'asset error 1',
+      'asset error 2',
+      'schema error 1',
+      'schema error 2',
+      'schema error 3',
+      'schema error 4'
     ]);
 
     expect(validateMeta).toBeCalledWith(runtime);

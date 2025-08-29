@@ -1,5 +1,5 @@
-import { validateSourcesSchema } from '../validateSourcesSchema';
-import { SourceSchema } from '../../types';
+import {validateSourcesSchema} from '../validateSourcesSchema';
+import {SourceSchema} from '../../types';
 
 describe('validateSourceSchema', () => {
   beforeEach(() => {
@@ -12,8 +12,8 @@ describe('validateSourceSchema', () => {
       display_name: 'Valid Schema',
       description: 'Description',
       fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true },
-        { name: 'field2', display_name: 'Field 2', description: 'Description', type: 'string' },
+        {name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true},
+        {name: 'field2', display_name: 'Field 2', description: 'Description', type: 'string'}
       ]
     };
     const file = 'valid_schema.yml';
@@ -26,9 +26,7 @@ describe('validateSourceSchema', () => {
       name: 'invalid_schema',
       description: 'Description',
       display_name: 'Invalid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}]
     };
     const file = 'valid_schema.yml';
     const result = validateSourcesSchema(invalidSchema, file);
@@ -40,9 +38,7 @@ describe('validateSourceSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: '',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}]
     };
     const file = 'valid_schema.yml';
     const result = validateSourcesSchema(invalidSchema, file);
@@ -55,8 +51,8 @@ describe('validateSourceSchema', () => {
       description: 'Description',
       display_name: 'Valid Schema',
       fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string' },
-        { name: 'field2', display_name: 'Field 2', description: 'Description', type: 'string' },
+        {name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string'},
+        {name: 'field2', display_name: 'Field 2', description: 'Description', type: 'string'}
       ]
     };
     const file = 'valid_schema.yml';
@@ -70,15 +66,15 @@ describe('validateSourceSchema', () => {
       name: 'InvalidName!',
       description: 'Description',
       display_name: 'Invalid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}]
     };
 
     const file = 'InvalidName.yml';
     const result = validateSourcesSchema(invalidSchema, file);
-    expect(result).toContain('Invalid InvalidName.yml: name must start with a letter, contain only lowercase ' +
-      'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)');
+    expect(result).toContain(
+      'Invalid InvalidName.yml: name must start with a letter, contain only lowercase ' +
+        'alpha-numeric and underscore, and be between 2 and 64 characters long (/^[a-z][a-z0-9_]{1,61}$/)'
+    );
   });
 
   it('should return an error if field name does not match format', () => {
@@ -87,14 +83,16 @@ describe('validateSourceSchema', () => {
       description: 'Description',
       display_name: 'Valid Schema',
       fields: [
-        { name: 'invalid-field', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
+        {name: 'invalid-field', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}
       ]
     };
     const file = 'valid_schema.yml';
     const result = validateSourcesSchema(invalidSchema, file);
-    expect(result).toEqual(['Invalid valid_schema.yml: fields[0].name must start with a letter, contain ' +
-      'only lowercase alpha-numeric and underscore, and be between 2 and 64 characters long ' +
-      '(/^[a-z][a-z0-9_]{1,61}$/)']);
+    expect(result).toEqual([
+      'Invalid valid_schema.yml: fields[0].name must start with a letter, contain ' +
+        'only lowercase alpha-numeric and underscore, and be between 2 and 64 characters long ' +
+        '(/^[a-z][a-z0-9_]{1,61}$/)'
+    ]);
   });
 
   it('should return an error if field display_name is missing', () => {
@@ -102,9 +100,7 @@ describe('validateSourceSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: '', description: 'Description', type: 'string', primary: true }
-      ]
+      fields: [{name: 'field1', display_name: '', description: 'Description', type: 'string', primary: true}]
     };
     const file = 'valid_schema.yml';
     const result = validateSourcesSchema(invalidSchema, file);
@@ -116,9 +112,7 @@ describe('validateSourceSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: '', type: 'string', primary: true }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: '', type: 'string', primary: true}]
     };
     const file = 'valid_schema.yml';
     const result = validateSourcesSchema(invalidSchema, file);

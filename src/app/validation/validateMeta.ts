@@ -1,26 +1,25 @@
 import * as EmailValidator from 'email-validator';
-import { Rivendell } from '../../util/Rivendell';
+import {Rivendell} from '../../util/Rivendell';
 import {Runtime} from '../Runtime';
 import {APP_ID_FORMAT, VENDOR_FORMAT, VERSION_FORMAT} from '../types';
 
 export async function validateMeta(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
 
-  const {
-    app_id, display_name, version, vendor, support_url, contact_email, summary, categories, availability
-  } = runtime.manifest.meta;
+  const {app_id, display_name, version, vendor, support_url, contact_email, summary, categories, availability} =
+    runtime.manifest.meta;
 
   // App ID, version, vendor, support url, and contact email must be in the correct format
   if (!app_id.match(APP_ID_FORMAT)) {
     errors.push(
       'Invalid app.yml: meta.app_id must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
-      `and be between 3 and 32 characters long (${APP_ID_FORMAT.toString()})`
+        `and be between 3 and 32 characters long (${APP_ID_FORMAT.toString()})`
     );
   }
   if (!version.match(VERSION_FORMAT)) {
     errors.push(
       'Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ' +
-      `or -private (${VERSION_FORMAT.toString()})`
+        `or -private (${VERSION_FORMAT.toString()})`
     );
   }
   if (!vendor.match(VENDOR_FORMAT)) {
@@ -68,7 +67,8 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
       if (invalid.length) {
         errors.push(
           'Invalid app.yml: meta.availability should only contain ' +
-          `valid availability zones (${shards.toString()}) found: ${invalid.toString()}`);
+            `valid availability zones (${shards.toString()}) found: ${invalid.toString()}`
+        );
       }
     }
   }

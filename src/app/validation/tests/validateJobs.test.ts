@@ -84,15 +84,17 @@ describe('validateJobs', () => {
   });
 
   describe('valid cron expressions', () => {
-
     async function validateCronExpression(expression: string, expectedErrors: string[] = []) {
-      const manifest = {...appManifest, jobs: {
-        bar: {
-          entry_point: 'Bar',
-          cron: expression
+      const manifest = {
+        ...appManifest,
+        jobs: {
+          bar: {
+            entry_point: 'Bar',
+            cron: expression
+          }
         }
-      }};
-      const runtime = Runtime.fromJson(JSON.stringify({'appManifest': manifest, dirName: '/tmp/foo'}));
+      };
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
       const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockReturnValue(ProperBar as any);
 
       expect(await validateJobs(runtime)).toEqual(expectedErrors);
@@ -149,27 +151,19 @@ describe('validateJobs', () => {
     });
 
     it('not a cron expression at all', async () => {
-      await validateCronExpression('invalid-cron-expression', [
-        'Invalid CRON expression: Bar'
-      ]);
+      await validateCronExpression('invalid-cron-expression', ['Invalid CRON expression: Bar']);
     });
 
     it('invalid cron expression - too many positions', async () => {
-      await validateCronExpression('0 0 * * * ? ?', [
-        'Invalid CRON expression: Bar'
-      ]);
+      await validateCronExpression('0 0 * * * ? ?', ['Invalid CRON expression: Bar']);
     });
 
     it('invalid cron expression - not enough positions', async () => {
-      await validateCronExpression('0 0 * * *', [
-        'Invalid CRON expression: Bar'
-      ]);
+      await validateCronExpression('0 0 * * *', ['Invalid CRON expression: Bar']);
     });
 
     it('invalid cron expression - hour outside of range', async () => {
-      await validateCronExpression('0 15 25 ? * *', [
-        'Invalid CRON expression: Bar'
-      ]);
+      await validateCronExpression('0 15 25 ? * *', ['Invalid CRON expression: Bar']);
     });
   });
 });
