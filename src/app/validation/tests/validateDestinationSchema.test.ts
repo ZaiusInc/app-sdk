@@ -1,5 +1,5 @@
-import {validateDestinationsSchema} from '../validateDestinationsSchema';
 import {DestinationSchema} from '../../types';
+import {validateDestinationsSchema} from '../validateDestinationsSchema';
 
 describe('validateDestinationSchema', () => {
   beforeEach(() => {

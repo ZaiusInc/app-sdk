@@ -1,7 +1,8 @@
-import 'jest';
-import {LogContext, Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../types';
+import {LogContext, Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
 
 describe('Logger', () => {
   function runWithAsyncLocalStore(

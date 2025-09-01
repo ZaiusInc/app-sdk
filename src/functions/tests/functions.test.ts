@@ -1,9 +1,10 @@
-import 'jest';
-import {functions, initializeFunctionApi} from '../functions';
-import {LocalFunctionApi} from '../LocalFunctionApi';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../types';
 import {FunctionApi} from '../FunctionApi';
+import {LocalFunctionApi} from '../LocalFunctionApi';
+import {functions, initializeFunctionApi} from '../functions';
 
 describe('functions', () => {
   const mockFunctionApi: FunctionApi = {

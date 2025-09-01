@@ -1,5 +1,6 @@
 import 'jest';
 import {TextEncoder} from 'util';
+
 import {Request} from '../Request';
 
 describe('Request', () => {

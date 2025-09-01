@@ -1,4 +1,5 @@
 import 'jest';
+
 import {Batcher} from '../Batcher';
 
 describe('Batcher', () => {

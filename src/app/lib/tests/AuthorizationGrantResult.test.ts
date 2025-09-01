@@ -1,4 +1,5 @@
 import 'jest';
+
 import {AuthorizationGrantResult} from '../AuthorizationGrantResult';
 
 describe('AuthorizationGrantResult', () => {

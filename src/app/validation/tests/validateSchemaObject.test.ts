@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import 'jest';
+
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {SchemaObject, SchemaObjects} from '../../types/SchemaObject';

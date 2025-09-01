@@ -1,7 +1,8 @@
-import 'jest';
-import {AppContext, getAppContext, isGlobalContext, setContext} from '../AppContext';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../types';
+import {AppContext, getAppContext, isGlobalContext, setContext} from '../AppContext';
 
 describe('AppContext', () => {
   function runWithAsyncLocalStore(appContext: AppContext, code: () => void) {

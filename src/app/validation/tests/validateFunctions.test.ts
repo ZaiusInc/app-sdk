@@ -1,10 +1,11 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
 import 'jest';
+
 import {Function} from '../../Function';
 import {GlobalFunction} from '../../GlobalFunction';
-import {Request, Response} from '../../lib';
 import {FunctionClassNotFoundError, Runtime} from '../../Runtime';
+import {Request, Response} from '../../lib';
 import {AppManifest} from '../../types';
 import {validateFunctions} from '../validateFunctions';
 

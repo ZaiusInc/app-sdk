@@ -1,4 +1,5 @@
 import 'jest';
+
 import {ChannelPreviewResult} from '../ChannelPreviewResult';
 
 describe('ChannelPreviewResult', () => {

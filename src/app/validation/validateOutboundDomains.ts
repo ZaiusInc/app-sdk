@@ -1,5 +1,6 @@
-import {Runtime} from '../Runtime';
 import {URL} from 'url';
+
+import {Runtime} from '../Runtime';
 
 const PROTOCOL_REGEX = /^[a-z]+\:\/\/.*/;
 const HOSTNAME_REGEX = /^(\*\.)?[a-zA-Z0-9][a-zA-Z0-9\-_.]+$/;

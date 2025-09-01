@@ -2,6 +2,7 @@
 import {FormData} from '@zaiusinc/app-forms-schema';
 import deepFreeze from 'deep-freeze';
 import 'jest';
+
 import {
   CampaignContent,
   CampaignDelivery,
@@ -14,8 +15,8 @@ import {
   ChannelPublishOptions,
   ChannelValidateOptions
 } from '../../Channel';
-import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../../lib';
 import {Runtime} from '../../Runtime';
+import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../../lib';
 import {AppManifest} from '../../types';
 import {validateChannel} from '../validateChannel';
 

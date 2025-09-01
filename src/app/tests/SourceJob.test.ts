@@ -1,4 +1,5 @@
 import 'jest';
+
 import {ValueHash} from '../..';
 import {SourceJob, SourceJobStatus} from '../SourceJob';
 

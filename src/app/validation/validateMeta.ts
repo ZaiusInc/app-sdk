@@ -1,4 +1,5 @@
 import * as EmailValidator from 'email-validator';
+
 import {Rivendell} from '../../util/Rivendell';
 import {Runtime} from '../Runtime';
 import {APP_ID_FORMAT, VENDOR_FORMAT, VERSION_FORMAT} from '../types';

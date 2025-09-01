@@ -2,12 +2,14 @@ import deepFreeze from 'deep-freeze';
 import 'jest';
 import * as jsYaml from 'js-yaml';
 import mockFs from 'mock-fs';
+
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {SchemaObject} from '../../types/SchemaObject';
 import {validateApp} from '../validateApp';
 import {validateAssets} from '../validateAssets';
 import {validateChannel} from '../validateChannel';
+import {validateDestinations} from '../validateDestinations';
 import {validateEnvironment} from '../validateEnvironment';
 import {validateFunctions} from '../validateFunctions';
 import {validateJobs} from '../validateJobs';
@@ -15,7 +17,6 @@ import {validateLifecycle} from '../validateLifecycle';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 import {validateMeta} from '../validateMeta';
 import {validateSchemaObject} from '../validateSchemaObject';
-import {validateDestinations} from '../validateDestinations';
 import {validateSources} from '../validateSources';
 
 jest.mock('../validateMeta');

@@ -1,4 +1,5 @@
 import 'jest';
+
 import {LifecycleSettingsResult} from '../LifecycleSettingsResult';
 
 describe('LifecycleSettingsResult', () => {

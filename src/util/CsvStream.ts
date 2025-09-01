@@ -1,8 +1,9 @@
 import csv from 'csv-parser';
+import {Options} from 'csv-parser';
 import fetch from 'node-fetch';
 import {URL} from 'url';
 import * as zlib from 'zlib';
-import {Options} from 'csv-parser';
+
 import {FileReadableStreamBuilder, FileRowProcessor, FileStream} from './FileStream';
 
 export interface CsvRow {

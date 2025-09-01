@@ -1,6 +1,6 @@
-import {Request} from './Request';
 import {HttpMethod} from '../types';
 import {QueryParams} from './QueryParams';
+import {Request} from './Request';
 
 /**
  * @hidden

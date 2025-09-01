@@ -1,9 +1,10 @@
 import {z} from '@zaiusinc/node-sdk';
-import 'jest';
-import {CampaignEvents} from '../CampaignEvents';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../../types';
 import {AppContext} from '../../AppContext';
+import {CampaignEvents} from '../CampaignEvents';
 
 jest.mock('@zaiusinc/node-sdk');
 

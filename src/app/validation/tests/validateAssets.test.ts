@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import mockFs from 'mock-fs';
+
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {validateAssets} from '../validateAssets';

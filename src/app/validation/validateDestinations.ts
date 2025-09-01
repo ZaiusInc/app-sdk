@@ -1,8 +1,9 @@
+import fs from 'fs';
+import {join} from 'path';
+
 import {Destination} from '../Destination';
 import {DestinationSchemaFunction} from '../DestinationSchemaFunction';
 import {Runtime} from '../Runtime';
-import fs from 'fs';
-import {join} from 'path';
 
 export async function validateDestinations(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];

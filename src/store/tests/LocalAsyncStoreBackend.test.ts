@@ -1,4 +1,5 @@
 import 'jest';
+
 import {CasError} from '../CasError';
 import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 

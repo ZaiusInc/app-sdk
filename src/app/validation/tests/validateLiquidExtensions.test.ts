@@ -1,9 +1,10 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
 import 'jest';
-import {LiquidExtensionResult} from '../../lib';
+
 import {LiquidExtension} from '../../LiquidExtension';
 import {Runtime} from '../../Runtime';
+import {LiquidExtensionResult} from '../../lib';
 import {AppManifest} from '../../types';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 

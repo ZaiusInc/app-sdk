@@ -1,8 +1,9 @@
-import 'jest';
-import {notifications, Notifier, setNotifier} from '..';
-import {LocalNotifier} from '../LocalNotifier';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
+import {notifications, Notifier, setNotifier} from '..';
 import {OCPContext} from '../../types';
+import {LocalNotifier} from '../LocalNotifier';
 
 describe('activityLog', () => {
   const mockNotifier: Notifier = {

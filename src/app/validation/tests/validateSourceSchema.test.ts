@@ -1,5 +1,5 @@
-import {validateSourcesSchema} from '../validateSourcesSchema';
 import {SourceSchema} from '../../types';
+import {validateSourcesSchema} from '../validateSourcesSchema';
 
 describe('validateSourceSchema', () => {
   beforeEach(() => {

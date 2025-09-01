@@ -1,6 +1,7 @@
 import 'jest';
-import {Form} from '../forms';
+
 import {storage} from '../../../store';
+import {Form} from '../forms';
 
 describe('Forms', () => {
   it('sets and retrieves openSection', async () => {

@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-unsafe-call */
+import {ValueHash} from '../../../store';
 import {SourceFunction} from '../../SourceFunction';
-import {SourceSchemaFunction} from '../../SourceSchemaFunction';
+import {SourceJob, SourceJobStatus} from '../../SourceJob';
 import {
   SourceCreateResponse,
   SourceDeleteResponse,
@@ -9,11 +10,10 @@ import {
   SourcePauseResponse,
   SourceUpdateResponse
 } from '../../SourceLifecycle';
+import {SourceSchemaFunction} from '../../SourceSchemaFunction';
 import {Response} from '../../lib';
 import {SourceSchema} from '../../types';
 import {validateSources} from '../validateSources';
-import {SourceJob, SourceJobStatus} from '../../SourceJob';
-import {ValueHash} from '../../../store';
 
 // Mock fs module
 jest.mock('fs', () => {

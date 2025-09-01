@@ -1,4 +1,5 @@
 import 'jest';
+
 import {FormResult} from '../FormResult';
 
 class RealizedFormResult extends FormResult {}

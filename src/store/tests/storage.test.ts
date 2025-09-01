@@ -1,4 +1,6 @@
+import {AsyncLocalStorage} from 'async_hooks';
 import 'jest';
+
 import {
   BaseKVStore,
   initializeStores,
@@ -9,9 +11,8 @@ import {
   resetLocalStores,
   storage
 } from '..';
-import {LocalStore} from '../LocalStore';
-import {AsyncLocalStorage} from 'async_hooks';
 import {OCPContext} from '../../types';
+import {LocalStore} from '../LocalStore';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

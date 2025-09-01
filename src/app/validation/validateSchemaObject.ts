@@ -1,4 +1,5 @@
 import * as path from 'path';
+
 import {Runtime} from '../Runtime';
 import {SCHEMA_NAME_FORMAT, SchemaField, SchemaIdentifier, SchemaObject, SchemaRelation} from '../types/SchemaObject';
 

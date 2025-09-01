@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file */
-
-import {validateDestinations} from '../validateDestinations';
-import {Destination, GetDestinationSchemaResult} from '../../Destination';
 import fs from 'fs';
+
 import {DestinationSchema} from '../..';
+import {Destination, GetDestinationSchemaResult} from '../../Destination';
 import {DestinationSchemaFunction} from '../../DestinationSchemaFunction';
+import {validateDestinations} from '../validateDestinations';
 
 class ValidDestination extends Destination<any> {
   public getDestinationSchema(): Promise<GetDestinationSchemaResult> {

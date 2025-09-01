@@ -1,6 +1,7 @@
-import {logger} from '../logging';
 import * as ObjectHash from 'object-hash';
 import {Transform, Stream} from 'stream';
+
+import {logger} from '../logging';
 
 export interface FileRowProcessor<T> {
   /**

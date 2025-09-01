@@ -1,4 +1,5 @@
 import 'jest';
+
 import {Runtime} from '../../Runtime';
 import {validateOutboundDomains} from '../validateOutboundDomains';
 

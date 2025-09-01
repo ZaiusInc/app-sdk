@@ -1,4 +1,5 @@
 import {Schema} from '@zaiusinc/app-forms-schema';
+
 import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from './lib';
 import {Intent} from './lib/FormResult';
 

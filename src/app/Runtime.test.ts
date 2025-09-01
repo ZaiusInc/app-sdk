@@ -4,6 +4,7 @@ import fs from 'fs';
 import 'jest';
 import * as jsYaml from 'js-yaml';
 import mockFs from 'mock-fs';
+
 import {Runtime} from './Runtime';
 import {AppManifest} from './types';
 import {SchemaObject} from './types/SchemaObject';

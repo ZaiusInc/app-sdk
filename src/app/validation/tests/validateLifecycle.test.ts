@@ -1,10 +1,11 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
 import 'jest';
-import {LifecycleSettingsResult, Request} from '../../lib';
-import {AuthorizationGrantResult} from '../../lib/AuthorizationGrantResult';
+
 import {Lifecycle} from '../../Lifecycle';
 import {Runtime} from '../../Runtime';
+import {LifecycleSettingsResult, Request} from '../../lib';
+import {AuthorizationGrantResult} from '../../lib/AuthorizationGrantResult';
 import {AppManifest, LifecycleResult} from '../../types';
 import {validateLifecycle} from '../validateLifecycle';
 

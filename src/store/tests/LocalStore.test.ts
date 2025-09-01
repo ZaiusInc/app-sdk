@@ -1,4 +1,5 @@
 import 'jest';
+
 import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 import {LocalStore} from '../LocalStore';
 

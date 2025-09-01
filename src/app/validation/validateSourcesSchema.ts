@@ -1,5 +1,6 @@
-import {SourceSchema, SourceSchemaField} from '../types/SourceSchema';
 import * as path from 'path';
+
+import {SourceSchema, SourceSchemaField} from '../types/SourceSchema';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 

@@ -1,6 +1,7 @@
 import 'jest';
-import {Request, Response} from '../lib';
+
 import {RequestHandler} from '../RequestHandler';
+import {Request, Response} from '../lib';
 
 class SubClass extends RequestHandler {
   public async perform() {

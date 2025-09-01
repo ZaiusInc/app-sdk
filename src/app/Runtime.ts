@@ -1,28 +1,29 @@
 /* eslint-disable max-classes-per-file */
 import Ajv from 'ajv';
+import deepFreeze from 'deep-freeze';
 import {readFileSync} from 'fs';
+import * as glob from 'glob';
 import * as jsYaml from 'js-yaml';
 import {join} from 'path';
+
+import {Source} from '../sources/Source';
 import {Channel} from './Channel';
+import {Destination} from './Destination';
+import {DestinationSchemaFunction, DestinationSchemaFunctionConfig} from './DestinationSchemaFunction';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
-import {SourceJob, SourceJobInvocation} from './SourceJob';
-import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
+import {SourceFunction, SourceConfiguration} from './SourceFunction';
+import {SourceJob, SourceJobInvocation} from './SourceJob';
+import {SourceLifecycle} from './SourceLifecycle';
+import {SourceSchemaFunction, SourceSchemaFunctionConfig} from './SourceSchemaFunction';
+import {Request} from './lib';
 import {AppManifest} from './types';
 import manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects} from './types/SchemaObject';
-import deepFreeze from 'deep-freeze';
-import * as glob from 'glob';
-import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
-import {SourceFunction, SourceConfiguration} from './SourceFunction';
-import {SourceSchemaFunction, SourceSchemaFunctionConfig} from './SourceSchemaFunction';
+import {SchemaObjects} from './types/SchemaObject';
 import {SourceSchemaObjects} from './types/SourceSchema';
-import {Source} from '../sources/Source';
-import {SourceLifecycle} from './SourceLifecycle';
-import {DestinationSchemaFunction, DestinationSchemaFunctionConfig} from './DestinationSchemaFunction';
 
 interface SerializedRuntime {
   appManifest: AppManifest;

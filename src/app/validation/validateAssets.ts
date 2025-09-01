@@ -1,5 +1,7 @@
+import {Schema} from '@zaiusinc/app-forms-schema';
 import {validateFormDefinition} from '@zaiusinc/app-forms-schema/dist/validation/validateForm';
 import fs from 'fs';
+import * as glob from 'glob';
 import * as jsYaml from 'js-yaml';
 import * as path from 'path';
 import remark from 'remark';
@@ -10,11 +12,10 @@ import links from 'remark-validate-links';
 // @ts-ignore
 import * as vfile from 'to-vfile';
 import {VFile} from 'vfile';
+
 import {logger} from '../../logging';
 import {Runtime} from '../Runtime';
 import {AppManifest} from '../types';
-import * as glob from 'glob';
-import {Schema} from '@zaiusinc/app-forms-schema';
 
 const STANDARD_ASSETS = ['assets/directory/overview.md', 'assets/icon.svg', 'assets/logo.svg', 'forms/settings.yml'];
 

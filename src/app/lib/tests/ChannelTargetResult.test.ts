@@ -1,4 +1,5 @@
 import 'jest';
+
 import {ChannelTargetResult} from '../ChannelTargetResult';
 
 describe('ChannelTargetResult', () => {

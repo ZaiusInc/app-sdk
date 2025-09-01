@@ -1,5 +1,5 @@
-import {ValueHash} from '../store';
 import {Source} from '../sources/Source';
+import {ValueHash} from '../store';
 
 export interface SourceJobInvocation {
   /**

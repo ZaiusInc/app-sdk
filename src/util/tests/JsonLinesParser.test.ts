@@ -1,5 +1,6 @@
 import 'jest';
 import {Stream} from 'stream';
+
 import {nullValue, parse} from '../JsonLinesParser';
 
 const expectedObjects = [

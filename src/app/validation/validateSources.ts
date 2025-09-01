@@ -1,10 +1,11 @@
-import {SourceFunction} from '../SourceFunction';
-import {SourceSchemaFunction} from '../SourceSchemaFunction';
-import {Runtime} from '../Runtime';
 import * as fs from 'fs';
 import {join} from 'path';
-import {SourceLifecycle} from '../SourceLifecycle';
+
+import {Runtime} from '../Runtime';
+import {SourceFunction} from '../SourceFunction';
 import {SourceJob} from '../SourceJob';
+import {SourceLifecycle} from '../SourceLifecycle';
+import {SourceSchemaFunction} from '../SourceSchemaFunction';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
   'onSourceCreate',
