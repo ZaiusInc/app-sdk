@@ -4,14 +4,11 @@ process.env.ZAIUS_ENV = 'test';
 
 module.exports = {
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    '^.+\\.tsx?$': 'ts-jest'
   },
-  testRegex: "\\.test\\.tsx?$",
+  testRegex: '\\.test\\.tsx?$',
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/example*', '/.yalc/'],
-  moduleFileExtensions: [
-    ...defaults.moduleFileExtensions,
-    "ts"
-  ],
+  moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts'],
   setupFilesAfterEnv: ['./src/test/setup.ts'],
   verbose: true,
   // note: jobApi.ts is presently only interfaces. see: https://github.com/kulshekhar/ts-jest/issues/378
@@ -37,12 +34,12 @@ module.exports = {
     }
   },
   reporters: [
-    "default",
+    'default',
     [
-      "jest-junit",
+      'jest-junit',
       {
-        outputDirectory: "reports",
-        outputName: "jest-results.xml"
+        outputDirectory: 'reports',
+        outputName: 'jest-results.xml'
       }
     ]
   ],

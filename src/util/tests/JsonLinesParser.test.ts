@@ -1,36 +1,44 @@
 import 'jest';
 import {Stream} from 'stream';
+
 import {nullValue, parse} from '../JsonLinesParser';
 
-const expectedObjects = [{
-  col1: 'val1',
-  col2: 123,
-  col3: true
-}, {
-  col1: 'val4',
-  col2: 456,
-  col3: true
-}, {
-  col1: 'val7',
-  col2: 789,
-  col3: false
-}];
-const expectedObjectsWithoutHeaders = [{
-  0: 'val1',
-  1: 123,
-  2: true
-}, {
-  0: 'val4',
-  1: 456,
-  2: true
-}, {
-  0: 'val7',
-  1: 789,
-  2: false
-}];
+const expectedObjects = [
+  {
+    col1: 'val1',
+    col2: 123,
+    col3: true
+  },
+  {
+    col1: 'val4',
+    col2: 456,
+    col3: true
+  },
+  {
+    col1: 'val7',
+    col2: 789,
+    col3: false
+  }
+];
+const expectedObjectsWithoutHeaders = [
+  {
+    0: 'val1',
+    1: 123,
+    2: true
+  },
+  {
+    0: 'val4',
+    1: 456,
+    2: true
+  },
+  {
+    0: 'val7',
+    1: 789,
+    2: false
+  }
+];
 
 describe('JsonLinesParser', () => {
-
   it('Process stream with objects format without parameters', async () => {
     const objectsFormat = new Stream.Readable();
     objectsFormat.push('{"col1":"val1","col2":123,"col3":true}\n');
@@ -56,8 +64,9 @@ describe('JsonLinesParser', () => {
     arraysFormat.push('["val4",456,true]\n');
     arraysFormat.push('["val7",789,false]\n');
     arraysFormat.push(null);
-    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: false}))))
-      .toEqual(expectedObjectsWithoutHeaders);
+    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: false})))).toEqual(
+      expectedObjectsWithoutHeaders
+    );
   });
 
   it('Process stream with arrays format with declared headers', async () => {
@@ -66,8 +75,9 @@ describe('JsonLinesParser', () => {
     arraysFormat.push('["val4",456,true]\n');
     arraysFormat.push('["val7",789,false]\n');
     arraysFormat.push(null);
-    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: ['col1', 'col2', 'col3']}))))
-      .toEqual(expectedObjects);
+    expect(
+      await streamToString(arraysFormat.pipe(parse({tabularFormat: true, headers: ['col1', 'col2', 'col3']})))
+    ).toEqual(expectedObjects);
   });
 
   it('Process stream with arrays format - strict mode', async () => {
@@ -77,8 +87,9 @@ describe('JsonLinesParser', () => {
     arraysFormat.push('["val4",456,true]\n');
     arraysFormat.push('["val7",789,false]\n');
     arraysFormat.push(null);
-    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, strict: true}))))
-      .toEqual(expectedObjects);
+    expect(await streamToString(arraysFormat.pipe(parse({tabularFormat: true, strict: true})))).toEqual(
+      expectedObjects
+    );
   });
 
   it('Process stream with mixed objects format', async () => {
@@ -105,7 +116,7 @@ describe('JsonLinesParser', () => {
       -1,
       nullValue,
       nullValue,
-      {'value': null},
+      {value: null},
       [null, null]
     ]);
   });
@@ -115,8 +126,9 @@ describe('JsonLinesParser', () => {
     arraysFormat.push('["col1","col2","col3"]\n');
     arraysFormat.push('{"col1":"val4","col2":"val5","col3":"val6"}\n');
     arraysFormat.push(null);
-    await expect(streamToString(arraysFormat.pipe(parse({tabularFormat: true}))))
-      .rejects.toThrowError('Each line must be an array of objects');
+    await expect(streamToString(arraysFormat.pipe(parse({tabularFormat: true})))).rejects.toThrowError(
+      'Each line must be an array of objects'
+    );
   });
 });
 

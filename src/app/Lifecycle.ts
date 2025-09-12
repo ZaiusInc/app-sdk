@@ -1,4 +1,5 @@
 import {PrimitiveFormValue} from '@zaiusinc/app-forms-schema';
+
 import {LifecycleSettingsResult, Request} from './lib';
 import {AuthorizationGrantResult} from './lib/AuthorizationGrantResult';
 import {LifecycleResult, CanUninstallResult} from './types';
@@ -33,7 +34,9 @@ export abstract class Lifecycle {
    * @returns {LifecycleSettingsResult} with any errors that should be displayed to the user
    */
   public abstract onSettingsForm(
-    section: string, action: string, formData: SubmittedFormData
+    section: string,
+    action: string,
+    formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
   /**
@@ -91,7 +94,8 @@ export abstract class Lifecycle {
    * @returns {LifecycleSettingsResult} with a redirect to the external oauth endpoint
    */
   public abstract onAuthorizationRequest(
-    section: string, formData: SubmittedFormData
+    section: string,
+    formData: SubmittedFormData
   ): Promise<LifecycleSettingsResult>;
 
   /**

@@ -1,9 +1,10 @@
 import {z} from '@zaiusinc/node-sdk';
-import 'jest';
-import {CampaignEvents} from '../CampaignEvents';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../../types';
 import {AppContext} from '../../AppContext';
+import {CampaignEvents} from '../CampaignEvents';
 
 jest.mock('@zaiusinc/node-sdk');
 
@@ -18,7 +19,6 @@ const CAMPAIGN_TRACKING = Object.freeze({
 });
 
 describe('CampaignEvents', () => {
-
   function runWithAsyncLocalStore(
     code: () => void,
     appContext: AppContext = {manifest: {channel: {type: 'example'}}} as any
@@ -57,10 +57,11 @@ describe('CampaignEvents', () => {
     });
 
     it('throws an error if type is not provided', () => {
-      runWithAsyncLocalStore(async () => {
-        expect(() => new CampaignEvents('test_id', CAMPAIGN_TRACKING)).toThrowError('Type is required');
-      },
-      {manifest: {channel: {type: undefined}}} as any
+      runWithAsyncLocalStore(
+        async () => {
+          expect(() => new CampaignEvents('test_id', CAMPAIGN_TRACKING)).toThrowError('Type is required');
+        },
+        {manifest: {channel: {type: undefined}}} as any
       );
     });
   });
@@ -72,20 +73,21 @@ describe('CampaignEvents', () => {
         await campaignEvents.event('id1', 'sent');
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'sent',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: undefined
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'sent',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: undefined
+            }
           }
-        }]);
-      }
-      );
+        ]);
+      });
     });
   });
 
@@ -96,21 +98,22 @@ describe('CampaignEvents', () => {
         await campaignEvents.delivery('id1', '2020-02-24T16:40:07Z', {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'delivery',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: '2020-02-24T16:40:07Z',
-            _test: 'test1'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'delivery',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: '2020-02-24T16:40:07Z',
+              _test: 'test1'
+            }
           }
-        }]);
-      }
-      );
+        ]);
+      });
     });
   });
 
@@ -121,19 +124,21 @@ describe('CampaignEvents', () => {
         await campaignEvents.open('id1', new Date('2020-02-24T16:40:07Z'), {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'open',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: '2020-02-24T16:40:07.000Z',
-            _test: 'test1'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'open',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: '2020-02-24T16:40:07.000Z',
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -145,19 +150,21 @@ describe('CampaignEvents', () => {
         await campaignEvents.click('id1', undefined, {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'click',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: undefined,
-            _test: 'test1'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'click',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: undefined,
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -169,19 +176,21 @@ describe('CampaignEvents', () => {
         await campaignEvents.engage('id1', '2020-02-24T16:40:07Z', {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'engage',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: '2020-02-24T16:40:07Z',
-            _test: 'test1'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'engage',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: '2020-02-24T16:40:07Z',
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -193,19 +202,21 @@ describe('CampaignEvents', () => {
         await campaignEvents.disengage('id1', '2020-02-24T16:40:07Z', {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'disengage',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: '2020-02-24T16:40:07Z',
-            _test: 'test1'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'disengage',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: '2020-02-24T16:40:07Z',
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -217,18 +228,20 @@ describe('CampaignEvents', () => {
         await campaignEvents.hardBounce('id1', 'n/a', '2020-02-24T16:40:07Z', {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.identifier.updateReachability).toHaveBeenCalledWith([{
-          identifier_field_name: 'test_id',
-          identifier_value: 'id1',
-          reachable: false,
-          reachable_update_type: 'hard_bounce',
-          reachable_update_reason: 'n/a',
-          reachable_update_ts: '2020-02-24T16:40:07Z',
-          event_data: {
-            ...CAMPAIGN_TRACKING,
-            _test: 'test1'
+        expect(z.identifier.updateReachability).toHaveBeenCalledWith([
+          {
+            identifier_field_name: 'test_id',
+            identifier_value: 'id1',
+            reachable: false,
+            reachable_update_type: 'hard_bounce',
+            reachable_update_reason: 'n/a',
+            reachable_update_ts: '2020-02-24T16:40:07Z',
+            event_data: {
+              ...CAMPAIGN_TRACKING,
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -240,20 +253,22 @@ describe('CampaignEvents', () => {
         await campaignEvents.softBounce('id1', 'delivery failure', '2020-02-24T16:40:07Z', {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.event).toHaveBeenCalledWith([{
-          identifiers: {
-            test_id: 'id1'
-          },
-          type: 'example',
-          action: 'soft_bounce',
-          data: {
-            ...CAMPAIGN_TRACKING,
-            target_address: 'id1',
-            ts: '2020-02-24T16:40:07Z',
-            _test: 'test1',
-            value: 'Reason: delivery failure'
+        expect(z.event).toHaveBeenCalledWith([
+          {
+            identifiers: {
+              test_id: 'id1'
+            },
+            type: 'example',
+            action: 'soft_bounce',
+            data: {
+              ...CAMPAIGN_TRACKING,
+              target_address: 'id1',
+              ts: '2020-02-24T16:40:07Z',
+              _test: 'test1',
+              value: 'Reason: delivery failure'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -265,17 +280,19 @@ describe('CampaignEvents', () => {
         await campaignEvents.optOut('id1', 'unsubscribed', 1582562407, {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.identifier.updateConsent).toHaveBeenCalledWith([{
-          identifier_field_name: 'test_id',
-          identifier_value: 'id1',
-          consent: false,
-          consent_update_reason: 'unsubscribed',
-          consent_update_ts: 1582562407,
-          event_data: {
-            ...CAMPAIGN_TRACKING,
-            _test: 'test1',
+        expect(z.identifier.updateConsent).toHaveBeenCalledWith([
+          {
+            identifier_field_name: 'test_id',
+            identifier_value: 'id1',
+            consent: false,
+            consent_update_reason: 'unsubscribed',
+            consent_update_ts: 1582562407,
+            event_data: {
+              ...CAMPAIGN_TRACKING,
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });
@@ -287,17 +304,19 @@ describe('CampaignEvents', () => {
         await campaignEvents.optIn('id1', 'subscribed', 1582562407, {_test: 'test1'});
         await campaignEvents.flush();
 
-        expect(z.identifier.updateConsent).toHaveBeenCalledWith([{
-          identifier_field_name: 'test_id',
-          identifier_value: 'id1',
-          consent: true,
-          consent_update_reason: 'subscribed',
-          consent_update_ts: 1582562407,
-          event_data: {
-            ...CAMPAIGN_TRACKING,
-            _test: 'test1',
+        expect(z.identifier.updateConsent).toHaveBeenCalledWith([
+          {
+            identifier_field_name: 'test_id',
+            identifier_value: 'id1',
+            consent: true,
+            consent_update_reason: 'subscribed',
+            consent_update_ts: 1582562407,
+            event_data: {
+              ...CAMPAIGN_TRACKING,
+              _test: 'test1'
+            }
           }
-        }]);
+        ]);
       });
     });
   });

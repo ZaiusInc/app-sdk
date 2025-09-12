@@ -1,9 +1,10 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
 import 'jest';
-import {LiquidExtensionResult} from '../../lib';
+
 import {LiquidExtension} from '../../LiquidExtension';
 import {Runtime} from '../../Runtime';
+import {LiquidExtensionResult} from '../../lib';
 import {AppManifest} from '../../types';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 
@@ -40,7 +41,6 @@ const appManifest = deepFreeze({
   }
 } as AppManifest);
 
-
 class NonExtendedBuzz {
   // Nothing
 }
@@ -58,7 +58,8 @@ class ProperBuzz extends LiquidExtension {
 describe('validateLiquidExtensions', () => {
   it('succeeds with a proper definition', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLiquidExtensionClass = jest.spyOn(Runtime.prototype, 'getLiquidExtensionClass')
+    const getLiquidExtensionClass = jest
+      .spyOn(Runtime.prototype, 'getLiquidExtensionClass')
       .mockResolvedValue(ProperBuzz);
 
     const errors = await validateLiquidExtensions(runtime);
@@ -71,19 +72,21 @@ describe('validateLiquidExtensions', () => {
 
   it('detects missing liquid extension entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLiquidExtensionClass = jest.spyOn(Runtime.prototype, 'getLiquidExtensionClass')
+    const getLiquidExtensionClass = jest
+      .spyOn(Runtime.prototype, 'getLiquidExtensionClass')
       .mockRejectedValue(new Error('not found'));
 
-    expect(await validateLiquidExtensions(runtime)).toEqual(
-      ['Error loading entry point for liquid extension buzz. Error: not found']
-    );
+    expect(await validateLiquidExtensions(runtime)).toEqual([
+      'Error loading entry point for liquid extension buzz. Error: not found'
+    ]);
 
     getLiquidExtensionClass.mockRestore();
   });
 
   it('detects non-extended liquid extension entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLiquidExtensionClass = jest.spyOn(Runtime.prototype, 'getLiquidExtensionClass')
+    const getLiquidExtensionClass = jest
+      .spyOn(Runtime.prototype, 'getLiquidExtensionClass')
       .mockResolvedValue(NonExtendedBuzz as any);
 
     expect(await validateLiquidExtensions(runtime)).toEqual([
@@ -95,7 +98,8 @@ describe('validateLiquidExtensions', () => {
 
   it('detects partial liquid extension entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    const getLiquidExtensionClass = jest.spyOn(Runtime.prototype, 'getLiquidExtensionClass')
+    const getLiquidExtensionClass = jest
+      .spyOn(Runtime.prototype, 'getLiquidExtensionClass')
       .mockResolvedValue(PartialBuzz as any);
 
     expect(await validateLiquidExtensions(runtime)).toEqual([

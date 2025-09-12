@@ -1,5 +1,5 @@
-import {AppManifest} from './types';
 import {OCPContext} from '../types';
+import {AppManifest} from './types';
 
 export interface AppContext {
   manifest: AppManifest;

@@ -76,12 +76,33 @@ export interface AppDestinationSchemaFunction {
   entry_point: string;
 }
 
-export type AppCategory = 'Commerce Platform' | 'Point of Sale' | 'Lead Capture' | 'Advertising' | 'Marketing'
-| 'Channel' | 'Loyalty & Rewards' | 'Customer Experience' | 'Analytics & Reporting' | 'Surveys & Feedback'
-| 'Reviews & Ratings' | 'Content Management' | 'Data Quality & Enrichment' | 'Productivity' | 'CRM'
-| 'Accounting & Finance' | 'CDP / DMP' | 'Attribution & Linking' | 'Testing & Utilities'
-| 'Personalization & Content' | 'Offers' | 'Merchandising & Products' | 'Site & Content Experience'
-| 'Subscriptions' | 'Audience Sync' | 'Opal';
+export type AppCategory =
+  | 'Commerce Platform'
+  | 'Point of Sale'
+  | 'Lead Capture'
+  | 'Advertising'
+  | 'Marketing'
+  | 'Channel'
+  | 'Loyalty & Rewards'
+  | 'Customer Experience'
+  | 'Analytics & Reporting'
+  | 'Surveys & Feedback'
+  | 'Reviews & Ratings'
+  | 'Content Management'
+  | 'Data Quality & Enrichment'
+  | 'Productivity'
+  | 'CRM'
+  | 'Accounting & Finance'
+  | 'CDP / DMP'
+  | 'Attribution & Linking'
+  | 'Testing & Utilities'
+  | 'Personalization & Content'
+  | 'Offers'
+  | 'Merchandising & Products'
+  | 'Site & Content Experience'
+  | 'Subscriptions'
+  | 'Audience Sync'
+  | 'Opal';
 
 export type AppRuntime = 'node12' | 'node18' | 'node18_rt' | 'node22';
 

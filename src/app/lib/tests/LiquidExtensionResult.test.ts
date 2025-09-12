@@ -1,4 +1,5 @@
 import 'jest';
+
 import {LiquidExtensionResult} from '../LiquidExtensionResult';
 
 describe('LiquidExtensionResult', () => {

@@ -1,12 +1,10 @@
-import { DestinationSchema, DestinationSchemaField } from '../types/DestinationSchema';
 import * as path from 'path';
+
+import {DestinationSchema, DestinationSchemaField} from '../types/DestinationSchema';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 
-export function validateDestinationsSchema(
-  destinationSchema: DestinationSchema,
-  file: string
-): string[] {
+export function validateDestinationsSchema(destinationSchema: DestinationSchema, file: string): string[] {
   return new DestinationSchemaValidator(destinationSchema, file).validate();
 }
 
@@ -15,17 +13,16 @@ class DestinationSchemaValidator {
   private destinationsSchema: DestinationSchema;
   private file: string;
 
-  public constructor(
-    destinationSchema: DestinationSchema,
-    file: string
-  ) {
+  public constructor(destinationSchema: DestinationSchema, file: string) {
     this.destinationsSchema = destinationSchema;
     this.file = file;
   }
 
   public validate(): string[] {
-    if (path.basename(this.file, '.yml') !== this.destinationsSchema.name &&
-        path.basename(this.file, '.yaml') !== this.destinationsSchema.name) {
+    if (
+      path.basename(this.file, '.yml') !== this.destinationsSchema.name &&
+      path.basename(this.file, '.yaml') !== this.destinationsSchema.name
+    ) {
       this.errors.push(`Invalid ${this.file}: name must match file base name`);
     }
 

@@ -11,7 +11,11 @@ export class Request {
   private parsedJsonBody?: any;
 
   public constructor(
-    method: HttpMethod, path: string, params: QueryParams, headers: string[][], body: Uint8Array | null
+    method: HttpMethod,
+    path: string,
+    params: QueryParams,
+    headers: string[][],
+    body: Uint8Array | null
   ) {
     this.method = method;
     this.path = path;
@@ -34,7 +38,7 @@ export class Request {
     }
 
     // TODO: attempt to read character set from content-type header and/or allow user to set the encoding
-    return this.parsedJsonBody = JSON.parse(Buffer.from(this.bodyData).toString('utf8'));
+    return (this.parsedJsonBody = JSON.parse(Buffer.from(this.bodyData).toString('utf8')));
   }
 
   public get contentType() {

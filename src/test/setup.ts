@@ -6,10 +6,7 @@ expect.extend({
     try {
       const object = JSON.parse(json);
       for (const property in expected) {
-        if (
-          !Object.keys(object).includes(property) ||
-          !isEqual(object[property], expected[property])
-        ) {
+        if (!Object.keys(object).includes(property) || !isEqual(object[property], expected[property])) {
           // NOTE: Don't know why this generated message isn't showing in the failure cases,
           // but you get a generic jest message instead
           return {

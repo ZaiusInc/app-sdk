@@ -1,11 +1,11 @@
-import 'jest';
-import {notifications, Notifier, setNotifier} from '..';
-import {LocalNotifier} from '../LocalNotifier';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
+import {notifications, Notifier, setNotifier} from '..';
 import {OCPContext} from '../../types';
+import {LocalNotifier} from '../LocalNotifier';
 
 describe('activityLog', () => {
-
   const mockNotifier: Notifier = {
     info: jest.fn(),
     success: jest.fn(),
@@ -32,14 +32,12 @@ describe('activityLog', () => {
 
   describe('initialize - async local store configuration', () => {
     it('uses local notifier if not provided in OCP runtime in global context', async () => {
-      const infoFunction = jest.spyOn(LocalNotifier.prototype, 'info')
+      const infoFunction = jest.spyOn(LocalNotifier.prototype, 'info').mockImplementation(() => Promise.resolve());
+      const successFunction = jest
+        .spyOn(LocalNotifier.prototype, 'success')
         .mockImplementation(() => Promise.resolve());
-      const successFunction = jest.spyOn(LocalNotifier.prototype, 'success')
-        .mockImplementation(() => Promise.resolve());
-      const warnFunction = jest.spyOn(LocalNotifier.prototype, 'warn')
-        .mockImplementation(() => Promise.resolve());
-      const errorFunction = jest.spyOn(LocalNotifier.prototype, 'error')
-        .mockImplementation(() => Promise.resolve());
+      const warnFunction = jest.spyOn(LocalNotifier.prototype, 'warn').mockImplementation(() => Promise.resolve());
+      const errorFunction = jest.spyOn(LocalNotifier.prototype, 'error').mockImplementation(() => Promise.resolve());
 
       await notifications.info('activity', 'title', 'summary', 'detail');
       await notifications.success('activity', 'title', 'summary', 'detail');

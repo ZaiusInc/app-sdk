@@ -1,5 +1,5 @@
-import {ValueHash} from '../store';
 import {Source} from '../sources/Source';
+import {ValueHash} from '../store';
 
 export interface SourceJobInvocation {
   /**
@@ -20,7 +20,6 @@ export interface SourceJobInvocation {
    * The data sync id.
    */
   dataSyncId: string;
-
 }
 
 export interface SourceJobStatus extends ValueHash {
@@ -65,8 +64,10 @@ export abstract class SourceJob {
    */
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: 6138 declared but never read
-  public constructor(protected invocation: SourceJobInvocation, protected source: Source) {
-  }
+  public constructor(
+    protected invocation: SourceJobInvocation,
+    protected source: Source
+  ) {}
 
   /**
    * Prepares to run a job. Prepare is called at the start of a job

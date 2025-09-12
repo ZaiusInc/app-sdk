@@ -1,10 +1,10 @@
-import 'jest';
-import {LogContext, Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../types';
+import {LogContext, Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
 
 describe('Logger', () => {
-
   function runWithAsyncLocalStore(
     code: () => void,
     logLevel: LogLevel = LogLevel.Info,
@@ -54,31 +54,36 @@ describe('Logger', () => {
     });
 
     it('uses the provided log context', () => {
-      runWithAsyncLocalStore(async () => {
-        logger.info('info');
-        expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
-          context: {
-            app_id: 'sample',
-            app_version: '1.0.0',
-            tracker_id: 'vdl',
-            install_id: 1234,
-            entry_point: 'job:foo',
-            job_id: '123-456'
-          }
-        }));
-      }, LogLevel.Info, {
-        app_id: 'sample',
-        app_version: '1.0.0',
-        tracker_id: 'vdl',
-        install_id: 1234,
-        entry_point: 'job:foo',
-        job_id: '123-456'
-      });
+      runWithAsyncLocalStore(
+        async () => {
+          logger.info('info');
+          expect(process.stdout.write).toHaveBeenCalledWith(
+            expect.jsonContaining({
+              context: {
+                app_id: 'sample',
+                app_version: '1.0.0',
+                tracker_id: 'vdl',
+                install_id: 1234,
+                entry_point: 'job:foo',
+                job_id: '123-456'
+              }
+            })
+          );
+        },
+        LogLevel.Info,
+        {
+          app_id: 'sample',
+          app_version: '1.0.0',
+          tracker_id: 'vdl',
+          install_id: 1234,
+          entry_point: 'job:foo',
+          job_id: '123-456'
+        }
+      );
     });
   });
 
   describe('debug - async local store', () => {
-
     it('logs to stdout', () => {
       runWithAsyncLocalStore(async () => {
         new Logger().debug('debug');
@@ -251,19 +256,13 @@ describe('Logger', () => {
     it('extracts the stacktrace from the first error', () => {
       runWithAsyncLocalStore(async () => {
         logger.error(new Error('i have a stacktrace'));
-        expect(process.stderr.write).toHaveBeenCalledWith(
-          expect.stringMatching(/"stacktrace":".+"/)
-        );
+        expect(process.stderr.write).toHaveBeenCalledWith(expect.stringMatching(/"stacktrace":".+"/));
 
         logger.error('Error:', new Error('i have a stacktrace'));
-        expect(process.stderr.write).toHaveBeenCalledWith(
-          expect.stringMatching(/"stacktrace":".+"/)
-        );
+        expect(process.stderr.write).toHaveBeenCalledWith(expect.stringMatching(/"stacktrace":".+"/));
 
         logger.error('no stacktrace');
-        expect(process.stderr.write).toHaveBeenCalledWith(
-          expect.not.stringMatching(/"stacktrace":".+"/)
-        );
+        expect(process.stderr.write).toHaveBeenCalledWith(expect.not.stringMatching(/"stacktrace":".+"/));
       });
     });
 
@@ -278,30 +277,36 @@ describe('Logger', () => {
 
     it('fills in all the expected details', () => {
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
-      runWithAsyncLocalStore(async () => {
-        logger.info('This is a test');
-        expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonRepresenting({
-          time: '2019-09-04T19:49:22.275Z',
-          level: 'info',
-          message: 'This is a test',
-          audience: 'developer',
-          context: {
-            app_id: 'sample1',
-            app_version: '1.1.0',
-            tracker_id: 'abc123',
-            install_id: 123,
-            entry_point: 'function:foo',
-            request_id: '12345-678-90'
-          }
-        }));
-      }, LogLevel.Info, {
-        app_id: 'sample1',
-        app_version: '1.1.0',
-        tracker_id: 'abc123',
-        install_id: 123,
-        entry_point: 'function:foo',
-        request_id: '12345-678-90'
-      });
+      runWithAsyncLocalStore(
+        async () => {
+          logger.info('This is a test');
+          expect(process.stdout.write).toHaveBeenCalledWith(
+            expect.jsonRepresenting({
+              time: '2019-09-04T19:49:22.275Z',
+              level: 'info',
+              message: 'This is a test',
+              audience: 'developer',
+              context: {
+                app_id: 'sample1',
+                app_version: '1.1.0',
+                tracker_id: 'abc123',
+                install_id: 123,
+                entry_point: 'function:foo',
+                request_id: '12345-678-90'
+              }
+            })
+          );
+        },
+        LogLevel.Info,
+        {
+          app_id: 'sample1',
+          app_version: '1.1.0',
+          tracker_id: 'abc123',
+          install_id: 123,
+          entry_point: 'function:foo',
+          request_id: '12345-678-90'
+        }
+      );
     });
 
     it.each([
@@ -312,9 +317,7 @@ describe('Logger', () => {
     ])('truncates long messages', (input, expected) => {
       runWithAsyncLocalStore(async () => {
         new Logger({maxLineLength: 16}).info(input);
-        expect(process.stdout.write).toHaveBeenCalledWith(
-          expect.jsonContaining({message: expected})
-        );
+        expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({message: expected}));
       });
     });
   });
@@ -368,16 +371,18 @@ describe('Logger', () => {
         job_id: '123-456'
       });
       logger.info('info');
-      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({
-        context: {
-          app_id: 'sample',
-          app_version: '1.0.0',
-          tracker_id: 'vdl',
-          install_id: 1234,
-          entry_point: 'job:foo',
-          job_id: '123-456'
-        }
-      }));
+      expect(process.stdout.write).toHaveBeenCalledWith(
+        expect.jsonContaining({
+          context: {
+            app_id: 'sample',
+            app_version: '1.0.0',
+            tracker_id: 'vdl',
+            install_id: 1234,
+            entry_point: 'job:foo',
+            job_id: '123-456'
+          }
+        })
+      );
     });
   });
 
@@ -534,19 +539,13 @@ describe('Logger', () => {
 
     it('extracts the stacktrace from the first error', () => {
       logger.error(new Error('i have a stacktrace'));
-      expect(process.stderr.write).toHaveBeenCalledWith(
-        expect.stringMatching(/"stacktrace":".+"/)
-      );
+      expect(process.stderr.write).toHaveBeenCalledWith(expect.stringMatching(/"stacktrace":".+"/));
 
       logger.error('Error:', new Error('i have a stacktrace'));
-      expect(process.stderr.write).toHaveBeenCalledWith(
-        expect.stringMatching(/"stacktrace":".+"/)
-      );
+      expect(process.stderr.write).toHaveBeenCalledWith(expect.stringMatching(/"stacktrace":".+"/));
 
       logger.error('no stacktrace');
-      expect(process.stderr.write).toHaveBeenCalledWith(
-        expect.not.stringMatching(/"stacktrace":".+"/)
-      );
+      expect(process.stderr.write).toHaveBeenCalledWith(expect.not.stringMatching(/"stacktrace":".+"/));
     });
 
     it('concatenates different values logged in one call', () => {
@@ -567,20 +566,22 @@ describe('Logger', () => {
       });
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       logger.info('This is a test');
-      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonRepresenting({
-        time: '2019-09-04T19:49:22.275Z',
-        level: 'info',
-        message: 'This is a test',
-        audience: 'developer',
-        context: {
-          app_id: 'sample1',
-          app_version: '1.1.0',
-          tracker_id: 'abc123',
-          install_id: 123,
-          entry_point: 'function:foo',
-          request_id: '12345-678-90'
-        }
-      }));
+      expect(process.stdout.write).toHaveBeenCalledWith(
+        expect.jsonRepresenting({
+          time: '2019-09-04T19:49:22.275Z',
+          level: 'info',
+          message: 'This is a test',
+          audience: 'developer',
+          context: {
+            app_id: 'sample1',
+            app_version: '1.1.0',
+            tracker_id: 'abc123',
+            install_id: 123,
+            entry_point: 'function:foo',
+            request_id: '12345-678-90'
+          }
+        })
+      );
     });
 
     it.each([
@@ -590,9 +591,7 @@ describe('Logger', () => {
       ['a'.repeat(18), 'a'.repeat(13) + '...']
     ])('truncates long messages', (input, expected) => {
       new Logger({maxLineLength: 16}).info(input);
-      expect(process.stdout.write).toHaveBeenCalledWith(
-        expect.jsonContaining({message: expected})
-      );
+      expect(process.stdout.write).toHaveBeenCalledWith(expect.jsonContaining({message: expected}));
     });
   });
 

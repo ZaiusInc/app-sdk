@@ -12,8 +12,10 @@ export type BatchOperation<T> = (batch: T[]) => Promise<any>;
  */
 export class Batcher<T> {
   private batch: T[] = [];
-  public constructor(private operation: BatchOperation<T>, private limit = 100) {
-  }
+  public constructor(
+    private operation: BatchOperation<T>,
+    private limit = 100
+  ) {}
 
   /**
    * Append data to the batch, and if the batch size reaches the limit, perform and await the desired operation
@@ -34,7 +36,6 @@ export class Batcher<T> {
     if (this.batch.length > 0) {
       const flushBatch = this.batch.splice(0, this.limit);
       await this.operation(flushBatch);
-
     }
   }
 }

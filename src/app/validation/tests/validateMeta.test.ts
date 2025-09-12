@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import 'jest';
+
 import {Rivendell} from '../../../util/Rivendell';
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
@@ -54,7 +55,7 @@ describe('validateMeta', () => {
 
     expect(await validateMeta(runtime)).toEqual([
       'Invalid app.yml: meta.app_id must start with a letter, contain only lowercase alpha-numeric and underscore, ' +
-      'and be between 3 and 32 characters long (/^[a-z][a-z_0-9]{2,31}$/)'
+        'and be between 3 and 32 characters long (/^[a-z][a-z_0-9]{2,31}$/)'
     ]);
   });
 
@@ -71,7 +72,7 @@ describe('validateMeta', () => {
 
     expect(await validateMeta(runtime)).toEqual([
       'Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ' +
-      'or -private (/^\\d+\\.\\d+\\.\\d+(-(((dev|beta)(\\.\\d+)?)|private))?$/)'
+        'or -private (/^\\d+\\.\\d+\\.\\d+(-(((dev|beta)(\\.\\d+)?)|private))?$/)'
     ]);
   });
 
@@ -114,10 +115,10 @@ describe('validateMeta', () => {
 
   it('detects too many categories', async () => {
     const manifest = {
-      ...appManifest, meta: {
-        ...appManifest.meta, categories: [
-          'Commerce Platform', 'Point of Sale', 'Lead Capture'
-        ]
+      ...appManifest,
+      meta: {
+        ...appManifest.meta,
+        categories: ['Commerce Platform', 'Point of Sale', 'Lead Capture']
       }
     };
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
@@ -136,17 +137,19 @@ describe('validateMeta', () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, availability: []}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
-    expect(await validateMeta(runtime)).toEqual(
-      ['Invalid app.yml: meta.availability must contain at least one availability zone']);
+    expect(await validateMeta(runtime)).toEqual([
+      'Invalid app.yml: meta.availability must contain at least one availability zone'
+    ]);
   });
 
   it('detects availability contains "all" or shards not both', async () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, availability: ['all', 'foo']}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
-    expect(await validateMeta(runtime)).toEqual(
-      ['Invalid app.yml: meta.availability should not contain any other availability zones ' +
-        'if it contains "all" availability zones']);
+    expect(await validateMeta(runtime)).toEqual([
+      'Invalid app.yml: meta.availability should not contain any other availability zones ' +
+        'if it contains "all" availability zones'
+    ]);
   });
 
   it('detects invalid shards', async () => {
@@ -154,8 +157,9 @@ describe('validateMeta', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
     jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'bar']);
 
-    expect(await validateMeta(runtime)).toEqual(
-      ['Invalid app.yml: meta.availability should only contain valid availability zones (us,bar) found: fuz']);
+    expect(await validateMeta(runtime)).toEqual([
+      'Invalid app.yml: meta.availability should only contain valid availability zones (us,bar) found: fuz'
+    ]);
   });
 
   it('allows only none-primary shards', async () => {
@@ -163,7 +167,6 @@ describe('validateMeta', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
     jest.spyOn(Rivendell, 'shards').mockResolvedValue(['us', 'au', 'eu']);
 
-    expect(await validateMeta(runtime)).toEqual(
-      []);
+    expect(await validateMeta(runtime)).toEqual([]);
   });
 });

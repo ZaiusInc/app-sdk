@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import 'jest';
+
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
 import {validateEnvironment} from '../validateEnvironment';
@@ -71,7 +72,7 @@ describe('validateEnvironment', () => {
 
     expect(validateEnvironment(runtime)).toEqual([
       'Invalid app.yml: environment.APP_ENV_FOO is listed more than once',
-      'Invalid app.yml: environment.APP_ENV_BUZZ is listed more than once',
+      'Invalid app.yml: environment.APP_ENV_BUZZ is listed more than once'
     ]);
   });
 

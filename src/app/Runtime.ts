@@ -1,35 +1,36 @@
 /* eslint-disable max-classes-per-file */
 import Ajv from 'ajv';
+import deepFreeze from 'deep-freeze';
 import {readFileSync} from 'fs';
+import * as glob from 'glob';
 import * as jsYaml from 'js-yaml';
 import {join} from 'path';
+
+import {Source} from '../sources/Source';
 import {Channel} from './Channel';
+import {Destination} from './Destination';
+import {DestinationSchemaFunction, DestinationSchemaFunctionConfig} from './DestinationSchemaFunction';
 import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
-import {SourceJob, SourceJobInvocation} from './SourceJob';
-import {Request} from './lib';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
+import {SourceFunction, SourceConfiguration} from './SourceFunction';
+import {SourceJob, SourceJobInvocation} from './SourceJob';
+import {SourceLifecycle} from './SourceLifecycle';
+import {SourceSchemaFunction, SourceSchemaFunctionConfig} from './SourceSchemaFunction';
+import {Request} from './lib';
 import {AppManifest} from './types';
 import manifestSchema from './types/AppManifest.schema.json';
-import {SchemaObjects} from './types/SchemaObject';
-import deepFreeze from 'deep-freeze';
-import * as glob from 'glob';
-import {Destination} from './Destination';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
-import { SourceFunction, SourceConfiguration } from './SourceFunction';
-import { SourceSchemaFunction, SourceSchemaFunctionConfig } from './SourceSchemaFunction';
-import { SourceSchemaObjects } from './types/SourceSchema';
-import { Source } from '../sources/Source';
-import { SourceLifecycle } from './SourceLifecycle';
-import { DestinationSchemaFunction, DestinationSchemaFunctionConfig } from './DestinationSchemaFunction';
+import {SchemaObjects} from './types/SchemaObject';
+import {SourceSchemaObjects} from './types/SourceSchema';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
   dirName: string;
 }
 
-export class FunctionClassNotFoundError extends Error { }
+export class FunctionClassNotFoundError extends Error {}
 
 export class Runtime {
   /**
@@ -94,8 +95,10 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'jobs', job.entry_point)))[job.entry_point];
   }
 
-  public async getSourceJobClass<T extends SourceJob>(sourceName: string, jobName: string):
-  Promise<new (invocation: SourceJobInvocation, source: Source) => T> {
+  public async getSourceJobClass<T extends SourceJob>(
+    sourceName: string,
+    jobName: string
+  ): Promise<new (invocation: SourceJobInvocation, source: Source) => T> {
     const source = this.manifest.sources;
     if (!source || !source[sourceName]) {
       throw new Error(`No source named ${sourceName} defined in manifest`);
@@ -118,8 +121,9 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', destination.entry_point)))[destination.entry_point];
   }
 
-  public async getSourceLifecycleClass<T extends SourceLifecycle>(name: string): Promise<
-  (new (config: SourceConfiguration) => T) | null> {
+  public async getSourceLifecycleClass<T extends SourceLifecycle>(
+    name: string
+  ): Promise<(new (config: SourceConfiguration) => T) | null> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
@@ -131,8 +135,9 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'sources', lifecycleEntryPoint)))[lifecycleEntryPoint];
   }
 
-  public async getDestinationSchemaFunctionClass<T extends DestinationSchemaFunction>(name: string): Promise<
-  (new (config: DestinationSchemaFunctionConfig) => T)> {
+  public async getDestinationSchemaFunctionClass<T extends DestinationSchemaFunction>(
+    name: string
+  ): Promise<new (config: DestinationSchemaFunctionConfig) => T> {
     const destinations = this.manifest.destinations;
     if (!destinations || !destinations[name]) {
       throw new Error(`No destination '${name}' defined in manifest`);
@@ -147,8 +152,9 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'destinations', providerEntryPoint)))[providerEntryPoint];
   }
 
-  public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(name: string): Promise<
-  (new (config: SourceSchemaFunctionConfig) => T)> {
+  public async getSourceSchemaFunctionClass<T extends SourceSchemaFunction>(
+    name: string
+  ): Promise<new (config: SourceSchemaFunctionConfig) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
@@ -163,8 +169,9 @@ export class Runtime {
     return (await this.import(join(this.dirName, 'sources', providerEntryPoint)))[providerEntryPoint];
   }
 
-  public async getSourceFunctionClass<T extends SourceFunction>(name: string): Promise<
-  new (config: SourceConfiguration, request: Request, source: Source) => T> {
+  public async getSourceFunctionClass<T extends SourceFunction>(
+    name: string
+  ): Promise<new (config: SourceConfiguration, request: Request, source: Source) => T> {
     const sources = this.manifest.sources;
     if (!sources || !sources[name]) {
       throw new Error(`No source '${name}' defined in manifest`);
@@ -200,7 +207,7 @@ export class Runtime {
 
   private getSchema(path: string) {
     const schemaObjects: any = {};
-    const files = glob.sync(`${path}/*.{yml,yaml}`, { cwd: this.dirName });
+    const files = glob.sync(`${path}/*.{yml,yaml}`, {cwd: this.dirName});
     if (files.length > 0) {
       for (const file of files) {
         schemaObjects[file] = jsYaml.load(readFileSync(join(this.dirName, file), 'utf8'));
@@ -224,9 +231,7 @@ export class Runtime {
   private async initialize(dirName: string, skipJsonValidation: boolean) {
     this.dirName = dirName;
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
-    const manifest = (await import('js-yaml')).load(
-      readFileSync(join(dirName, 'app.yml'), 'utf8')
-    );
+    const manifest = (await import('js-yaml')).load(readFileSync(join(dirName, 'app.yml'), 'utf8'));
 
     if (!skipJsonValidation) {
       const ajv: Ajv = new Ajv({allowUnionTypes: true});

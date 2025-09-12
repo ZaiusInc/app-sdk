@@ -1,8 +1,9 @@
+import jp from 'jsonpath';
+
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
-import { AppFunction } from '../types';
-import jp from 'jsonpath';
+import {AppFunction} from '../types';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
