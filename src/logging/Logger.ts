@@ -1,5 +1,7 @@
 import * as util from 'util';
 
+import {ValueHash} from '../store';
+
 /**
  * Supported log levels, in order of least important to most.
  */
@@ -44,17 +46,15 @@ interface LogMessage {
 /**
  * @hidden
  * Context added to each log automatically by the SDK
+ * This is set automatically when the app code is called by the engine.
+ * Different fields will be set depending on how the app code is being executed
+ * (e.g. function, job, data sync, etc.)
  */
-export interface LogContext {
+export interface LogContext extends ValueHash {
   app_id: string;
   app_version: string;
+  entry_point: string;
   tracker_id?: string;
-  install_id?: number;
-  entry_point?: string; // e.g., function:fn_name
-  request_id?: string;
-  job_id?: string;
-  data_sync_id?: string;
-  source_key?: string;
 }
 
 export interface LoggerOptions {
@@ -94,6 +94,14 @@ let context: LogContext;
  */
 export function setLogContext(logContext: LogContext) {
   context = logContext;
+}
+
+/**
+ * @hidden
+ * Amend the current log context with additional information
+ */
+export function amendLogContext(extra_fields: {[field: string]: string | number | boolean}) {
+  context && (context = {...context, ...extra_fields});
 }
 
 function getLogContext(): LogContext {
