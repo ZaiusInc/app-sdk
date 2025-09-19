@@ -6,9 +6,9 @@ export interface AppContext {
   trackerId: string;
   installId: number;
   account: {
-    organizationId: string,
-    instanceId: string
-  }
+    organizationId: string;
+    instanceId: string;
+  };
 }
 
 let currentContext: AppContext;
