@@ -2,7 +2,16 @@ import {AsyncLocalStorage} from 'async_hooks';
 import 'jest';
 
 import {OCPContext} from '../../types';
-import {LogContext, Logger, logger, LogLevel, LogVisibility, setLogContext, setLogLevel} from '../Logger';
+import {
+  amendLogContext,
+  LogContext,
+  Logger,
+  logger,
+  LogLevel,
+  LogVisibility,
+  setLogContext,
+  setLogLevel
+} from '../Logger';
 
 describe('Logger', () => {
   function runWithAsyncLocalStore(
@@ -370,6 +379,7 @@ describe('Logger', () => {
         entry_point: 'job:foo',
         job_id: '123-456'
       });
+      amendLogContext({extra_field: 'extra_value'});
       logger.info('info');
       expect(process.stdout.write).toHaveBeenCalledWith(
         expect.jsonContaining({
@@ -379,7 +389,8 @@ describe('Logger', () => {
             tracker_id: 'vdl',
             install_id: 1234,
             entry_point: 'job:foo',
-            job_id: '123-456'
+            job_id: '123-456',
+            extra_field: 'extra_value'
           }
         })
       );
@@ -564,6 +575,7 @@ describe('Logger', () => {
         entry_point: 'function:foo',
         request_id: '12345-678-90'
       });
+      amendLogContext({extra_field: 'extra_value'});
       jest.spyOn(Date.prototype, 'toISOString').mockReturnValueOnce('2019-09-04T19:49:22.275Z');
       logger.info('This is a test');
       expect(process.stdout.write).toHaveBeenCalledWith(
@@ -578,7 +590,8 @@ describe('Logger', () => {
             tracker_id: 'abc123',
             install_id: 123,
             entry_point: 'function:foo',
-            request_id: '12345-678-90'
+            request_id: '12345-678-90',
+            extra_field: 'extra_value'
           }
         })
       );
