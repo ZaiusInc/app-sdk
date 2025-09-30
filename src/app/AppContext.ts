@@ -5,7 +5,7 @@ export interface AppContext {
   manifest: AppManifest;
   trackerId: string;
   installId: number;
-  account: {
+  account?: {
     organizationId: string;
     instanceId: string;
   };
