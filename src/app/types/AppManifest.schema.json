@@ -127,6 +127,9 @@
                         "type"
                     ],
                     "type": "object"
+                },
+                "is_opal_tool": {
+                    "type": "boolean"
                 }
             },
             "required": [
