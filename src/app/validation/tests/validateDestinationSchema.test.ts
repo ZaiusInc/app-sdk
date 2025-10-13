@@ -125,11 +125,9 @@ describe('validateDestinationSchema', () => {
       description: 'Description',
       display_name: 'Valid Schema',
       fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'custom_type2', primary: true }
+        {name: 'field1', display_name: 'Field 1', description: 'Description', type: 'custom_type2', primary: true}
       ],
-      custom_types: [
-        { name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [] }
-      ]
+      custom_types: [{name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -144,11 +142,9 @@ describe('validateDestinationSchema', () => {
       description: 'Description',
       display_name: 'Valid Schema',
       fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'custom_type1', primary: true }
+        {name: 'field1', display_name: 'Field 1', description: 'Description', type: 'custom_type1', primary: true}
       ],
-      custom_types: [
-        { name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [] }
-      ]
+      custom_types: [{name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -161,11 +157,9 @@ describe('validateDestinationSchema', () => {
       description: 'Description',
       display_name: 'Valid Schema',
       fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: '[custom_type1]', primary: true }
+        {name: 'field1', display_name: 'Field 1', description: 'Description', type: '[custom_type1]', primary: true}
       ],
-      custom_types: [
-        { name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [] }
-      ]
+      custom_types: [{name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -177,12 +171,8 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
-      custom_types: [
-        { name: '', display_name: 'Custom Type 1', description: 'Description', fields: [] }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
+      custom_types: [{name: '', display_name: 'Custom Type 1', description: 'Description', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -194,12 +184,8 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
-      custom_types: [
-        { name: 'custom_type1', display_name: '', description: 'Description', fields: [] }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
+      custom_types: [{name: 'custom_type1', display_name: '', description: 'Description', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -211,12 +197,8 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
-      custom_types: [
-        { name: 'custom_type1', display_name: 'Custom Type 1', description: '', fields: [] }
-      ]
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
+      custom_types: [{name: 'custom_type1', display_name: 'Custom Type 1', description: '', fields: []}]
     };
     const file = 'valid_schema.yml';
     const result = validateDestinationsSchema(invalidSchema, file);
@@ -228,14 +210,20 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
       custom_types: [
         {
-          name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [{
-            name: '', display_name: 'Field 1', description: 'Description', type: 'string'
-          }]
+          name: 'custom_type1',
+          display_name: 'Custom Type 1',
+          description: 'Description',
+          fields: [
+            {
+              name: '',
+              display_name: 'Field 1',
+              description: 'Description',
+              type: 'string'
+            }
+          ]
         }
       ]
     };
@@ -249,14 +237,20 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
       custom_types: [
         {
-          name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [{
-            name: 'field1', display_name: '', description: 'Description', type: 'string'
-          }]
+          name: 'custom_type1',
+          display_name: 'Custom Type 1',
+          description: 'Description',
+          fields: [
+            {
+              name: 'field1',
+              display_name: '',
+              description: 'Description',
+              type: 'string'
+            }
+          ]
         }
       ]
     };
@@ -270,14 +264,20 @@ describe('validateDestinationSchema', () => {
       name: 'valid_schema',
       description: 'Description',
       display_name: 'Valid Schema',
-      fields: [
-        { name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true }
-      ],
+      fields: [{name: 'field1', display_name: 'Field 1', description: 'Description', type: 'string', primary: true}],
       custom_types: [
         {
-          name: 'custom_type1', display_name: 'Custom Type 1', description: 'Description', fields: [{
-            name: 'field1', display_name: 'Field 1', description: '', type: 'string'
-          }]
+          name: 'custom_type1',
+          display_name: 'Custom Type 1',
+          description: 'Description',
+          fields: [
+            {
+              name: 'field1',
+              display_name: 'Field 1',
+              description: '',
+              type: 'string'
+            }
+          ]
         }
       ]
     };

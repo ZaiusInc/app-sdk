@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { DestinationSchema, DestinationSchemaCustomType, DestinationSchemaField } from '../types';
+import {DestinationSchema, DestinationSchemaCustomType, DestinationSchemaField} from '../types';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
 

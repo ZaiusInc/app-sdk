@@ -131,24 +131,29 @@ const schemaObjects = deepFreeze({
         display_name: 'Bynder App Id',
         description: 'Id of the app',
         primary: true
+      },
+      {
+        name: 'category',
+        type: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset'
       }
-    , {
-      name: 'category',
-      type: 'category',
-      display_name: 'Category',
-      description: 'Category of the asset'
-    }],
-    custom_types: [{
-      name: 'category',
-      display_name: 'Category',
-      description: 'Category of the asset',
-      fields: [{
-        name: 'name',
-        display_name: 'Name',
-        description: 'Name of the category',
-        type: 'string'
-      }]
-    }]
+    ],
+    custom_types: [
+      {
+        name: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset',
+        fields: [
+          {
+            name: 'name',
+            display_name: 'Name',
+            description: 'Name of the category',
+            type: 'string'
+          }
+        ]
+      }
+    ]
   },
   'sources/schema/asset.yml': {
     name: 'asset',
@@ -161,24 +166,29 @@ const schemaObjects = deepFreeze({
         display_name: 'Bynder App Id',
         description: 'Id of the app',
         primary: true
+      },
+      {
+        name: 'category',
+        type: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset'
       }
-    , {
-      name: 'category',
-      type: 'category',
-      display_name: 'Category',
-      description: 'Category of the asset'
-    }],
-    custom_types: [{
-      name: 'category',
-      display_name: 'Category',
-      description: 'Category of the asset',
-      fields: [{
-        name: 'name',
-        display_name: 'Name',
-        description: 'Name of the category',
-        type: 'string'
-      }]
-    }]
+    ],
+    custom_types: [
+      {
+        name: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset',
+        fields: [
+          {
+            name: 'name',
+            display_name: 'Name',
+            description: 'Name of the category',
+            type: 'string'
+          }
+        ]
+      }
+    ]
   }
 } as {[file: string]: SchemaObject}) as {[file: string]: SchemaObject};
 
@@ -277,11 +287,11 @@ describe('validateApp', () => {
       "Invalid destinations/schema/asset.yml: must have required property 'name'",
       "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
       'Invalid destinations/schema/asset.yml: fields/0/type must match pattern ' +
-      '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
       "Invalid sources/schema/asset.yml: must have required property 'name'",
       "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name'",
       'Invalid sources/schema/asset.yml: fields/0/type must match pattern ' +
-      '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
