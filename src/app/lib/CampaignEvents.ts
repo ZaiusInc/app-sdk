@@ -1,10 +1,19 @@
 import {EventData, z} from '@zaiusinc/node-sdk';
+
+import {getAppContext} from '../AppContext';
 import {CampaignTracking} from '../Channel';
 import {Batcher} from './Batcher';
-import {getAppContext} from '../AppContext';
 
-export type CampaignAction = 'sent' | 'delivery' | 'open' | 'click' | 'engage' | 'disengage'
-| 'soft_bounce' | 'hard_bounce' | 'spam_report';
+export type CampaignAction =
+  | 'sent'
+  | 'delivery'
+  | 'open'
+  | 'click'
+  | 'engage'
+  | 'disengage'
+  | 'soft_bounce'
+  | 'hard_bounce'
+  | 'spam_report';
 
 /**
  * A class to help batch and send campaign related events

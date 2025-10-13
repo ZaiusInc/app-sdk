@@ -53,7 +53,7 @@ class JsonLinesParser extends Transform {
     first: false,
     lineNumber: 0,
     previousEnd: 0,
-    rowLength: 0,
+    rowLength: 0
   };
   private prev?: Buffer;
   private skipComments?: number;
@@ -130,7 +130,7 @@ class JsonLinesParser extends Transform {
 
     if (bufferLength - this.state.previousEnd < data.length) {
       this.prev = data;
-      this.state.previousEnd -= (bufferLength - data.length);
+      this.state.previousEnd -= bufferLength - data.length;
       return cb();
     }
 
@@ -183,7 +183,7 @@ class JsonLinesParser extends Transform {
         } else {
           // Push directly the row as object
           if (row === null) {
-            this.push(nullValue );
+            this.push(nullValue);
           } else {
             this.push(row);
           }

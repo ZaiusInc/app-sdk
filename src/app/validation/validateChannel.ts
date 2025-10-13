@@ -36,11 +36,15 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
       const hasPrepare = typeof (channelClass.prototype as any).prepare === 'function';
       const needsPrepare = channelManifest?.options?.prepare === undefined ? true : channelManifest.options.prepare;
       if (needsPrepare && !hasPrepare) {
-        errors.push('Channel implementation is missing the prepare method. ' +
-          'Either implement prepare or specify you do not need prepare in the channel options.');
+        errors.push(
+          'Channel implementation is missing the prepare method. ' +
+            'Either implement prepare or specify you do not need prepare in the channel options.'
+        );
       } else if (!needsPrepare && hasPrepare) {
-        errors.push('Channel implementation implements the prepare method, ' +
-          'but the channel options specify you do not need prepare');
+        errors.push(
+          'Channel implementation implements the prepare method, ' +
+            'but the channel options specify you do not need prepare'
+        );
       }
 
       const hasTarget = typeof (channelClass.prototype as any).target === 'function';

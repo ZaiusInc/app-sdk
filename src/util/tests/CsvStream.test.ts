@@ -1,10 +1,11 @@
 /* eslint max-classes-per-file: "off" */
-import 'jest';
-import {CsvRowProcessor, CsvStream} from '../CsvStream';
-import nock from 'nock';
-import {Stream} from 'stream';
 import {Options} from 'csv-parser';
+import 'jest';
+import nock from 'nock';
 import * as ObjectHash from 'object-hash';
+import {Stream} from 'stream';
+
+import {CsvRowProcessor, CsvStream} from '../CsvStream';
 import {JsonLinesStream} from '../JsonLinesStream';
 
 interface Row {
@@ -14,7 +15,10 @@ interface Row {
 }
 
 class TestCsvRowProcessor implements CsvRowProcessor<Row> {
-  public constructor(private completed = false, private readRows: Row[] = []) { }
+  public constructor(
+    private completed = false,
+    private readRows: Row[] = []
+  ) {}
 
   public get isCompleted() {
     return this.completed;
@@ -64,11 +68,7 @@ describe('CsvStream', () => {
     });
   };
 
-  const processAndVerifyError = async (
-    stream: JsonLinesStream<Row>,
-    processor: TestCsvRowProcessor,
-    error: string
-  ) => {
+  const processAndVerifyError = async (stream: JsonLinesStream<Row>, processor: TestCsvRowProcessor, error: string) => {
     await expect(() => stream.processSome()).rejects.toThrowError(error);
     expect(processor.isCompleted).toBe(false);
   };
@@ -79,22 +79,14 @@ describe('CsvStream', () => {
     readable.push(null);
 
     const processor = new TestCsvRowProcessor();
-    await processAndVerify(
-      CsvStream.fromStream(readable, processor),
-      processor
-    );
+    await processAndVerify(CsvStream.fromStream(readable, processor), processor);
   });
 
   it('builds instances processes from a url', async () => {
-    nock('https://zaius.app.sdk')
-      .get('/csv')
-      .reply(200, 'col1,col2,col3\nval1,val2,val3\n');
+    nock('https://zaius.app.sdk').get('/csv').reply(200, 'col1,col2,col3\nval1,val2,val3\n');
 
     const processor = new TestCsvRowProcessor();
-    await processAndVerify(
-      CsvStream.fromUrl('https://zaius.app.sdk/csv', processor),
-      processor
-    );
+    await processAndVerify(CsvStream.fromUrl('https://zaius.app.sdk/csv', processor), processor);
   });
 
   it('passes along config for csv-parser', async () => {
@@ -102,15 +94,12 @@ describe('CsvStream', () => {
     readable.push('COL1,COL2,COL3\nVAL1,VAL2,VAL3\n');
     readable.push(null);
     const options: Options = {
-      mapHeaders: ({ header}) => header.toLowerCase(),
-      mapValues: ({ value }) => (value as string).toLowerCase()
+      mapHeaders: ({header}) => header.toLowerCase(),
+      mapValues: ({value}) => (value as string).toLowerCase()
     };
 
     const processor = new TestCsvRowProcessor();
-    await processAndVerify(
-      CsvStream.fromStream(readable, processor, options),
-      processor
-    );
+    await processAndVerify(CsvStream.fromStream(readable, processor, options), processor);
   });
 
   it('should pause and resume', async () => {
@@ -179,11 +168,7 @@ describe('CsvStream', () => {
     readable.push(null);
 
     const processor = new FailingCompleteCsvLinesRowProcessor();
-    await processAndVerifyError(
-      CsvStream.fromStream(readable, processor),
-      processor,
-      'complete failed'
-    );
+    await processAndVerifyError(CsvStream.fromStream(readable, processor), processor, 'complete failed');
   });
 
   it('should throw error when process method fails and allow further processing', async () => {
@@ -196,14 +181,7 @@ describe('CsvStream', () => {
     const processor = new FailingProcessJsonLinesRowProcessor();
     const stream = CsvStream.fromStream(readable, processor);
 
-    await processAndVerifyError(
-      stream,
-      processor,
-      'process failed'
-    );
-    await processAndVerify(
-      stream,
-      processor
-    );
+    await processAndVerifyError(stream, processor, 'process failed');
+    await processAndVerify(stream, processor);
   });
 });

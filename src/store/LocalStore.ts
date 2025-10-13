@@ -31,7 +31,7 @@ export class LocalStore implements BaseKVStore<ValueHash, true> {
 
   public async patch<T extends ValueHash>(key: string, value?: ValueHash | PatchUpdater): Promise<T> {
     if (typeof value === 'function') {
-      return await this.patchWithRetry(key, value) as T;
+      return (await this.patchWithRetry(key, value)) as T;
     } else {
       return await this.patchWithRetry(key, (previous) => Object.assign(previous, value));
     }
@@ -56,7 +56,7 @@ export class LocalStore implements BaseKVStore<ValueHash, true> {
   private filter(result: ValueHash, fields?: string[]) {
     if (fields) {
       const copy: ValueHash = {};
-      fields.forEach((f) => copy[f] = result[f]);
+      fields.forEach((f) => (copy[f] = result[f]));
       return copy;
     }
     return result;

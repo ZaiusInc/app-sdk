@@ -31,7 +31,11 @@ export class LiquidExtensionResult {
    * @hidden
    * Use the static helper methods instead.
    */
-  public constructor(private success: boolean, private output?: any, private message?: string) { }
+  public constructor(
+    private success: boolean,
+    private output?: any,
+    private message?: string
+  ) {}
 
   /**
    * @hidden
@@ -40,7 +44,7 @@ export class LiquidExtensionResult {
   public getResponse(): LiquidExtensionResponse {
     return {
       output: this.success ? JSON.stringify(this.output === undefined ? null : this.output) : undefined,
-      error: this.success ? undefined : (this.message || 'unknown')
+      error: this.success ? undefined : this.message || 'unknown'
     };
   }
 }

@@ -2,9 +2,21 @@
 import {FormData} from '@zaiusinc/app-forms-schema';
 import deepFreeze from 'deep-freeze';
 import 'jest';
-import {CampaignContent, CampaignDelivery, CampaignTracking, Channel, ChannelDeliverOptions, ChannelDeliverResult, ChannelPrepareOptions, ChannelPrepareResult, ChannelPublishOptions, ChannelValidateOptions} from '../../Channel';
-import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../../lib';
+
+import {
+  CampaignContent,
+  CampaignDelivery,
+  CampaignTracking,
+  Channel,
+  ChannelDeliverOptions,
+  ChannelDeliverResult,
+  ChannelPrepareOptions,
+  ChannelPrepareResult,
+  ChannelPublishOptions,
+  ChannelValidateOptions
+} from '../../Channel';
 import {Runtime} from '../../Runtime';
+import {ChannelContentResult, ChannelPreviewResult, ChannelTargetResult} from '../../lib';
 import {AppManifest} from '../../types';
 import {validateChannel} from '../validateChannel';
 
@@ -30,12 +42,14 @@ const staticManifest = deepFreeze({
     delivery: {
       batch_size: 10,
       concurrent_batches: 5,
-      rate_limits: [{
-        count: 20,
-        period: 1,
-        unit: 'minute',
-        grouping: 'install'
-      }]
+      rate_limits: [
+        {
+          count: 20,
+          period: 1,
+          unit: 'minute',
+          grouping: 'install'
+        }
+      ]
     }
   }
 } as AppManifest);
@@ -86,7 +100,9 @@ class ProperChannel extends Channel {
   }
 
   public async publish(
-    _contentKey: string, _content: CampaignContent, _options: ChannelPublishOptions
+    _contentKey: string,
+    _content: CampaignContent,
+    _options: ChannelPublishOptions
   ): Promise<ChannelContentResult> {
     return new ChannelContentResult();
   }
@@ -116,7 +132,9 @@ class MoreProperChannel extends ProperChannel {
   }
 
   public async prepare(
-    _contentKey: string, _tracking: CampaignTracking, _options: ChannelPrepareOptions
+    _contentKey: string,
+    _tracking: CampaignTracking,
+    _options: ChannelPrepareOptions
   ): Promise<ChannelPrepareResult> {
     return {success: true};
   }
@@ -173,8 +191,7 @@ describe('validateChannel', () => {
 
   it('detects missing channel implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: staticManifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockRejectedValue(new Error('not found'));
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockRejectedValue(new Error('not found'));
 
     expect(await validateChannel(runtime)).toEqual(['Error loading Channel implementation. Error: not found']);
 
@@ -183,7 +200,8 @@ describe('validateChannel', () => {
 
   it('detects non-extended channel implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: staticManifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+    const getChannelClass = jest
+      .spyOn(Runtime.prototype, 'getChannelClass')
       .mockResolvedValue(NonExtendedChannel as any);
 
     expect(await validateChannel(runtime)).toEqual(['Channel implementation does not extend App.Channel']);
@@ -193,8 +211,7 @@ describe('validateChannel', () => {
 
   it('detects partial channel implementation', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: staticManifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockResolvedValue(PartialChannel as any);
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(PartialChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
       'Channel implementation is missing the ready method',
@@ -219,8 +236,7 @@ describe('validateChannel', () => {
       }
     };
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockResolvedValue(ProperChannel as any);
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
       expect.stringMatching('Channel implementation is missing the prepare method')
@@ -231,7 +247,8 @@ describe('validateChannel', () => {
 
   it('detects unused target implementation when not required', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: staticManifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
+    const getChannelClass = jest
+      .spyOn(Runtime.prototype, 'getChannelClass')
       .mockResolvedValue(MoreProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
@@ -244,8 +261,7 @@ describe('validateChannel', () => {
 
   it('detects missing target implementation when required', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: dynamicManifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockResolvedValue(ProperChannel as any);
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
       expect.stringContaining('Channel implementation is missing the prepare method'),
@@ -267,12 +283,11 @@ describe('validateChannel', () => {
       }
     } as AppManifest;
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockResolvedValue(ProperChannel as any);
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
       'channel.delivery.batch_size must be an integer',
-      'channel.delivery.concurrent_batches must be an integer',
+      'channel.delivery.concurrent_batches must be an integer'
     ]);
 
     Object.assign<any, any>(runtime.manifest.channel?.delivery, {
@@ -282,7 +297,7 @@ describe('validateChannel', () => {
 
     expect(await validateChannel(runtime)).toEqual([
       'channel.delivery.batch_size must be between 1 and 1000 (inclusive)',
-      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
+      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)'
     ]);
 
     Object.assign<any, any>(runtime.manifest.channel?.delivery, {
@@ -292,7 +307,7 @@ describe('validateChannel', () => {
 
     expect(await validateChannel(runtime)).toEqual([
       'channel.delivery.batch_size must be between 1 and 1000 (inclusive)',
-      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)',
+      'channel.delivery.concurrent_batches must be between 1 and 1000 (inclusive)'
     ]);
 
     getChannelClass.mockRestore();
@@ -306,29 +321,31 @@ describe('validateChannel', () => {
         delivery: {
           batch_size: 100,
           concurrent_batches: 10,
-          rate_limits: [{
-            count: 0,
-            period: 0,
-            unit: 'second',
-            grouping: 'install'
-          }, {
-            count: 1.25,
-            period: 1.99,
-            unit: 'minute',
-            grouping: 'app'
-          }]
+          rate_limits: [
+            {
+              count: 0,
+              period: 0,
+              unit: 'second',
+              grouping: 'install'
+            },
+            {
+              count: 1.25,
+              period: 1.99,
+              unit: 'minute',
+              grouping: 'app'
+            }
+          ]
         }
       }
     } as AppManifest;
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
-    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass')
-      .mockResolvedValue(ProperChannel as any);
+    const getChannelClass = jest.spyOn(Runtime.prototype, 'getChannelClass').mockResolvedValue(ProperChannel as any);
 
     expect(await validateChannel(runtime)).toEqual([
       'channel.delivery.rate_limit[0].count must be > 0',
       'channel.delivery.rate_limit[0].period must be > 0 if specifying a number of seconds',
       'channel.delivery.rate_limit[1].count must be an integer',
-      'channel.delivery.rate_limit[1].period must be an integer',
+      'channel.delivery.rate_limit[1].period must be an integer'
     ]);
 
     getChannelClass.mockRestore();

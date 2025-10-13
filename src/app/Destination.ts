@@ -35,9 +35,7 @@ export interface DestinationSchemaResult {
   fields: DestinationField[];
 }
 
-
 export abstract class Destination<T> {
-
   /**
    * Checks if the Destination ready to use.
    * This should ensure that any required credentials and/or other configuration exist and are valid.

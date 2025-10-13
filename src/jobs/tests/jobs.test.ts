@@ -1,9 +1,10 @@
-import 'jest';
-import {initializeJobApi, jobs} from '../jobs';
-import {LocalJobApi} from '../LocalJobApi';
 import {AsyncLocalStorage} from 'async_hooks';
+import 'jest';
+
 import {OCPContext} from '../../types';
 import {JobApi} from '../JobApi';
+import {LocalJobApi} from '../LocalJobApi';
+import {initializeJobApi, jobs} from '../jobs';
 
 describe('jobs', () => {
   const mockJobApi: JobApi = {
@@ -32,7 +33,6 @@ describe('jobs', () => {
 
   describe('async local store configured', () => {
     it('uses local job Api if not configured', async () => {
-
       const getEndpointsFn = jest.spyOn(LocalJobApi.prototype, 'trigger');
 
       expect(() => jobs.trigger('foot', {})).toThrow();

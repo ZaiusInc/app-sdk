@@ -1,6 +1,6 @@
-import {Notifier} from './Notifier';
-import {LocalNotifier} from './LocalNotifier';
 import {logger} from '../logging';
+import {LocalNotifier} from './LocalNotifier';
+import {Notifier} from './Notifier';
 
 let notifier: Notifier = new LocalNotifier();
 

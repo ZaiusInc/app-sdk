@@ -1,10 +1,14 @@
-import {AppManifest} from './types';
 import {OCPContext} from '../types';
+import {AppManifest} from './types';
 
 export interface AppContext {
   manifest: AppManifest;
   trackerId: string;
   installId: number;
+  account?: {
+    organizationId: string;
+    instanceId: string;
+  };
 }
 
 let currentContext: AppContext;

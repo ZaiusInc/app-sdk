@@ -11,39 +11,39 @@
  * - 'Form' namespace gets its own parent doc with all elements in the namespace as children
  */
 
-const slugify = require("slugify");
-const path = require("path");
-const fs = require("fs");
+const slugify = require('slugify');
+const path = require('path');
+const fs = require('fs');
 
 function getFrontMatterProperty(file, property) {
-    let content = fs.readFileSync(file, 'utf8')
-    const re = new RegExp(`${property}: "?([^"$\n]+)("|$)`, "gm");
+  let content = fs.readFileSync(file, 'utf8');
+  const re = new RegExp(`${property}: "?([^"$\n]+)("|$)`, 'gm');
 
-    return re.exec(content)[1];
+  return re.exec(content)[1];
 }
 
-let category = getFrontMatterProperty('./docs/README.md', "category");
-let hidden = getFrontMatterProperty('./docs/README.md', "hidden");
+let category = getFrontMatterProperty('./docs/README.md', 'category');
+let hidden = getFrontMatterProperty('./docs/README.md', 'hidden');
 
 function addFrontMatterProperty(file, property) {
-    let content = fs.readFileSync(file, 'utf8')
-    let updatedContent = content.replace(/---\n/, `---\n${property}\n`);
+  let content = fs.readFileSync(file, 'utf8');
+  let updatedContent = content.replace(/---\n/, `---\n${property}\n`);
 
-    fs.writeFileSync(file, updatedContent);
+  fs.writeFileSync(file, updatedContent);
 }
 
 function removeFrontMatterProperty(file, property) {
-    let content = fs.readFileSync(file, 'utf8')
-    let updatedContent = content.replace(/title: .*\n/, ``);
+  let content = fs.readFileSync(file, 'utf8');
+  let updatedContent = content.replace(/title: .*\n/, ``);
 
-    fs.writeFileSync(file, updatedContent);
+  fs.writeFileSync(file, updatedContent);
 }
 
 function createFolderAndMoveDocs(folderName, title) {
-    let files = fs.readdirSync('./docs/' + folderName, { withFileTypes: true });
-    let parentDocSlug = slugify(`app-sdk API reference ${title}`, {lower: true, strict: true});
+  let files = fs.readdirSync('./docs/' + folderName, {withFileTypes: true});
+  let parentDocSlug = slugify(`app-sdk API reference ${title}`, {lower: true, strict: true});
 
-    let header = `---
+  let header = `---
 title: ${title}
 category: ${category}
 slug: ${parentDocSlug}
@@ -54,115 +54,112 @@ hidden: ${hidden}
 
 `;
 
-    let toc = files
-    .filter(f => f.isFile())
-    .map(f => {
-        const titleRe = /title: (.+).*/g;
-        let title = titleRe.exec(fs.readFileSync('./docs/' + folderName + "/" + f.name, 'utf8'))[1];
-        return "- [" + title + "](" + folderName + "/" + f.name + ")"
+  let toc = files
+    .filter((f) => f.isFile())
+    .map((f) => {
+      const titleRe = /title: (.+).*/g;
+      let title = titleRe.exec(fs.readFileSync('./docs/' + folderName + '/' + f.name, 'utf8'))[1];
+      return '- [' + title + '](' + folderName + '/' + f.name + ')';
     })
-    .join('\n')
+    .join('\n');
 
-    fs.writeFileSync(
-        './docs/' + folderName+'.md',
-        header + toc
-    );
+  fs.writeFileSync('./docs/' + folderName + '.md', header + toc);
 
-    // add slug parameter to frontmatter in every file in folder
-    let order = 100;
-    files.filter(f => f.isFile()).forEach(f => {
-        let file = './docs/' + folderName + "/" + f.name;
+  // add slug parameter to frontmatter in every file in folder
+  let order = 100;
+  files
+    .filter((f) => f.isFile())
+    .forEach((f) => {
+      let file = './docs/' + folderName + '/' + f.name;
 
-        let childTitle = getFrontMatterProperty(file, 'title')
-        let slug = slugify(`app-sdk API reference ${title} ${childTitle}`, {lower: true, strict: true})
+      let childTitle = getFrontMatterProperty(file, 'title');
+      let slug = slugify(`app-sdk API reference ${title} ${childTitle}`, {lower: true, strict: true});
 
-        addFrontMatterProperty(file, `slug: ${slug}`);
-        addFrontMatterProperty(file, `parentDocSlug: ${parentDocSlug}`);
-        addFrontMatterProperty(file, `order: ${order++}`);
+      addFrontMatterProperty(file, `slug: ${slug}`);
+      addFrontMatterProperty(file, `parentDocSlug: ${parentDocSlug}`);
+      addFrontMatterProperty(file, `order: ${order++}`);
     });
 }
 
 function mergeReadmeAndModules() {
-    let toc = fs.readFileSync('./docs/globals.md', 'utf8')
-    fs.rmSync('./docs/globals.md');
+  let toc = fs.readFileSync('./docs/globals.md', 'utf8');
+  fs.rmSync('./docs/globals.md');
 
-    toc = toc.replace(/.*## Index/s, '');
+  toc = toc.replace(/.*## Index/s, '');
 
-    let readme = fs.readFileSync('./docs/README.md', 'utf8') + "\n## Index" + toc;
-    fs.writeFileSync('./docs/README.md', readme);
+  let readme = fs.readFileSync('./docs/README.md', 'utf8') + '\n## Index' + toc;
+  fs.writeFileSync('./docs/README.md', readme);
 }
 
-
 function fixLinks(folder) {
-    fs.readdirSync(folder, { withFileTypes: true })
-      .forEach(f => {
-          if (f.isDirectory()) {
-              fixLinks(folder + '/' + f.name);
-          } else {
-              console.log(`file: ${folder}/${f.name}`);
-              //[success](LiquidExtensionResult.md#success)
-              let content = fs.readFileSync(`${folder}/${f.name}`, 'utf8')
-              content = content.replaceAll("globals.md", "README.md");
+  fs.readdirSync(folder, {withFileTypes: true}).forEach((f) => {
+    if (f.isDirectory()) {
+      fixLinks(folder + '/' + f.name);
+    } else {
+      console.log(`file: ${folder}/${f.name}`);
+      //[success](LiquidExtensionResult.md#success)
+      let content = fs.readFileSync(`${folder}/${f.name}`, 'utf8');
+      content = content.replaceAll('globals.md', 'README.md');
 
-              let linkRe = /\]\(([^\)]*\.md)/g;
-              let m;
-              do {
-                  m = linkRe.exec(content);
-                  if (m) {
-                      let link = m[1];
-                      let targetSlug = getFrontMatterProperty(folder + "/" + link, "slug");
-                      console.log(`Replacing ${link} with ${targetSlug}`);
-                      content = content.replaceAll(m[1], targetSlug);
-                  }
-              } while (m);
+      let linkRe = /\]\(([^\)]*\.md)/g;
+      let m;
+      do {
+        m = linkRe.exec(content);
+        if (m) {
+          let link = m[1];
+          let targetSlug = getFrontMatterProperty(folder + '/' + link, 'slug');
+          console.log(`Replacing ${link} with ${targetSlug}`);
+          content = content.replaceAll(m[1], targetSlug);
+        }
+      } while (m);
 
-              // for unclear reason some links are generated broken
-              let fixRe = /\]\((Baseapp-sdk-api-reference-)/g;
-              let fixM;
-              do {
-                  fixM = fixRe.exec(content);
-                  if (fixM) {
-                      console.log(`Replacing '](Baseapp-sdk-api-reference-' with '](app-sdk-api-reference-'`);
-                      content = content.replaceAll('](Baseapp-sdk-api-reference-', '](app-sdk-api-reference-');
-                  }
-              } while (fixM);
+      // for unclear reason some links are generated broken
+      let fixRe = /\]\((Baseapp-sdk-api-reference-)/g;
+      let fixM;
+      do {
+        fixM = fixRe.exec(content);
+        if (fixM) {
+          console.log(`Replacing '](Baseapp-sdk-api-reference-' with '](app-sdk-api-reference-'`);
+          content = content.replaceAll('](Baseapp-sdk-api-reference-', '](app-sdk-api-reference-');
+        }
+      } while (fixM);
 
-              fs.writeFileSync(`${folder}/${f.name}`, content);
-          }
-      });
+      fs.writeFileSync(`${folder}/${f.name}`, content);
+    }
+  });
 }
 
 function moveFolder(source, destination) {
-    // Ensure the destination directory exists
-    const destinationDir = path.dirname(destination);
-    if (!fs.existsSync(destinationDir)) {
-        fs.mkdirSync(destinationDir, { recursive: true });
-    }
+  // Ensure the destination directory exists
+  const destinationDir = path.dirname(destination);
+  if (!fs.existsSync(destinationDir)) {
+    fs.mkdirSync(destinationDir, {recursive: true});
+  }
 
-    // Move the folder
-    fs.renameSync(source, destination);
-    console.log(`Folder moved from ${source} to ${destination}`);
+  // Move the folder
+  fs.renameSync(source, destination);
+  console.log(`Folder moved from ${source} to ${destination}`);
 }
 
 function removeEmptyFolders(folder) {
-    if (!fs.existsSync(folder)) return;
+  if (!fs.existsSync(folder)) return;
 
-    // Read the contents of the folder
-    const files = fs.readdirSync(folder);
+  // Read the contents of the folder
+  const files = fs.readdirSync(folder);
 
-    // Recursively remove empty subfolders
-    files.forEach(file => {
-        const fullPath = path.join(folder, file);
-        if (fs.statSync(fullPath).isDirectory()) {
-            removeEmptyFolders(fullPath);
-        }
-    });
-
-    // Check if the folder is empty after processing subfolders
-    if (fs.readdirSync(folder).length === 0) {
-        fs.rmdirSync(folder);
-        console.log(`Removed empty folder: ${folder}`);
+  // Recursively remove empty subfolders
+  files.forEach((file) => {
+    const fullPath = path.join(folder, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      removeEmptyFolders(fullPath);
     }
+  });
+
+  // Check if the folder is empty after processing subfolders
+  if (fs.readdirSync(folder).length === 0) {
+    fs.rmdirSync(folder);
+    console.log(`Removed empty folder: ${folder}`);
+  }
 }
 
 mergeReadmeAndModules();
@@ -194,15 +191,14 @@ addFrontMatterProperty('./docs/type-aliases.md', `order: 60`);
 addFrontMatterProperty('./docs/variables.md', `order: 70`);
 addFrontMatterProperty('./docs/OCP-App-SDK/namespaces/Form/README.md', `order: 80`);
 
-fs.readdirSync('./docs/OCP-App-SDK/namespaces/Form/functions/', { withFileTypes: true })
-    .forEach(f => {
-        let file = './docs/OCP-App-SDK/namespaces/Form/functions/' + f.name;
-        let title = getFrontMatterProperty(file, 'title')
-        let slug = slugify(`app-sdk API reference namespace form ${title}`, {lower: true, strict: true})
+fs.readdirSync('./docs/OCP-App-SDK/namespaces/Form/functions/', {withFileTypes: true}).forEach((f) => {
+  let file = './docs/OCP-App-SDK/namespaces/Form/functions/' + f.name;
+  let title = getFrontMatterProperty(file, 'title');
+  let slug = slugify(`app-sdk API reference namespace form ${title}`, {lower: true, strict: true});
 
-        addFrontMatterProperty(file, `slug: ${slug}`);
-        addFrontMatterProperty(file, `parentDocSlug: ${formDocSlug}`);
-    });
+  addFrontMatterProperty(file, `slug: ${slug}`);
+  addFrontMatterProperty(file, `parentDocSlug: ${formDocSlug}`);
+});
 
 fixLinks('docs');
 moveFolder('docs/OCP-App-SDK/namespaces/Form', 'docs/Form');

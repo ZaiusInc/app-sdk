@@ -1,6 +1,8 @@
 import {Notifier} from './Notifier';
 
-const noop = () => {/**/};
+const noop = () => {
+  /**/
+};
 
 /**
  * @hidden

@@ -1,4 +1,5 @@
 import 'jest';
+
 import {CasError} from '../CasError';
 import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 
@@ -105,13 +106,15 @@ describe('LocalAsyncStoreBackend', () => {
   describe('atomicPatch', () => {
     it('updates a value in place', async () => {
       const changeFn = jest.spyOn(store, 'onChange' as any);
-      expect(await store.atomicPatch('foo', (prev, options) => {
-        options.ttl = 1000;
-        return {
-          ...prev,
-          foo: 'foo'
-        };
-      })).toEqual({
+      expect(
+        await store.atomicPatch('foo', (prev, options) => {
+          options.ttl = 1000;
+          return {
+            ...prev,
+            foo: 'foo'
+          };
+        })
+      ).toEqual({
         cas: 2,
         ttl: 1000,
         value: {
@@ -125,17 +128,19 @@ describe('LocalAsyncStoreBackend', () => {
     it('overwrites an expired value', async () => {
       const changeFn = jest.spyOn(store, 'onChange' as any);
       jest.spyOn(LocalAsyncStoreBackend.prototype, 'epoch' as any).mockReturnValue(1585273501);
-      expect(await store.atomicPatch('foo', (prev, options) => {
-        expect(options).toEqual({});
-        expect(prev).toEqual({});
-        return {
-          ...prev,
-          foo: 'foo'
-        };
-      })).toEqual({
+      expect(
+        await store.atomicPatch('foo', (prev, options) => {
+          expect(options).toEqual({});
+          expect(prev).toEqual({});
+          return {
+            ...prev,
+            foo: 'foo'
+          };
+        })
+      ).toEqual({
         cas: 0,
         value: {
-          foo: 'foo',
+          foo: 'foo'
         }
       });
       expect(changeFn).toHaveBeenCalledTimes(1);

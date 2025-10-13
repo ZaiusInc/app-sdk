@@ -1,6 +1,7 @@
-import {logger} from '../logging';
 import * as ObjectHash from 'object-hash';
 import {Transform, Stream} from 'stream';
+
+import {logger} from '../logging';
 
 export interface FileRowProcessor<T> {
   /**
@@ -74,41 +75,46 @@ export abstract class FileStream<T, O> {
   }
 
   private async createPipe() {
-    let pipeline = this.readStream = await this.streamBuilder();
+    let pipeline = (this.readStream = await this.streamBuilder());
     const rowProcessor = this.rowProcessor;
     const transform = this.parser(this.options);
     transform.on('error', (error) => {
       this.onError(error);
     });
-    pipeline = pipeline.pipe(transform).pipe(new Stream.Transform({
-      writableObjectMode: true,
-      transform: (row, _, callback) => {
-        // if we're fastforwarding in order to resume
-        if (this.fastforwardMarker) {
-          if (this.fastforwardMarker === ObjectHash.sha1(row)) {
-            this.resume = callback;
-            const hash = this.fastforwardMarker;
-            this.fastforwardMarker = undefined;
-            this.onPause(hash);
-          } else {
-            callback();
-          }
-        } else {
-          rowProcessor.process(row).then((canPause: boolean) => {
-            if (canPause) {
+    pipeline = pipeline.pipe(transform).pipe(
+      new Stream.Transform({
+        writableObjectMode: true,
+        transform: (row, _, callback) => {
+          // if we're fastforwarding in order to resume
+          if (this.fastforwardMarker) {
+            if (this.fastforwardMarker === ObjectHash.sha1(row)) {
               this.resume = callback;
-              this.onPause(ObjectHash.sha1(row));
+              const hash = this.fastforwardMarker;
+              this.fastforwardMarker = undefined;
+              this.onPause(hash);
             } else {
               callback();
             }
-          }).catch((error) => {
-            logger.error(error, 'on row:', row);
-            this.resume = callback;
-            this.onError(error);
-          });
+          } else {
+            rowProcessor
+              .process(row)
+              .then((canPause: boolean) => {
+                if (canPause) {
+                  this.resume = callback;
+                  this.onPause(ObjectHash.sha1(row));
+                } else {
+                  callback();
+                }
+              })
+              .catch((error) => {
+                logger.error(error, 'on row:', row);
+                this.resume = callback;
+                this.onError(error);
+              });
+          }
         }
-      }
-    }));
+      })
+    );
 
     pipeline.on('finish', async (error) => {
       this.pipelineFinished = true;
@@ -116,7 +122,8 @@ export abstract class FileStream<T, O> {
       if (error) {
         this.onError(error);
       } else {
-        await this.rowProcessor.complete()
+        await this.rowProcessor
+          .complete()
           .then(() => this.onPause(null))
           .catch((e) => this.onError(e));
       }

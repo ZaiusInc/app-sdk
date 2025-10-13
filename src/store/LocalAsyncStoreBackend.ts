@@ -91,7 +91,7 @@ export class LocalAsyncStoreBackend<T> {
         };
         entry.value = this.copy(updater(entry.value as O, options));
         entry.cas++;
-        entry.expires = options.ttl == null ? undefined : (epoch + options.ttl);
+        entry.expires = options.ttl == null ? undefined : epoch + options.ttl;
         this.onChange();
       } else {
         const options = {ttl: undefined};
@@ -99,7 +99,7 @@ export class LocalAsyncStoreBackend<T> {
         value = this.copy(updater(value, options));
         this.data[key] = {
           cas: 0,
-          expires: options.ttl == null ? undefined : (epoch + Number(options.ttl)),
+          expires: options.ttl == null ? undefined : epoch + Number(options.ttl),
           value: this.copy(value)
         };
         this.onChange();
@@ -142,13 +142,16 @@ export class LocalAsyncStoreBackend<T> {
 
   private async async<R>(operation: () => any): Promise<R> {
     return new Promise((resolve, reject) =>
-      setTimeout(() => {
-        try {
-          resolve(operation());
-        } catch (e) {
-          reject(e instanceof Error ? e : new Error(String(e)));
-        }
-      }, this.avgDelay * (0.5 + Math.random()))
+      setTimeout(
+        () => {
+          try {
+            resolve(operation());
+          } catch (e) {
+            reject(e instanceof Error ? e : new Error(String(e)));
+          }
+        },
+        this.avgDelay * (0.5 + Math.random())
+      )
     );
   }
 
@@ -171,16 +174,19 @@ export class LocalAsyncStoreBackend<T> {
   private onChange() {
     this.hasChanges = true;
     if (!this.changeTimer && this.changeHandler) {
-      this.changeTimer = setTimeout(async () => {
-        if (this.hasChanges && this.changeHandler) {
-          this.hasChanges = false;
-          await this.changeHandler(this.data);
-        }
-        this.changeTimer = undefined;
-        if (this.hasChanges) {
-          this.onChange();
-        }
-      }, process.env.ZAIUS_ENV === 'test' ? 0 : 10);
+      this.changeTimer = setTimeout(
+        async () => {
+          if (this.hasChanges && this.changeHandler) {
+            this.hasChanges = false;
+            await this.changeHandler(this.data);
+          }
+          this.changeTimer = undefined;
+          if (this.hasChanges) {
+            this.onChange();
+          }
+        },
+        process.env.ZAIUS_ENV === 'test' ? 0 : 10
+      );
     }
   }
 }

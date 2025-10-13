@@ -31,7 +31,5 @@ export abstract class LiquidExtension {
    * @return either successful output (via {@link LiquidExtensionResult.success}) or an error message
    *         (via {@link LiquidExtensionResult.error})
    */
-  public abstract perform(
-    context: LiquidExtensionContext, input: LiquidExtensionInput
-  ): Promise<LiquidExtensionResult>;
+  public abstract perform(context: LiquidExtensionContext, input: LiquidExtensionInput): Promise<LiquidExtensionResult>;
 }

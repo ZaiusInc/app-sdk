@@ -1,4 +1,5 @@
 import 'jest';
+
 import {LocalAsyncStoreBackend} from '../LocalAsyncStoreBackend';
 import {LocalStore} from '../LocalStore';
 
@@ -58,25 +59,31 @@ describe('LocalStore', () => {
     it('handles a function patch', async () => {
       // patch existing
       await store.put('foo', {foo: 1, bar: 2});
-      expect(await store.patch('foo', (data) => {
-        Object.entries(data).forEach(([key, value]) => data[key] = value as number + 1);
-        return data;
-      })).toEqual({foo: 1, bar: 2});
+      expect(
+        await store.patch('foo', (data) => {
+          Object.entries(data).forEach(([key, value]) => (data[key] = (value as number) + 1));
+          return data;
+        })
+      ).toEqual({foo: 1, bar: 2});
       expect(await store.get('foo')).toEqual({foo: 2, bar: 3});
 
       // patch empty key
-      expect(await store.patch('bar', (data) => {
-        Object.entries(data).forEach(([key, value]) => data[key] = value as number + 1);
-        data['foobar'] = 0;
-        return data;
-      })).toEqual({});
+      expect(
+        await store.patch('bar', (data) => {
+          Object.entries(data).forEach(([key, value]) => (data[key] = (value as number) + 1));
+          data['foobar'] = 0;
+          return data;
+        })
+      ).toEqual({});
       expect(await store.get('bar')).toEqual({foobar: 0});
     });
 
     it('properly surfaces errors thrown in a function patch', async () => {
-      await expect(store.patch('foo', () => {
-        throw new Error('nah');
-      })).rejects.toThrowError('nah');
+      await expect(
+        store.patch('foo', () => {
+          throw new Error('nah');
+        })
+      ).rejects.toThrowError('nah');
     });
   });
 });

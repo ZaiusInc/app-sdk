@@ -8,7 +8,7 @@ export function validateEnvironment(runtime: Runtime): string[] {
     if (!name.match(/^APP_ENV_[A-Z0-9_]+$/)) {
       errors.push(
         `Invalid app.yml: environment${name.match(/\s/) ? `["${name}"]` : `.${name}`} ` +
-        'must be prefixed with "APP_ENV_" and consist of only uppercase alphanumeric and underscores'
+          'must be prefixed with "APP_ENV_" and consist of only uppercase alphanumeric and underscores'
       );
     }
     nameCounts[name] = (nameCounts[name] || 0) + 1;

@@ -1,6 +1,7 @@
 import 'jest';
-import { Form } from '../forms';
-import { storage } from '../../../store';
+
+import {storage} from '../../../store';
+import {Form} from '../forms';
 
 describe('Forms', () => {
   it('sets and retrieves openSection', async () => {
@@ -8,7 +9,7 @@ describe('Forms', () => {
     expect(await Form.getDefaultSection()).toBeUndefined();
 
     await Form.setDefaultSection('foo');
-    expect(await storage.settings.get('$formState')).toEqual({ defaultSection: 'foo' });
+    expect(await storage.settings.get('$formState')).toEqual({defaultSection: 'foo'});
     expect(await Form.getDefaultSection()).toEqual('foo');
 
     await Form.clearDefaultSection();

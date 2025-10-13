@@ -1,8 +1,13 @@
 {
-  "files": "*.ts",
   "singleQuote": true,
   "jsxSingleQuote": false,
   "bracketSpacing": false,
   "arrowParens": "always",
-  "printWidth": 120
+  "printWidth": 120,
+  "semi": true,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^@/(.*)$", "^[./]"],
+  "importOrderSeparation": true
 }

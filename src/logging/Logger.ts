@@ -1,5 +1,7 @@
 import * as util from 'util';
 
+import {ValueHash} from '../store';
+
 /**
  * Supported log levels, in order of least important to most.
  */
@@ -44,17 +46,15 @@ interface LogMessage {
 /**
  * @hidden
  * Context added to each log automatically by the SDK
+ * This is set automatically when the app code is called by the engine.
+ * Different fields will be set depending on how the app code is being executed
+ * (e.g. function, job, data sync, etc.)
  */
-export interface LogContext {
+export interface LogContext extends ValueHash {
   app_id: string;
   app_version: string;
+  entry_point: string;
   tracker_id?: string;
-  install_id?: number;
-  entry_point?: string; // e.g., function:fn_name
-  request_id?: string;
-  job_id?: string;
-  data_sync_id?: string;
-  source_key?: string;
 }
 
 export interface LoggerOptions {
@@ -67,7 +67,7 @@ export const LOG_LEVELS = {
   [LogLevel.Info]: 'info',
   [LogLevel.Warn]: 'warn',
   [LogLevel.Error]: 'error',
-  [LogLevel.NEVER]: 'NEVER',
+  [LogLevel.NEVER]: 'NEVER'
 };
 
 export const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
@@ -78,10 +78,7 @@ export const LOG_LEVELS_BY_STRING: {[key: string]: LogLevel} = {
   NEVER: LogLevel.NEVER
 };
 
-const visibilityValues = new Set([
-  LogVisibility.Zaius,
-  LogVisibility.Developer
-]);
+const visibilityValues = new Set([LogVisibility.Zaius, LogVisibility.Developer]);
 
 const INSPECT_OPTIONS = {
   depth: 5,
@@ -97,6 +94,14 @@ let context: LogContext;
  */
 export function setLogContext(logContext: LogContext) {
   context = logContext;
+}
+
+/**
+ * @hidden
+ * Amend the current log context with additional information
+ */
+export function amendLogContext(extra_fields: {[field: string]: string | number | boolean}) {
+  context && (context = {...context, ...extra_fields});
 }
 
 function getLogContext(): LogContext {
@@ -204,15 +209,12 @@ export class Logger implements ILogger {
   private defaultVisibility: LogVisibility;
 
   public constructor(options: Partial<LoggerOptions> = {}) {
-    this.maxLineLength = Math.min(
-      options.maxLineLength || MAX_LINE_LENGTH,
-      MAX_LINE_LENGTH
-    );
+    this.maxLineLength = Math.min(options.maxLineLength || MAX_LINE_LENGTH, MAX_LINE_LENGTH);
     this.defaultVisibility = options.defaultVisibility || DEFAULT_VISIBILITY;
   }
 
   private getLogLevel(): LogLevel {
-    return getLogLevel() ||  DEFAULT_LOG_LEVEL;
+    return getLogLevel() || DEFAULT_LOG_LEVEL;
   }
 
   public debug(...args: any[]) {
@@ -273,14 +275,16 @@ export class Logger implements ILogger {
       }
     }
 
-    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(JSON.stringify({
-      time,
-      level: LOG_LEVELS[logLevel],
-      message: this.truncateMessage(args.join(' ')),
-      stacktrace,
-      audience: visibility,
-      context: getLogContext(),
-    } as LogMessage) + '\n');
+    (logLevel === LogLevel.Error ? process.stderr : process.stdout).write(
+      JSON.stringify({
+        time,
+        level: LOG_LEVELS[logLevel],
+        message: this.truncateMessage(args.join(' ')),
+        stacktrace,
+        audience: visibility,
+        context: getLogContext()
+      } as LogMessage) + '\n'
+    );
   }
 
   private truncateMessage(message: string): string {

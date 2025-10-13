@@ -1,8 +1,9 @@
-import {Destination} from '../Destination';
-import { DestinationSchemaFunction } from '../DestinationSchemaFunction';
-import {Runtime} from '../Runtime';
 import fs from 'fs';
 import {join} from 'path';
+
+import {Destination} from '../Destination';
+import {DestinationSchemaFunction} from '../DestinationSchemaFunction';
+import {Runtime} from '../Runtime';
 
 export async function validateDestinations(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -24,12 +25,12 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
           `Destination entry point does not extend App.Destination: ${runtime.manifest.destinations[name].entry_point}`
         );
       } else {
-        if (typeof (destinationClass.prototype.ready) !== 'function') {
+        if (typeof destinationClass.prototype.ready !== 'function') {
           errors.push(
             `Destination entry point is missing the prepare method: ${runtime.manifest.destinations[name].entry_point}`
           );
         }
-        if (typeof (destinationClass.prototype.deliver) !== 'function') {
+        if (typeof destinationClass.prototype.deliver !== 'function') {
           errors.push(
             `Destination entry point is missing the perform method: ${runtime.manifest.destinations[name].entry_point}`
           );
@@ -60,12 +61,12 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
             if (!(destinationSchemaFunction.prototype instanceof DestinationSchemaFunction)) {
               errors.push(
                 'DestinationSchemaFunction entry point does not extend App.DestinationSchemaFunction: ' +
-                  `${schema.entry_point}`,
+                  `${schema.entry_point}`
               );
             } else if (typeof (destinationSchemaFunction.prototype as any)['getDestinationsSchema'] !== 'function') {
               errors.push(
                 'DestinationSchemaFunction entry point is missing the getDestinationsSchema method: ' +
-                  `${schema.entry_point}`,
+                  `${schema.entry_point}`
               );
             }
           }

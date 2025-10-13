@@ -10,13 +10,12 @@ export interface SourceData<T extends object> {
 /**
  * Error thrown when source interaction fails
  */
-export class SourceError extends Error { }
+export class SourceError extends Error {}
 
 /**
  * Interface to interact with sources
  */
 export interface Source {
-
   /**
    * Emit data to be processed and send to the destination.
    * @param data - SourceData the data to be emitted
@@ -25,4 +24,3 @@ export interface Source {
    */
   emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
 }
-
