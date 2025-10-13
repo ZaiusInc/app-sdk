@@ -131,6 +131,27 @@ const schemaObjects = deepFreeze({
         display_name: 'Bynder App Id',
         description: 'Id of the app',
         primary: true
+      },
+      {
+        name: 'category',
+        type: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset'
+      }
+    ],
+    custom_types: [
+      {
+        name: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset',
+        fields: [
+          {
+            name: 'name',
+            display_name: 'Name',
+            description: 'Name of the category',
+            type: 'string'
+          }
+        ]
       }
     ]
   },
@@ -145,6 +166,27 @@ const schemaObjects = deepFreeze({
         display_name: 'Bynder App Id',
         description: 'Id of the app',
         primary: true
+      },
+      {
+        name: 'category',
+        type: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset'
+      }
+    ],
+    custom_types: [
+      {
+        name: 'category',
+        display_name: 'Category',
+        description: 'Category of the asset',
+        fields: [
+          {
+            name: 'name',
+            display_name: 'Name',
+            description: 'Name of the category',
+            type: 'string'
+          }
+        ]
       }
     ]
   }
@@ -229,7 +271,7 @@ describe('validateApp', () => {
       'destinations/schema/asset.yml': {
         ...schemaObjects['destinations/schema/asset.yml'],
         name: undefined,
-        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0], type: 'no', display_name: undefined}]
+        fields: [{...schemaObjects['destinations/schema/asset.yml'].fields![0], type: '', display_name: undefined}]
       }
     } as any);
 
@@ -237,17 +279,19 @@ describe('validateApp', () => {
       'sources/schema/asset.yml': {
         ...schemaObjects['sources/schema/asset.yml'],
         name: undefined,
-        fields: [{...schemaObjects['sources/schema/asset.yml'].fields![0], type: 'no', display_name: undefined}]
+        fields: [{...schemaObjects['sources/schema/asset.yml'].fields![0], type: '', display_name: undefined}]
       }
     } as any);
 
     expect(await validateApp(runtime)).toEqual([
       "Invalid destinations/schema/asset.yml: must have required property 'name'",
       "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
-      'Invalid destinations/schema/asset.yml: fields/0/type must be equal to one of the allowed values',
+      'Invalid destinations/schema/asset.yml: fields/0/type must match pattern ' +
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
       "Invalid sources/schema/asset.yml: must have required property 'name'",
       "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name'",
-      'Invalid sources/schema/asset.yml: fields/0/type must be equal to one of the allowed values',
+      'Invalid sources/schema/asset.yml: fields/0/type must match pattern ' +
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
       "Invalid schema/events.yml: must have required property 'name'",
       "Invalid schema/events.yml: fields/0 must have required property 'description'",
       'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
