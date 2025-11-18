@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -41,7 +41,6 @@
     "glob": "^11.0.1",
     "js-yaml": "^4.1.0",
     "jsonpath": "^1.1.1",
-    "node-fetch": "^2.7.0",
     "object-hash": "^3.0.0",
     "remark": "^13.0.0",
     "remark-validate-links": "^10.0.4"
@@ -58,7 +57,6 @@
     "@types/lodash": "^4.17.16",
     "@types/mock-fs": "^4.13.4",
     "@types/node": "^22.13.10",
-    "@types/node-fetch": "^2.6.12",
     "@types/object-hash": "^3.0.6",
     "@types/url-regex-safe": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
