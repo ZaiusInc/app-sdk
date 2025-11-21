@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import {Readable} from 'stream';
 import {URL} from 'url';
 import * as zlib from 'zlib';
 
@@ -40,8 +40,11 @@ export class JsonLinesStream<T> extends FileStream<T, Options> {
   public static fromUrl<T>(url: string, processor: FileRowProcessor<T>, options: Options = {}): JsonLinesStream<T> {
     const builder: JsonLineReadableStreamBuilder = async () => {
       const response = await fetch(url);
-      const pipeline = response.body;
-      return /\.gz$/.test(new URL(url).pathname) ? pipeline.pipe(zlib.createGunzip()) : pipeline;
+      if (!response.body) {
+        throw new Error(`No response body received from ${url}`);
+      }
+      const nodeStream = Readable.fromWeb(response.body);
+      return /\.gz$/.test(new URL(url).pathname) ? nodeStream.pipe(zlib.createGunzip()) : nodeStream;
     };
 
     return new JsonLinesStream(builder, processor, options);
