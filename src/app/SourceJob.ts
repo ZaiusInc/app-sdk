@@ -1,6 +1,9 @@
 import {Source} from '../sources/Source';
 import {ValueHash} from '../store';
 
+/**
+ * @deprecated Use {@link JobInvocation} instead
+ */
 export interface SourceJobInvocation {
   /**
    * A unique id generated for this job run
@@ -22,6 +25,9 @@ export interface SourceJobInvocation {
   dataSyncId: string;
 }
 
+/**
+ * @deprecated Use {@link JobStatus} instead
+ */
 export interface SourceJobStatus extends ValueHash {
   /**
    * The source job's state. Store any state you need to continue on the next perform loop.
@@ -36,6 +42,9 @@ export interface SourceJobStatus extends ValueHash {
   complete: boolean;
 }
 
+/**
+ * @deprecated Use {@link SleepOptions} instead
+ */
 export interface SourceSleepOptions {
   /**
    * true if the job can be safely interrupted during this sleep (and resumed later with the current job state)
@@ -44,6 +53,12 @@ export interface SourceSleepOptions {
   interruptible?: boolean;
 }
 
+/**
+ * @deprecated Use a regular {@link Job} instead
+ * The {@link sources.emit} API allows emitting data for a source from any job
+ * That lets having a single job maintained from the app settings to emit source data
+ * and there's no need to trigger jobs for each data syncs to sync data
+ */
 export abstract class SourceJob {
   /**
    * Set this to true during an interruptible operation, such as waiting for a long running export.

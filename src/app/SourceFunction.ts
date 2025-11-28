@@ -2,6 +2,11 @@ import {Source} from '../sources/Source';
 import {Request} from './lib/Request';
 import {Response} from './lib/Response';
 
+/**
+ * @deprecated Use a regular {@link Function} with {@link sources.emit} instead.
+ * The sources.emit API allows emitting data to a source from any function
+ * without requiring a dedicated SourceFunction context.
+ */
 export interface SourceConfiguration {
   dataSyncId: string;
   sourceKey: string;
@@ -9,6 +14,11 @@ export interface SourceConfiguration {
   webhookUrl?: string;
 }
 
+/**
+ * @deprecated Use a regular {@link Function} with {@link sources.emit} instead.
+ * The sources.emit API allows emitting data to a source from any function
+ * without requiring a dedicated SourceFunction context.
+ */
 export abstract class SourceFunction {
   protected config: SourceConfiguration;
   protected request: Request;

@@ -11,6 +11,12 @@ export type SourceDeleteResponse = SourceCallbackResponse;
 export type SourceEnableResponse = SourceCallbackResponse;
 export type SourcePauseResponse = SourceCallbackResponse;
 
+/**
+ * @deprecated Use a regular {@link Function} with {@link sources.emit} instead.
+ * The sources.emit API allows emitting data from a source from any function
+ * That lets having a dedicated webhook to emit source data
+ * and there's no need to manage webhooks for each data syncs via the lifecycle methods.
+ */
 export abstract class SourceLifecycle {
   protected config: SourceConfiguration;
 
