@@ -5,7 +5,7 @@ export interface SourceResponse {
 
 export interface SourceData<T extends object> {
   data: T;
-  isDelete: boolean;
+  isDelete?: boolean;
 }
 
 /**
