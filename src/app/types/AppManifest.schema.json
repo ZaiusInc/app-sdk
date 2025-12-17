@@ -208,10 +208,12 @@
         },
         "AppRuntime": {
             "enum": [
+                "dotnet10",
                 "node12",
                 "node18",
                 "node18_rt",
-                "node22"
+                "node22",
+                "python312"
             ],
             "type": "string"
         },
