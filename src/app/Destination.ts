@@ -1,7 +1,12 @@
 export interface DestinationBatch<T> {
-  items: T[];
+  items: Array<DestinationBatchItem<T>>;
   attempt: number;
   sync: DataSync;
+}
+
+export interface DestinationBatchItem<T> {
+  item: T;
+  isDelete?: boolean;
 }
 
 export interface DataSync {
@@ -47,7 +52,8 @@ export abstract class Destination<T> {
 
   /**
    * Delivers the given batch to i.e. an external system.
-   * @param batch - The batch to be delivered
+   * @param batch - The batch to be delivered. Each item in batch.items may have an isDelete flag
+   *                to indicate delete operations. Check batchItem.isDelete for each item to handle deletions.
    * @returns A DestinationDeliverResult with success/failure,
    *          if the batch should be retried and a failure reason if applicable.
    */

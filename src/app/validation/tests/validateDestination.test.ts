@@ -183,4 +183,79 @@ describe('validateDestination', () => {
         'App.DestinationSchemaFunction: InvalidDestinationSchemaFunction'
     );
   });
+
+  it('should return no error when delete_option is "hard"', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            delete_option: 'hard'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return no error when delete_option is "soft"', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            delete_option: 'soft'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return no error when delete_option is not specified', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return error when delete_option is invalid', async () => {
+    const invalidDeleteOptionRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            delete_option: 'invalid'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(invalidDeleteOptionRuntime);
+    expect(result).toContain("Destination delete_option must be either 'hard' or 'soft': validDestination");
+  });
 });

@@ -72,6 +72,14 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
           }
         }
       }
+
+      // Validate delete_option if present
+      const deleteOption = runtime.manifest.destinations[name].delete_option;
+      if (deleteOption !== undefined) {
+        if (deleteOption !== 'hard' && deleteOption !== 'soft') {
+          errors.push(`Destination delete_option must be either 'hard' or 'soft': ${name}`);
+        }
+      }
     }
   }
 

@@ -58,6 +58,13 @@
         "AppDestination": {
             "additionalProperties": false,
             "properties": {
+                "delete_option": {
+                    "enum": [
+                        "hard",
+                        "soft"
+                    ],
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
