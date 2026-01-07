@@ -45,13 +45,11 @@ export interface AppLiquidExtension {
   };
 }
 
-export type DeleteOption = 'hard' | 'soft';
-
 export interface AppDestination {
   entry_point: string;
   schema: string | AppDestinationSchemaFunction;
   description: string;
-  delete_option?: DeleteOption;
+  support_delete?: boolean;
 }
 
 export interface AppSource {

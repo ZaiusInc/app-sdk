@@ -73,11 +73,11 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
         }
       }
 
-      // Validate delete_option if present
-      const deleteOption = runtime.manifest.destinations[name].delete_option;
-      if (deleteOption !== undefined) {
-        if (deleteOption !== 'hard' && deleteOption !== 'soft') {
-          errors.push(`Destination delete_option must be either 'hard' or 'soft': ${name}`);
+      // Validate support_delete if present
+      const supportDelete = runtime.manifest.destinations[name].support_delete;
+      if (supportDelete !== undefined) {
+        if (typeof supportDelete !== 'boolean') {
+          errors.push(`Destination support_delete must be a boolean: ${name}`);
         }
       }
     }

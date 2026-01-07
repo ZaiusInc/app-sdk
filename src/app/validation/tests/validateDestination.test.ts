@@ -184,14 +184,14 @@ describe('validateDestination', () => {
     );
   });
 
-  it('should return no error when delete_option is "hard"', async () => {
+  it('should return no error when support_delete is true', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            delete_option: 'hard'
+            support_delete: true
           }
         }
       },
@@ -203,14 +203,14 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return no error when delete_option is "soft"', async () => {
+  it('should return no error when support_delete is false', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            delete_option: 'soft'
+            support_delete: false
           }
         }
       },
@@ -222,7 +222,7 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return no error when delete_option is not specified', async () => {
+  it('should return no error when support_delete is not specified', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
@@ -240,14 +240,14 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return error when delete_option is invalid', async () => {
-    const invalidDeleteOptionRuntime: any = {
+  it('should return error when support_delete is not a boolean', async () => {
+    const invalidSupportDeleteRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            delete_option: 'invalid'
+            support_delete: 'invalid'
           }
         }
       },
@@ -255,7 +255,7 @@ describe('validateDestination', () => {
     };
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
-    const result = await validateDestinations(invalidDeleteOptionRuntime);
-    expect(result).toContain("Destination delete_option must be either 'hard' or 'soft': validDestination");
+    const result = await validateDestinations(invalidSupportDeleteRuntime);
+    expect(result).toContain('Destination support_delete must be a boolean: validDestination');
   });
 });
