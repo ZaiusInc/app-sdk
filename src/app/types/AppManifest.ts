@@ -49,7 +49,7 @@ export interface AppDestination {
   entry_point: string;
   schema: string | AppDestinationSchemaFunction;
   description: string;
-  support_delete?: boolean;
+  supports_delete?: boolean;
 }
 
 export interface AppSource {

@@ -184,14 +184,14 @@ describe('validateDestination', () => {
     );
   });
 
-  it('should return no error when support_delete is true', async () => {
+  it('should return no error when supports_delete is true', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            support_delete: true
+            supports_delete: true
           }
         }
       },
@@ -203,14 +203,14 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return no error when support_delete is false', async () => {
+  it('should return no error when supports_delete is false', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            support_delete: false
+            supports_delete: false
           }
         }
       },
@@ -222,7 +222,7 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return no error when support_delete is not specified', async () => {
+  it('should return no error when supports_delete is not specified', async () => {
     const validRuntime: any = {
       manifest: {
         destinations: {
@@ -240,14 +240,14 @@ describe('validateDestination', () => {
     expect(result.length).toEqual(0);
   });
 
-  it('should return error when support_delete is not a boolean', async () => {
+  it('should return error when supports_delete is not a boolean', async () => {
     const invalidSupportDeleteRuntime: any = {
       manifest: {
         destinations: {
           validDestination: {
             entry_point: 'validDestinationClass',
             schema: 'validSchema',
-            support_delete: 'invalid'
+            supports_delete: 'invalid'
           }
         }
       },
@@ -256,6 +256,6 @@ describe('validateDestination', () => {
 
     jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
     const result = await validateDestinations(invalidSupportDeleteRuntime);
-    expect(result).toContain('Destination support_delete must be a boolean: validDestination');
+    expect(result).toContain('Destination supports_delete must be a boolean: validDestination');
   });
 });
