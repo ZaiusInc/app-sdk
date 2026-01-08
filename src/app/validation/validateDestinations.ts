@@ -74,9 +74,9 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
       }
 
       // Validate supports_delete if present
-      const supportDelete = runtime.manifest.destinations[name].supports_delete;
-      if (supportDelete !== undefined) {
-        if (typeof supportDelete !== 'boolean') {
+      const supportsDelete = runtime.manifest.destinations[name].supports_delete;
+      if (supportsDelete !== undefined) {
+        if (typeof supportsDelete !== 'boolean') {
           errors.push(`Destination supports_delete must be a boolean: ${name}`);
         }
       }
