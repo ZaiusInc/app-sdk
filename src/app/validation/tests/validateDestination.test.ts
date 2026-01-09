@@ -183,4 +183,79 @@ describe('validateDestination', () => {
         'App.DestinationSchemaFunction: InvalidDestinationSchemaFunction'
     );
   });
+
+  it('should return no error when supports_delete is true', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            supports_delete: true
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return no error when supports_delete is false', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            supports_delete: false
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return no error when supports_delete is not specified', async () => {
+    const validRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(validRuntime);
+    expect(result.length).toEqual(0);
+  });
+
+  it('should return error when supports_delete is not a boolean', async () => {
+    const invalidSupportDeleteRuntime: any = {
+      manifest: {
+        destinations: {
+          validDestination: {
+            entry_point: 'validDestinationClass',
+            schema: 'validSchema',
+            supports_delete: 'invalid'
+          }
+        }
+      },
+      getDestinationClass: () => ValidDestination
+    };
+
+    jest.spyOn(fs, 'existsSync').mockImplementationOnce(() => true);
+    const result = await validateDestinations(invalidSupportDeleteRuntime);
+    expect(result).toContain('Destination supports_delete must be a boolean: validDestination');
+  });
 });

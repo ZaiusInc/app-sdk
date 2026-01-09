@@ -49,6 +49,7 @@ export interface AppDestination {
   entry_point: string;
   schema: string | AppDestinationSchemaFunction;
   description: string;
+  supports_delete?: boolean;
 }
 
 export interface AppSource {
