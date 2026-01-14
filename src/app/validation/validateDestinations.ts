@@ -72,6 +72,14 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
           }
         }
       }
+
+      // Validate supports_delete if present
+      const supportsDelete = runtime.manifest.destinations[name].supports_delete;
+      if (supportsDelete !== undefined) {
+        if (typeof supportsDelete !== 'boolean') {
+          errors.push(`Destination supports_delete must be a boolean: ${name}`);
+        }
+      }
     }
   }
 
