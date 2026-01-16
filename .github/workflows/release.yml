@@ -23,4 +23,5 @@ jobs:
     with:
       release_to_npm: ${{ inputs.release_to_npm }}
       release_to_github: ${{ inputs.release_to_github }}
-      release_tag: release-2
+      release_tag: v2-latest
+ 
