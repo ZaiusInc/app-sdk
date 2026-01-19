@@ -14,7 +14,7 @@ export interface SourceApi extends Source {
    * @param data - SourceData the data to be emitted
    * @returns A SourceResponse with success/failure and optional message
    */
-  emitToSource<T>(sourceName: string, data: SourceData<T>): Promise<SourceResponse>;
+  emitToSource<T extends object>(sourceName: string, data: SourceData<T>): Promise<SourceResponse>;
 }
 
 /**
