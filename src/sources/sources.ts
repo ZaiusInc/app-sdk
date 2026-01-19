@@ -14,7 +14,7 @@ export interface SourceApi extends Source {
    * @param data - SourceData the data to be emitted
    * @returns A SourceResponse with success/failure and optional message
    */
-  emitToSource<T extends {_isDeleted?: boolean}>(sourceName: string, data: SourceData<T>): Promise<SourceResponse>;
+  emitToSource<T>(sourceName: string, data: SourceData<T>): Promise<SourceResponse>;
 }
 
 /**
@@ -47,7 +47,7 @@ export const sources = {
    * @returns A SourceResponse with success/failure and optional message
    * @throws Error if called outside of an execution context
    */
-  emit: async <T extends {_isDeleted?: boolean}>(sourceName: string, data: SourceData<T>): Promise<SourceResponse> => {
+  emit: async <T>(sourceName: string, data: SourceData<T>): Promise<SourceResponse> => {
     if (!sourceApi) {
       throw new Error(
         'Source API is not initialized. This API is only available within function/job execution context.'

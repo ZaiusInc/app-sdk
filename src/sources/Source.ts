@@ -3,8 +3,8 @@ export interface SourceResponse {
   message?: string;
 }
 
-export interface SourceData<T extends {_isDeleted?: boolean}> {
-  data: T;
+export interface SourceData<T> {
+  data: T & {_isDeleted?: boolean};
 }
 
 /**
@@ -27,5 +27,5 @@ export interface Source {
    * @deprecated Use {@link sources.emit} instead, which allows emitting data to a source
    * from any function or job without requiring a SourceFunction/SourceJob context.
    */
-  emit<T extends {_isDeleted?: boolean}>(data: SourceData<T>): Promise<SourceResponse>;
+  emit<T>(data: SourceData<T>): Promise<SourceResponse>;
 }

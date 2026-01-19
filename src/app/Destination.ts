@@ -1,5 +1,5 @@
-export interface DestinationBatch<T extends {_isDeleted?: boolean}> {
-  items: T[];
+export interface DestinationBatch<T> {
+  items: (T & {_isDeleted?: boolean})[];
   attempt: number;
   sync: DataSync;
 }
@@ -35,7 +35,7 @@ export interface DestinationSchemaResult {
   fields: DestinationField[];
 }
 
-export abstract class Destination<T extends {_isDeleted?: boolean}> {
+export abstract class Destination<T> {
   /**
    * Checks if the Destination ready to use.
    * This should ensure that any required credentials and/or other configuration exist and are valid.
