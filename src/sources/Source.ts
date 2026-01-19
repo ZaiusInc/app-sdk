@@ -3,7 +3,7 @@ export interface SourceResponse {
   message?: string;
 }
 
-export interface SourceData<T> {
+export interface SourceData<T extends object> {
   data: T & {_isDeleted?: boolean};
 }
 
