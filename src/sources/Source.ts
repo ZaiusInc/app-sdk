@@ -27,5 +27,5 @@ export interface Source {
    * @deprecated Use {@link sources.emit} instead, which allows emitting data to a source
    * from any function or job without requiring a SourceFunction/SourceJob context.
    */
-  emit<T>(data: SourceData<T>): Promise<SourceResponse>;
+  emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
 }
