@@ -1,5 +1,5 @@
 export interface DestinationBatch<T> {
-  items: (T & {_isDeleted?: boolean})[];
+  items: Array<T & {_isDeleted?: boolean}>;
   attempt: number;
   sync: DataSync;
 }
