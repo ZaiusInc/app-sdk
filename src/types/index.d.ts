@@ -25,6 +25,5 @@ export interface OCPRuntime {
 }
 
 declare global {
-  /* eslint-disable no-var */
   var ocpContextStorage: AsyncLocalStorage<OCPContext>;
 }

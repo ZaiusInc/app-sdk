@@ -87,5 +87,12 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
 function formatAjvError(file: string, e: ErrorObject): string {
   const adjustedDataPath =
     e.instancePath.length > 0 ? e.instancePath.substring(1).replace(/\['([^']+)']/, '.$1') + ' ' : '';
-  return `Invalid ${file}: ${adjustedDataPath}${e.message?.replace(/\bshould\b/, 'must') ?? ''}`;
+  let message = e.message?.replace(/\bshould\b/, 'must') ?? '';
+  if (e.params && Object.keys(e.params).length > 0) {
+    const paramsStr = Object.entries(e.params)
+      .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+      .join(', ');
+    message += ` (${paramsStr})`;
+  }
+  return `Invalid ${file}: ${adjustedDataPath}${message}`;
 }
