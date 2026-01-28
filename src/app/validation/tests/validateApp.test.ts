@@ -251,9 +251,27 @@ describe('validateApp', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
     expect(await validateApp(runtime)).toEqual([
-      "Invalid app.yml: functions/foo must have required property 'entry_point'",
-      'Invalid app.yml: meta/categories/0 must be equal to one of the allowed values',
-      'Invalid app.yml: runtime must be equal to one of the allowed values'
+      'Invalid app.yml: functions/foo must have required property \'entry_point\' (missingProperty: "entry_point")',
+      'Invalid app.yml: meta/categories/0 must be equal to one of the allowed values ' +
+        '(allowedValues: ["Accounting & Finance","Advertising","Analytics & Reporting","Attribution & Linking",' +
+        '"Audience Sync","CDP / DMP","CRM","Channel","Commerce Platform","Content Management","Customer Experience",' +
+        '"Data Quality & Enrichment","Lead Capture","Loyalty & Rewards","Marketing","Merchandising & Products",' +
+        '"Offers","Opal","Personalization & Content","Point of Sale","Productivity","Reviews & Ratings",' +
+        '"Site & Content Experience","Subscriptions","Surveys & Feedback","Testing & Utilities"])',
+      'Invalid app.yml: runtime must be equal to one of the allowed values ' +
+        '(allowedValues: ["node12","node18","node18_rt","node22"])'
+    ]);
+  });
+
+  it('includes params in error messages', async () => {
+    const manifest = {
+      ...appManifest,
+      functions: {foo: {...appManifest.functions!.foo, invalid_prop: 'test'}}
+    };
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+    expect(await validateApp(runtime)).toEqual([
+      'Invalid app.yml: functions/foo must NOT have additional properties (additionalProperty: "invalid_prop")'
     ]);
   });
 
@@ -284,17 +302,22 @@ describe('validateApp', () => {
     } as any);
 
     expect(await validateApp(runtime)).toEqual([
-      "Invalid destinations/schema/asset.yml: must have required property 'name'",
-      "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name'",
+      'Invalid destinations/schema/asset.yml: must have required property \'name\' (missingProperty: "name")',
+      "Invalid destinations/schema/asset.yml: fields/0 must have required property 'display_name' " +
+        '(missingProperty: "display_name")',
       'Invalid destinations/schema/asset.yml: fields/0/type must match pattern ' +
-        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
-      "Invalid sources/schema/asset.yml: must have required property 'name'",
-      "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name'",
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$" ' +
+        '(pattern: "^(string|integer|boolean|decimal|\\\\w+|\\\\[\\\\w+\\\\])$")',
+      'Invalid sources/schema/asset.yml: must have required property \'name\' (missingProperty: "name")',
+      "Invalid sources/schema/asset.yml: fields/0 must have required property 'display_name' " +
+        '(missingProperty: "display_name")',
       'Invalid sources/schema/asset.yml: fields/0/type must match pattern ' +
-        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$"',
-      "Invalid schema/events.yml: must have required property 'name'",
-      "Invalid schema/events.yml: fields/0 must have required property 'description'",
-      'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values'
+        '"^(string|integer|boolean|decimal|\\w+|\\[\\w+\\])$" ' +
+        '(pattern: "^(string|integer|boolean|decimal|\\\\w+|\\\\[\\\\w+\\\\])$")',
+      'Invalid schema/events.yml: must have required property \'name\' (missingProperty: "name")',
+      'Invalid schema/events.yml: fields/0 must have required property \'description\' (missingProperty: "description")',
+      'Invalid schema/events.yml: fields/0/type must be equal to one of the allowed values ' +
+        '(allowedValues: ["boolean","number","string","timestamp","vector"])'
     ]);
 
     getSchemaObjects.mockRestore();
