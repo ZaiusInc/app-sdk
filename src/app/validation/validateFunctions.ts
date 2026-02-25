@@ -48,6 +48,10 @@ async function validateInstallationResolution(definition: AppFunction): Promise<
     return ['Global functions cannot define a installation_resolution'];
   }
 
+  if (definition.accepts === 'cms_ui_extension' && definition.installation_resolution) {
+    return ['Functions with accepts: cms_ui_extension cannot define installation_resolution'];
+  }
+
   if (definition.installation_resolution) {
     const {type, key} = definition.installation_resolution;
     if (type === 'JSON_BODY_FIELD') {

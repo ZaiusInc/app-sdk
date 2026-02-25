@@ -7,6 +7,7 @@ export interface AppFunction {
   description: string;
   global?: boolean;
   opal_tool?: boolean;
+  accepts?: 'http' | 'cms_ui_extension';
   installation_resolution?: {
     type: 'GUID' | 'HEADER' | 'QUERY_PARAM' | 'JSON_BODY_FIELD';
     key: string;

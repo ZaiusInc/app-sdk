@@ -93,6 +93,34 @@ describe('validateFunctions', () => {
     getFunctionClass.mockRestore();
   });
 
+  it('succeeds with accepts parameter set to http', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    runtime.manifest.functions!.foo.accepts = 'http';
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    const errors = await validateFunctions(runtime);
+
+    expect(errors).toEqual([]);
+
+    getFunctionClass.mockRestore();
+  });
+
+  it('succeeds with accepts parameter set to cms_ui_extension', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    runtime.manifest.functions!.foo.accepts = 'cms_ui_extension';
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    const errors = await validateFunctions(runtime);
+
+    expect(errors).toEqual([]);
+
+    getFunctionClass.mockRestore();
+  });
+
   it('detects missing function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getFunctionClass = jest
@@ -185,6 +213,21 @@ describe('validateFunctions', () => {
 
     expect(await validateFunctions(runtime)).toEqual([
       'Invalid JSON path expression: Lexical error on line 1. Unrecognized text.\n' + '/test/foo\n' + '^'
+    ]);
+    getFunctionClass.mockRestore();
+  });
+
+  it('detects cms_ui_extension functions with installation_resolution', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+    runtime.manifest.functions!.foo.accepts = 'cms_ui_extension';
+    runtime.manifest.functions!.foo.installation_resolution = {type: 'HEADER', key: 'foo'};
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([
+      'Functions with accepts: cms_ui_extension cannot define installation_resolution'
     ]);
     getFunctionClass.mockRestore();
   });
