@@ -3,7 +3,7 @@ import jp from 'jsonpath';
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
-import {AppFunction} from '../types';
+import {AppFunction, FunctionAccepts} from '../types';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -48,7 +48,7 @@ async function validateInstallationResolution(definition: AppFunction): Promise<
     return ['Global functions cannot define a installation_resolution'];
   }
 
-  if (definition.accepts === 'cms_ui_extension' && definition.installation_resolution) {
+  if (definition.accepts === FunctionAccepts.CmsUiExtension && definition.installation_resolution) {
     return ['Functions with accepts: cms_ui_extension cannot define installation_resolution'];
   }
 

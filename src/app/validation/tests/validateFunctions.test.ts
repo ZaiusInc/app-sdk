@@ -6,7 +6,7 @@ import {Function} from '../../Function';
 import {GlobalFunction} from '../../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../../Runtime';
 import {Request, Response} from '../../lib';
-import {AppManifest} from '../../types';
+import {AppManifest, FunctionAccepts} from '../../types';
 import {validateFunctions} from '../validateFunctions';
 
 const appManifest = deepFreeze({
@@ -95,7 +95,7 @@ describe('validateFunctions', () => {
 
   it('succeeds with accepts parameter set to http', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    runtime.manifest.functions!.foo.accepts = 'http';
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.Http;
     const getFunctionClass = jest
       .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
@@ -109,7 +109,7 @@ describe('validateFunctions', () => {
 
   it('succeeds with accepts parameter set to cms_ui_extension', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-    runtime.manifest.functions!.foo.accepts = 'cms_ui_extension';
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.CmsUiExtension;
     const getFunctionClass = jest
       .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
@@ -220,7 +220,7 @@ describe('validateFunctions', () => {
   it('detects cms_ui_extension functions with installation_resolution', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
-    runtime.manifest.functions!.foo.accepts = 'cms_ui_extension';
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.CmsUiExtension;
     runtime.manifest.functions!.foo.installation_resolution = {type: 'HEADER', key: 'foo'};
     const getFunctionClass = jest
       .spyOn(Runtime.prototype, 'getFunctionClass')

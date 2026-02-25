@@ -2,12 +2,18 @@ import {ValueHash} from '../../store';
 import {CampaignTargeting} from '../Channel';
 
 // regenerate JSON schema with `yarn run update-schema`
+
+export enum FunctionAccepts {
+  Http = 'http',
+  CmsUiExtension = 'cms_ui_extension'
+}
+
 export interface AppFunction {
   entry_point: string;
   description: string;
   global?: boolean;
   opal_tool?: boolean;
-  accepts?: 'http' | 'cms_ui_extension';
+  accepts?: FunctionAccepts;
   installation_resolution?: {
     type: 'GUID' | 'HEADER' | 'QUERY_PARAM' | 'JSON_BODY_FIELD';
     key: string;
