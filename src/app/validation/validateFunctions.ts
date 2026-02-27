@@ -33,6 +33,9 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       } else if (typeof fnClass.prototype.perform !== 'function') {
         errors.push(`Function entry point is missing the perform method: ${fnDefinition.entry_point}`);
       }
+      if (fnDefinition.global && fnDefinition.accepts === FunctionAccepts.CmsUiExtension) {
+        errors.push('Global functions cannot have accepts: cms_ui_extension');
+      }
       const installationResolutionErrors = await validateInstallationResolution(fnDefinition);
       if (installationResolutionErrors.length) {
         errors.push(...installationResolutionErrors);

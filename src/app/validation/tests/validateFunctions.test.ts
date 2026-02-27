@@ -231,4 +231,18 @@ describe('validateFunctions', () => {
     ]);
     getFunctionClass.mockRestore();
   });
+
+  it('detects global functions with accepts: cms_ui_extension', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+    runtime.manifest.functions!.global_foo.accepts = FunctionAccepts.CmsUiExtension;
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([
+      'Global functions cannot have accepts: cms_ui_extension'
+    ]);
+    getFunctionClass.mockRestore();
+  });
 });
