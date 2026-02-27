@@ -240,9 +240,7 @@ describe('validateFunctions', () => {
       .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
-    expect(await validateFunctions(runtime)).toEqual([
-      'Global functions cannot have accepts: cms_ui_extension'
-    ]);
+    expect(await validateFunctions(runtime)).toEqual(['Global functions cannot have accepts: cms_ui_extension']);
     getFunctionClass.mockRestore();
   });
 });
