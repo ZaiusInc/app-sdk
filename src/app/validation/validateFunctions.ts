@@ -3,7 +3,7 @@ import jp from 'jsonpath';
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
-import {AppFunction} from '../types';
+import {AppFunction, FunctionAccepts} from '../types';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -33,6 +33,9 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       } else if (typeof fnClass.prototype.perform !== 'function') {
         errors.push(`Function entry point is missing the perform method: ${fnDefinition.entry_point}`);
       }
+      if (fnDefinition.global && fnDefinition.accepts === FunctionAccepts.CmsUiExtension) {
+        errors.push('Global functions cannot have accepts: cms_ui_extension');
+      }
       const installationResolutionErrors = await validateInstallationResolution(fnDefinition);
       if (installationResolutionErrors.length) {
         errors.push(...installationResolutionErrors);
@@ -46,6 +49,10 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
 async function validateInstallationResolution(definition: AppFunction): Promise<string[]> {
   if (definition.global && definition.installation_resolution) {
     return ['Global functions cannot define a installation_resolution'];
+  }
+
+  if (definition.accepts === FunctionAccepts.CmsUiExtension && definition.installation_resolution) {
+    return ['Functions with accepts: cms_ui_extension cannot define installation_resolution'];
   }
 
   if (definition.installation_resolution) {
