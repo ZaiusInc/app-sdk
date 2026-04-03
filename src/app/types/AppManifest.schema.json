@@ -641,6 +641,9 @@
                 "support_url": {
                     "type": "string"
                 },
+                "tag": {
+                    "type": "string"
+                },
                 "vendor": {
                     "type": "string"
                 },

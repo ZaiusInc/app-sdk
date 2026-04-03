@@ -197,6 +197,7 @@ export interface AppManifest {
     contact_email: string;
     categories: AppCategory[];
     availability: string[];
+    tag?: string;
   };
   runtime: AppRuntime;
   environment?: string[];
