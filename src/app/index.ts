@@ -1,4 +1,5 @@
 export * from './AppContext';
+export * from './config';
 export * from './Channel';
 export * from './Function';
 export * from './GlobalFunction';

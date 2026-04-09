@@ -18,12 +18,14 @@ import {SourceFunction, SourceConfiguration} from './SourceFunction';
 import {SourceJob, SourceJobInvocation} from './SourceJob';
 import {SourceLifecycle} from './SourceLifecycle';
 import {SourceSchemaFunction, SourceSchemaFunctionConfig} from './SourceSchemaFunction';
+import {loadAppSdkConfig} from './config';
 import {Request} from './lib';
 import {AppManifest} from './types';
 import manifestSchema from './types/AppManifest.schema.json';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import {SchemaObjects} from './types/SchemaObject';
 import {SourceSchemaObjects} from './types/SourceSchema';
+import {buildManifestSchema, type AppSdkPlugin} from './validation/plugins';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -34,13 +36,17 @@ export class FunctionClassNotFoundError extends Error {}
 
 export class Runtime {
   /**
-   * Initializes from a directory. Used during startup.
+   * Initializes from a directory. Used during startup. If an
+   * `ocp-app.config.{mjs,js,cjs}` is present alongside the app, its plugins
+   * are loaded automatically so manifest schema fragments contributed by
+   * downstream SDKs (e.g. cms-ui-extensions) are recognized at boot.
    * @param dirName the base directory of the app
    * @param skipJsonValidation for internal use, allows json-schema errors to be captured by the validation process
    */
   public static async initialize(dirName: string, skipJsonValidation = false) {
     const runtime = new Runtime();
-    await runtime.initialize(dirName, skipJsonValidation);
+    const config = await loadAppSdkConfig(dirName);
+    await runtime.initialize(dirName, skipJsonValidation, config.plugins ?? []);
     return runtime;
   }
 
@@ -57,6 +63,7 @@ export class Runtime {
 
   private appManifest!: Readonly<AppManifest>;
   private dirName!: string;
+  private loadedPlugins: AppSdkPlugin[] = [];
 
   public get manifest(): Readonly<AppManifest> {
     return this.appManifest;
@@ -64,6 +71,10 @@ export class Runtime {
 
   public get baseDir(): string {
     return this.dirName;
+  }
+
+  public get plugins(): readonly AppSdkPlugin[] {
+    return this.loadedPlugins;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -228,14 +239,16 @@ export class Runtime {
     return await import(path);
   }
 
-  private async initialize(dirName: string, skipJsonValidation: boolean) {
+  private async initialize(dirName: string, skipJsonValidation: boolean, plugins: AppSdkPlugin[]) {
     this.dirName = dirName;
+    this.loadedPlugins = plugins;
     // dynamically import libraries only needed on the main thread so we don't also load them on worker threads
     const manifest = (await import('js-yaml')).load(readFileSync(join(dirName, 'app.yml'), 'utf8'));
 
     if (!skipJsonValidation) {
       const ajv: Ajv = new Ajv({allowUnionTypes: true});
-      if (!ajv.validate(manifestSchema, manifest)) {
+      const schema = plugins.length > 0 ? buildManifestSchema(plugins) : manifestSchema;
+      if (!ajv.validate(schema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }
     }

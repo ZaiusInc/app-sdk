@@ -77,7 +77,7 @@ describe('validateLiquidExtensions', () => {
       .mockRejectedValue(new Error('not found'));
 
     expect(await validateLiquidExtensions(runtime)).toEqual([
-      'Error loading entry point for liquid extension buzz. Error: not found'
+      'Error loading entry point for liquid extension Buzz. Error: not found'
     ]);
 
     getLiquidExtensionClass.mockRestore();

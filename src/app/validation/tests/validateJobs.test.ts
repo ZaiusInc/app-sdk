@@ -1,6 +1,9 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
+import {mkdtempSync, rmSync, writeFileSync} from 'fs';
 import 'jest';
+import {tmpdir} from 'os';
+import {join} from 'path';
 
 import {ValueHash} from '../../../store';
 import {Job, JobStatus} from '../../Job';
@@ -70,7 +73,7 @@ describe('validateJobs', () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockRejectedValue(new Error('not found'));
 
-    expect(await validateJobs(runtime)).toEqual(['Error loading entry point bar. Error: not found']);
+    expect(await validateJobs(runtime)).toEqual(['Error loading entry point Bar. Error: not found']);
 
     getJobClass.mockRestore();
   });
@@ -82,6 +85,41 @@ describe('validateJobs', () => {
     expect(await validateJobs(runtime)).toEqual(['Job entry point does not extend App.Job: Bar']);
 
     getJobClass.mockRestore();
+  });
+
+  it('includes app.yml line number for missing job class', async () => {
+    const tempDir = mkdtempSync(join(tmpdir(), 'app-sdk-validate-jobs-'));
+    writeFileSync(
+      join(tempDir, 'app.yml'),
+      [
+        'meta:',
+        '  app_id: my_app',
+        '  display_name: My App',
+        '  version: 1.0.0',
+        '  vendor: zaius',
+        '  support_url: https://zaius.com',
+        '  summary: app',
+        '  contact_email: support@zaius.com',
+        '  categories:',
+        '    - Commerce Platform',
+        '  availability:',
+        '    - all',
+        'runtime: node22',
+        'jobs:',
+        '  bar:',
+        '    entry_point: Bar',
+        '    description: Does a thing'
+      ].join('\n')
+    );
+
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: tempDir}));
+    const getJobClass = jest.spyOn(Runtime.prototype, 'getJobClass').mockRejectedValue(new Error('not found'));
+
+    const result = await validateJobs(runtime);
+    expect(result[0]).toContain('(app.yml:16)');
+
+    getJobClass.mockRestore();
+    rmSync(tempDir, {recursive: true, force: true});
   });
 
   describe('valid cron expressions', () => {

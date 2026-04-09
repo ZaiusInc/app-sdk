@@ -1,6 +1,6 @@
-import {logger} from '../../logging';
 import {Channel, CHANNEL_REQUIRED_METHODS} from '../Channel';
 import {Runtime} from '../Runtime';
+import {getLoadErrorDetails} from './entryPointErrors';
 
 export async function validateChannel(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
@@ -15,15 +15,14 @@ export async function validateChannel(runtime: Runtime): Promise<string[]> {
 
     // Make sure the channel exists and is implemented
     let channelClass = null;
-    let errorMessage: string | null = null;
+    let loadErrorDetails = 'not found';
     try {
       channelClass = await runtime.getChannelClass();
     } catch (e: any) {
-      errorMessage = e;
-      logger.error(e);
+      loadErrorDetails = getLoadErrorDetails(e);
     }
     if (!channelClass) {
-      errors.push(`Error loading Channel implementation. ${errorMessage}`);
+      errors.push(`Error loading Channel implementation. Error: ${loadErrorDetails}`);
     } else if (!(channelClass.prototype instanceof Channel)) {
       errors.push('Channel implementation does not extend App.Channel');
     } else {
