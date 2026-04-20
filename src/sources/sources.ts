@@ -1,4 +1,5 @@
 import {Source, SourceData, SourceResponse} from './Source';
+import {validateAndNormalizeLanguage} from './validateLanguage';
 
 /**
  * @internal
@@ -14,7 +15,10 @@ export interface SourceApi extends Source {
    * @param data - SourceData the data to be emitted
    * @returns A SourceResponse with success/failure and optional message
    */
-  emitToSource<T extends {_isDeleted?: boolean}>(sourceName: string, data: SourceData<T>): Promise<SourceResponse>;
+  emitToSource<T extends {_isDeleted?: boolean; _language?: string}>(
+    sourceName: string,
+    data: SourceData<T>
+  ): Promise<SourceResponse>;
 }
 
 /**
@@ -29,9 +33,9 @@ export let sourceApi: Source | undefined;
  * Initialize the source API.
  * Do not call this function from application code.
  */
-export const initializeSourceApi = (api: SourceApi): void => {
+export function initializeSourceApi(api: SourceApi): void {
   sourceApi = api;
-};
+}
 
 /**
  * Source data emission API.
@@ -47,12 +51,26 @@ export const sources = {
    * @returns A SourceResponse with success/failure and optional message
    * @throws Error if called outside of an execution context
    */
-  emit: async <T extends {_isDeleted?: boolean}>(sourceName: string, data: SourceData<T>): Promise<SourceResponse> => {
+  emit: async <T extends {_isDeleted?: boolean; _language?: string}>(
+    sourceName: string,
+    data: SourceData<T>
+  ): Promise<SourceResponse> => {
     if (!sourceApi) {
       throw new Error(
         'Source API is not initialized. This API is only available within function/job execution context.'
       );
     }
+
+    const rawLanguage = data.data._language;
+    if (rawLanguage != null) {
+      const result = validateAndNormalizeLanguage(rawLanguage);
+      if (!result.valid) {
+        return {success: false, message: result.message};
+      }
+      // Shallow-copy data.data to avoid mutating the caller's object
+      data = {data: {...data.data, _language: result.normalized} as T};
+    }
+
     return (sourceApi as SourceApi).emitToSource(sourceName, data);
   }
 };
