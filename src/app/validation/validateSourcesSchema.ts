@@ -1,8 +1,10 @@
 import * as path from 'path';
 
 import {SourceSchemaCustomType, SourceSchema, SourceSchemaField} from '../types';
+import {isValidBcp47, isPrivateUseBcp47} from './validateLanguage';
 
 const SCHEMA_NAME_FORMAT = /^[a-z][a-z0-9_]{1,61}$/;
+const LOCALE_CONFIG_MAX_ENTRIES = 50;
 
 export function validateSourcesSchema(sourceSchema: SourceSchema, file: string): string[] {
   return new SourceSchemaValidator(sourceSchema, file).validate();
@@ -53,7 +55,53 @@ class SourceSchemaValidator {
       });
     }
 
+    this.validateLocaleConfig();
+
     return this.errors;
+  }
+
+  private validateLocaleConfig() {
+    const localeConfig = this.sourcesSchema.locale_config;
+    if (localeConfig === undefined) {
+      return;
+    }
+
+    const supported = localeConfig.supported_locales;
+    if (!Array.isArray(supported) || supported.length === 0) {
+      this.errors.push(
+        `Invalid ${this.file}: locale_config.supported_locales must be a non-empty array of BCP 47 tags`
+      );
+      return;
+    }
+
+    if (supported.length > LOCALE_CONFIG_MAX_ENTRIES) {
+      this.errors.push(
+        `Invalid ${this.file}: locale_config.supported_locales must contain at most ` +
+          `${LOCALE_CONFIG_MAX_ENTRIES} entries (got ${supported.length})`
+      );
+      return;
+    }
+
+    const seen = new Set<string>();
+    supported.forEach((tag, index) => {
+      const ref = `locale_config.supported_locales[${index}]`;
+      if (typeof tag !== 'string' || tag.length === 0) {
+        this.errors.push(`Invalid ${this.file}: ${ref} must be a non-empty string`);
+        return;
+      }
+      if (seen.has(tag)) {
+        this.errors.push(`Invalid ${this.file}: ${ref} '${tag}' is duplicated`);
+        return;
+      }
+      seen.add(tag);
+      if (isPrivateUseBcp47(tag)) {
+        this.errors.push(`Invalid ${this.file}: ${ref} '${tag}' is a private-use BCP 47 tag and is not allowed`);
+        return;
+      }
+      if (!isValidBcp47(tag)) {
+        this.errors.push(`Invalid ${this.file}: ${ref} '${tag}' is not a valid BCP 47 language tag`);
+      }
+    });
   }
 
   private enforceNameFormat(name: string, ref: string) {

@@ -1,2 +1,2 @@
 export * from './Source';
-export {sources} from './sources';
+export {sources, initializeSourceApi} from './sources';
