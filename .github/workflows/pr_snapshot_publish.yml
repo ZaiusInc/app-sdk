@@ -64,7 +64,7 @@ jobs:
         run: npm version --no-git-tag-version ${{ needs.detect.outputs.snapshot_version }}
 
       - name: Publish snapshot
-        run: npm publish --access restricted
+        run: npm publish --access restricted --tag ${{ needs.detect.outputs.jira_key }}-snapshot
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -79,6 +79,8 @@ jobs:
         with:
           script: |
             const snapshotVersion = '${{ needs.detect.outputs.snapshot_version }}';
+            const jiraKey = '${{ needs.detect.outputs.jira_key }}';
+            const distTag = `${jiraKey}-snapshot`;
             const success = '${{ needs.publish.result }}' === 'success';
             const status = success ? ':white_check_mark:' : ':x:';
             const marker = '<!-- snapshot-artifacts -->';
@@ -89,6 +91,8 @@ jobs:
               '| Package | Artifact | Status |',
               '|---------|----------|--------|',
               `| @zaiusinc/app-sdk | \`@zaiusinc/app-sdk@${snapshotVersion}\` | ${status} |`,
+              '',
+              `Or track the latest push for this PR via dist-tag: \`@zaiusinc/app-sdk@${distTag}\``,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
