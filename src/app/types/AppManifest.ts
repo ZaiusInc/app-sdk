@@ -113,7 +113,7 @@ export type AppCategory =
   | 'Audience Sync'
   | 'Opal';
 
-export type AppRuntime = 'node12' | 'node18' | 'node18_rt' | 'node22';
+export type AppRuntime = 'node12' | 'node18' | 'node18_rt' | 'node22' | 'node22-cms-ext';
 
 export enum ChannelType {
   Email = 'email',
