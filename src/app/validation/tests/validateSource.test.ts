@@ -132,7 +132,7 @@ describe('validateSources', () => {
 
       getSourceFunctionClass.mockRestore();
 
-      expect(result).toContain('Error loading SourceFunction entry point invalidFunctionEntry. Error: not found');
+      expect(result).toContain('Error loading SourceFunction entry point dne. Error: not found');
     });
 
     it('should return no errors if function is not defined', async () => {
@@ -164,7 +164,7 @@ describe('validateSources', () => {
       const result = await validateSources(runtime);
 
       getSourceLifecycleClass.mockRestore();
-      expect(result).toContain('Error loading SourceLifecycle entry point missingLifecycle. Error: not found');
+      expect(result).toContain('Error loading SourceLifecycle entry point dne. Error: not found');
     });
 
     it('should return error when schema is missing', async () => {
@@ -352,7 +352,7 @@ describe('validateSources', () => {
       const result = await validateSources(runtime);
       getSourceJobClass.mockRestore();
 
-      expect(result).toContain('Error loading job entry point bar. Error: not found');
+      expect(result).toContain('Error loading job entry point dne. Error: not found');
     });
 
     it('detects non-extended job entry point', async () => {

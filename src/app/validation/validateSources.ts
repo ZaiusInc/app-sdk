@@ -6,6 +6,8 @@ import {SourceFunction} from '../SourceFunction';
 import {SourceJob} from '../SourceJob';
 import {SourceLifecycle} from '../SourceLifecycle';
 import {SourceSchemaFunction} from '../SourceSchemaFunction';
+import {getLoadErrorDetails, withManifestLine} from './entryPointErrors';
+import {loadManifestSource, type ManifestSource} from './manifestSource';
 
 const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
   'onSourceCreate',
@@ -17,21 +19,22 @@ const SOURCE_FUNCTION_LIFECYCLE_METHODS = [
 
 export async function validateSources(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
+  const manifestSource = loadManifestSource(runtime.baseDir);
 
   // Make sure all the sources listed in the manifest actually exist and are implemented
   if (runtime.manifest.sources) {
     for (const name of Object.keys(runtime.manifest.sources)) {
-      errors.push(...(await validateFunction(runtime, name)));
-      errors.push(...(await validateSchema(runtime, name)));
-      errors.push(...(await validateLifecycle(runtime, name)));
-      errors.push(...(await validateSourceJobs(runtime, name)));
+      errors.push(...(await validateFunction(runtime, manifestSource, name)));
+      errors.push(...(await validateSchema(runtime, manifestSource, name)));
+      errors.push(...(await validateLifecycle(runtime, manifestSource, name)));
+      errors.push(...(await validateSourceJobs(runtime, manifestSource, name)));
     }
   }
 
   return errors;
 }
 
-async function validateSchema(runtime: Runtime, name: string) {
+async function validateSchema(runtime: Runtime, manifestSource: ManifestSource | null, name: string) {
   const errors: string[] = [];
   const source = runtime.manifest.sources?.[name];
   if (!source || !source.schema) {
@@ -52,7 +55,14 @@ async function validateSchema(runtime: Runtime, name: string) {
       try {
         sourceSchemaFunction = await runtime.getSourceSchemaFunctionClass(name);
       } catch (e: any) {
-        errors.push(`Error loading SourceSchemaFunction entry point ${schema.entry_point}. ${e}`);
+        const loadSchemaErrorDetails = getLoadErrorDetails(e);
+        errors.push(
+          withManifestLine({
+            manifestSource,
+            pathSegments: ['sources', name, 'schema', 'entry_point'],
+            message: `Error loading SourceSchemaFunction entry point ${schema.entry_point}. Error: ${loadSchemaErrorDetails}`
+          })
+        );
       }
       if (sourceSchemaFunction) {
         if (!(sourceSchemaFunction.prototype instanceof SourceSchemaFunction)) {
@@ -70,7 +80,7 @@ async function validateSchema(runtime: Runtime, name: string) {
   return errors;
 }
 
-async function validateLifecycle(runtime: Runtime, name: string) {
+async function validateLifecycle(runtime: Runtime, manifestSource: ManifestSource | null, name: string) {
   const errors: string[] = [];
   const source = runtime.manifest.sources?.[name];
 
@@ -79,15 +89,22 @@ async function validateLifecycle(runtime: Runtime, name: string) {
   }
 
   let lifecycleClass = null;
-  let errorMessage: string | null = null;
+  let loadErrorDetails = 'not found';
   try {
     lifecycleClass = await runtime.getSourceLifecycleClass(name);
   } catch (e: any) {
-    errorMessage = e;
+    loadErrorDetails = getLoadErrorDetails(e);
   }
 
-  if (!source || errorMessage) {
-    errors.push(`Error loading SourceLifecycle entry point ${name}. ${errorMessage}`);
+  if (!source || !lifecycleClass) {
+    const lifecycleEntryPoint = source?.lifecycle?.entry_point ?? name;
+    errors.push(
+      withManifestLine({
+        manifestSource,
+        pathSegments: ['sources', name, 'lifecycle', 'entry_point'],
+        message: `Error loading SourceLifecycle entry point ${lifecycleEntryPoint}. Error: ${loadErrorDetails}`
+      })
+    );
   } else if (lifecycleClass) {
     if (!(lifecycleClass.prototype instanceof SourceLifecycle)) {
       errors.push(`SourceLifecycle entry point does not extend App.SourceLifecycle: ${source.lifecycle?.entry_point}`);
@@ -103,7 +120,7 @@ async function validateLifecycle(runtime: Runtime, name: string) {
   return errors;
 }
 
-async function validateFunction(runtime: Runtime, name: string) {
+async function validateFunction(runtime: Runtime, manifestSource: ManifestSource | null, name: string) {
   const source = runtime.manifest.sources?.[name];
   if (!source?.function) {
     return [];
@@ -111,14 +128,21 @@ async function validateFunction(runtime: Runtime, name: string) {
 
   const errors: string[] = [];
   let sourceClass = null;
-  let errorMessage: string | null = null;
+  let loadErrorDetails = 'not found';
   try {
     sourceClass = await runtime.getSourceFunctionClass(name);
   } catch (e: any) {
-    errorMessage = e;
+    loadErrorDetails = getLoadErrorDetails(e);
   }
   if (!source || !sourceClass) {
-    errors.push(`Error loading SourceFunction entry point ${name}. ${errorMessage}`);
+    const functionEntryPoint = source?.function?.entry_point ?? name;
+    errors.push(
+      withManifestLine({
+        manifestSource,
+        pathSegments: ['sources', name, 'function', 'entry_point'],
+        message: `Error loading SourceFunction entry point ${functionEntryPoint}. Error: ${loadErrorDetails}`
+      })
+    );
   } else if (!(sourceClass.prototype instanceof SourceFunction)) {
     errors.push(`SourceFunction entry point does not extend App.SourceFunction: ${source.function?.entry_point}`);
   } else if (typeof (sourceClass.prototype as any)['perform'] !== 'function') {
@@ -127,21 +151,32 @@ async function validateFunction(runtime: Runtime, name: string) {
   return errors;
 }
 
-export async function validateSourceJobs(runtime: Runtime, sourceName: string): Promise<string[]> {
+export async function validateSourceJobs(
+  runtime: Runtime,
+  manifestSource: ManifestSource | null,
+  sourceName: string
+): Promise<string[]> {
   const errors: string[] = [];
   const source = runtime.manifest.sources?.[sourceName];
   // Make sure all the source jobs listed in the manifest actually exist and are implemented
   if (source && source.jobs) {
     for (const name of Object.keys(source.jobs)) {
       let sourceJobClass = null;
-      let errorMessage: string | null = null;
+      let loadErrorDetails = 'not found';
       try {
         sourceJobClass = await runtime.getSourceJobClass(sourceName, name);
       } catch (e: any) {
-        errorMessage = e;
+        loadErrorDetails = getLoadErrorDetails(e);
       }
       if (!sourceJobClass) {
-        errors.push(`Error loading job entry point ${name}. ${errorMessage}`);
+        const jobEntryPoint = source.jobs[name].entry_point;
+        errors.push(
+          withManifestLine({
+            manifestSource,
+            pathSegments: ['sources', sourceName, 'jobs', name, 'entry_point'],
+            message: `Error loading job entry point ${jobEntryPoint}. Error: ${loadErrorDetails}`
+          })
+        );
       } else if (!(sourceJobClass.prototype instanceof SourceJob)) {
         errors.push(`SourceJob entry point does not extend App.SourceJob: ${source.jobs[name].entry_point}`);
       } else {

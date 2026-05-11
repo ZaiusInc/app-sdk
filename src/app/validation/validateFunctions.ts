@@ -4,28 +4,41 @@ import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
 import {FunctionClassNotFoundError, Runtime} from '../Runtime';
 import {AppFunction, FunctionAccepts} from '../types';
+import {getLoadErrorDetails, withManifestLine} from './entryPointErrors';
+import {loadManifestSource} from './manifestSource';
 
 export async function validateFunctions(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
+  const manifestSource = loadManifestSource(runtime.baseDir);
 
   // Make sure all the functions listed in the manifest actually exist and are implemented
   if (runtime.manifest.functions) {
     for (const name of Object.keys(runtime.manifest.functions)) {
       const fnDefinition = runtime.manifest.functions[name];
       let fnClass = null;
-      let errorMessage: string | null = null;
+      let loadErrorDetails = 'not found';
       try {
         fnClass = await runtime.getFunctionClass(name);
       } catch (e: any) {
         if (!(e instanceof FunctionClassNotFoundError)) {
-          const msg: string = e.message;
-          errors.push(`Failed to load function class ${name}.  Error was: ${msg}`);
-          return errors;
+          loadErrorDetails = getLoadErrorDetails(e);
+          return [
+            withManifestLine({
+              manifestSource,
+              pathSegments: ['functions', name, 'entry_point'],
+              message: `Error loading function class ${fnDefinition.entry_point}. Error: ${loadErrorDetails}`
+            })
+          ];
         }
-        errorMessage = e instanceof Error ? e.message : String(e);
       }
       if (!fnClass) {
-        errors.push(`Error loading function class ${name}. Error: ${errorMessage}`);
+        errors.push(
+          withManifestLine({
+            manifestSource,
+            pathSegments: ['functions', name, 'entry_point'],
+            message: `Error loading function class ${fnDefinition.entry_point}. Error: ${loadErrorDetails}`
+          })
+        );
       } else if (!fnDefinition.global && !(fnClass.prototype instanceof Function)) {
         errors.push(`Function entry point does not extend App.Function: ${fnDefinition.entry_point}`);
       } else if (fnDefinition.global && !(fnClass.prototype instanceof GlobalFunction)) {

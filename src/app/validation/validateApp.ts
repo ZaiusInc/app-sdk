@@ -6,6 +6,7 @@ import * as manifestSchema from '../types/AppManifest.schema.json';
 import * as destinationSchema from '../types/DestinationSchema.schema.json';
 import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
 import * as sourceSchema from '../types/SourceSchema.schema.json';
+import {buildManifestSchema, runPluginValidators} from './plugins';
 import {validateAssets} from './validateAssets';
 import {validateChannel} from './validateChannel';
 import {validateDestinations} from './validateDestinations';
@@ -28,9 +29,11 @@ import {validateSourcesSchema} from './validateSourcesSchema';
  */
 export async function validateApp(runtime: Runtime, baseObjectNames?: string[]): Promise<string[]> {
   let errors: string[] = [];
+  const plugins = runtime.plugins;
 
   const ajv = new Ajv({allErrors: true, allowUnionTypes: true});
-  if (!ajv.validate(manifestSchema, runtime.manifest)) {
+  const manifestValidationSchema = plugins.length > 0 ? buildManifestSchema(plugins) : manifestSchema;
+  if (!ajv.validate(manifestValidationSchema, runtime.manifest)) {
     ajv.errors?.forEach((e: ErrorObject) => errors.push(formatAjvError('app.yml', e)));
   } else {
     errors = errors
@@ -80,6 +83,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       errors = errors.concat(validateSchemaObject(runtime, schemaObject, file, baseObjectNames));
     }
   }
+
+  errors = errors.concat(await runPluginValidators(runtime, plugins));
 
   return errors;
 }

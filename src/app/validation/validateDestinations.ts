@@ -4,22 +4,32 @@ import {join} from 'path';
 import {Destination} from '../Destination';
 import {DestinationSchemaFunction} from '../DestinationSchemaFunction';
 import {Runtime} from '../Runtime';
+import {getLoadErrorDetails, withManifestLine} from './entryPointErrors';
+import {loadManifestSource} from './manifestSource';
 
 export async function validateDestinations(runtime: Runtime): Promise<string[]> {
   const errors: string[] = [];
+  const manifestSource = loadManifestSource(runtime.baseDir);
 
   // Make sure all the destinations listed in the manifest actually exist and are implemented
   if (runtime.manifest.destinations) {
     for (const name of Object.keys(runtime.manifest.destinations)) {
       let destinationClass = null;
-      let errorMessage: string | null = null;
+      let loadErrorDetails = 'not found';
       try {
         destinationClass = await runtime.getDestinationClass(name);
       } catch (e: any) {
-        errorMessage = e;
+        loadErrorDetails = getLoadErrorDetails(e);
       }
       if (!destinationClass) {
-        errors.push(`Error loading entry point ${name}. ${errorMessage}`);
+        const entryPoint = runtime.manifest.destinations[name].entry_point;
+        errors.push(
+          withManifestLine({
+            manifestSource,
+            pathSegments: ['destinations', name, 'entry_point'],
+            message: `Error loading entry point ${entryPoint}. Error: ${loadErrorDetails}`
+          })
+        );
       } else if (!(destinationClass.prototype instanceof Destination)) {
         errors.push(
           `Destination entry point does not extend App.Destination: ${runtime.manifest.destinations[name].entry_point}`
@@ -55,7 +65,14 @@ export async function validateDestinations(runtime: Runtime): Promise<string[]> 
           try {
             destinationSchemaFunction = await runtime.getDestinationSchemaFunctionClass(name);
           } catch (e: any) {
-            errors.push(`Error loading DestinationSchemaFunction entry point ${schema.entry_point}. ${e}`);
+            const loadSchemaErrorDetails = getLoadErrorDetails(e);
+            errors.push(
+              withManifestLine({
+                manifestSource,
+                pathSegments: ['destinations', name, 'schema', 'entry_point'],
+                message: `Error loading DestinationSchemaFunction entry point ${schema.entry_point}. Error: ${loadSchemaErrorDetails}`
+              })
+            );
           }
           if (destinationSchemaFunction) {
             if (!(destinationSchemaFunction.prototype instanceof DestinationSchemaFunction)) {
