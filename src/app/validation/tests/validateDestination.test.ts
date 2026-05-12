@@ -91,7 +91,7 @@ describe('validateDestination', () => {
       .mockRejectedValue(new Error('not found'));
     const result = await validateDestinations(invalidRuntime);
     getDestinationsClass.mockRestore();
-    expect(result).toContain('Error loading entry point validDestination. Error: not found');
+    expect(result).toContain('Error loading entry point validDestinationClass. Error: not found');
   });
 
   it('should return error when schema is missing', async () => {

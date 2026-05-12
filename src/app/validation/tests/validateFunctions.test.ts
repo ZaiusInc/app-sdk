@@ -1,6 +1,9 @@
 /* eslint-disable max-classes-per-file */
 import deepFreeze from 'deep-freeze';
+import {mkdtempSync, rmSync, writeFileSync} from 'fs';
 import 'jest';
+import {tmpdir} from 'os';
+import {join} from 'path';
 
 import {Function} from '../../Function';
 import {GlobalFunction} from '../../GlobalFunction';
@@ -128,8 +131,8 @@ describe('validateFunctions', () => {
       .mockRejectedValue(new FunctionClassNotFoundError('not found'));
 
     expect(await validateFunctions(runtime)).toEqual([
-      'Error loading function class foo. Error: not found',
-      'Error loading function class global_foo. Error: not found'
+      'Error loading function class Foo. Error: not found',
+      'Error loading function class GlobalFoo. Error: not found'
     ]);
 
     getFunctionClass.mockRestore();
@@ -142,10 +145,47 @@ describe('validateFunctions', () => {
       .mockRejectedValue(new Error('dependent module not found'));
 
     expect(await validateFunctions(runtime)).toEqual([
-      'Failed to load function class foo.  Error was: dependent module not found'
+      'Error loading function class Foo. Error: dependent module not found'
     ]);
 
     getFunctionClass.mockRestore();
+  });
+
+  it('includes app.yml line number for loading errors', async () => {
+    const tempDir = mkdtempSync(join(tmpdir(), 'app-sdk-validate-functions-'));
+    writeFileSync(
+      join(tempDir, 'app.yml'),
+      [
+        'meta:',
+        '  app_id: my_app',
+        '  display_name: My App',
+        '  version: 1.0.0',
+        '  vendor: zaius',
+        '  support_url: https://zaius.com',
+        '  summary: app',
+        '  contact_email: support@zaius.com',
+        '  categories:',
+        '    - Commerce Platform',
+        '  availability:',
+        '    - all',
+        'runtime: node22',
+        'functions:',
+        '  foo:',
+        '    entry_point: Foo',
+        '    description: gets foo'
+      ].join('\n')
+    );
+
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: tempDir}));
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockRejectedValue(new Error('not found'));
+
+    const result = await validateFunctions(runtime);
+    expect(result[0]).toContain('(app.yml:16)');
+
+    getFunctionClass.mockRestore();
+    rmSync(tempDir, {recursive: true, force: true});
   });
 
   it('detects non-extended function entry point', async () => {

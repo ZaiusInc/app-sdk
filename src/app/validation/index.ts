@@ -5,6 +5,7 @@ import {Runtime} from '../Runtime';
 import {validateApp} from './validateApp';
 
 export {validateApp} from './validateApp';
+export type {AppSdkPlugin, AppValidator, ManifestSchemaFragment} from './plugins';
 
 /**
  * Options for running app validation.

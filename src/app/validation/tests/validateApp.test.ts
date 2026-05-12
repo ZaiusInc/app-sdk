@@ -259,7 +259,7 @@ describe('validateApp', () => {
         '"Offers","Opal","Personalization & Content","Point of Sale","Productivity","Reviews & Ratings",' +
         '"Site & Content Experience","Subscriptions","Surveys & Feedback","Testing & Utilities"])',
       'Invalid app.yml: runtime must be equal to one of the allowed values ' +
-        '(allowedValues: ["node12","node18","node18_rt","node22"])'
+        '(allowedValues: ["node12","node18","node18_rt","node22","node22-cms-ext"])'
     ]);
   });
 

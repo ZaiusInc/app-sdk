@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    # Schedule only affects version updates (which we disable below);
+    # security updates are event-driven and ignore this. Required by schema.
+    schedule:
+      interval: weekly
+    # Disable version-update PRs; security updates ignore this limit and still run.
+    open-pull-requests-limit: 0
+    versioning-strategy: increase
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"

@@ -221,7 +221,8 @@
                 "node12",
                 "node18",
                 "node18_rt",
-                "node22"
+                "node22",
+                "node22-cms-ext"
             ],
             "type": "string"
         },
