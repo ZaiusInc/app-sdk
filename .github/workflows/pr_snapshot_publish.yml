@@ -14,6 +14,8 @@ jobs:
       snapshot_version: ${{ steps.version.outputs.snapshot_version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Extract JIRA key from PR title
         id: jira
@@ -45,6 +47,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
