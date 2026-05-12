@@ -61,6 +61,21 @@
                 "type"
             ],
             "type": "object"
+        },
+        "SourceSchemaLocaleConfig": {
+            "additionalProperties": false,
+            "properties": {
+                "supported_locales": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "supported_locales"
+            ],
+            "type": "object"
         }
     },
     "properties": {
@@ -81,6 +96,10 @@
                 "$ref": "#/definitions/SourceSchemaField"
             },
             "type": "array"
+        },
+        "locale_config": {
+            "$ref": "#/definitions/SourceSchemaLocaleConfig",
+            "description": "Optional declaration that this source emits localized items. When present,\ndownstream sync configurations may filter incoming items by locale.\n\n`supported_locales` entries are BCP 47 tags. Validated by the bespoke\nsource-schema validator at app build/validation time using the\n`language-tags` IANA registry check."
         },
         "name": {
             "type": "string"

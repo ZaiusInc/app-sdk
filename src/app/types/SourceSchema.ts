@@ -4,6 +4,19 @@ export interface SourceSchema {
   display_name: string;
   fields: SourceSchemaField[];
   custom_types?: SourceSchemaCustomType[];
+  /**
+   * Optional declaration that this source emits localized items. When present,
+   * downstream sync configurations may filter incoming items by locale.
+   *
+   * `supported_locales` entries are BCP 47 tags. Validated by the bespoke
+   * source-schema validator at app build/validation time using the
+   * `language-tags` IANA registry check.
+   */
+  locale_config?: SourceSchemaLocaleConfig;
+}
+
+export interface SourceSchemaLocaleConfig {
+  supported_locales: string[];
 }
 
 export interface SourceSchemaField {
