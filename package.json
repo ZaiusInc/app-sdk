@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "3.4.0",
+  "version": "3.4.1-OCP-1888.2",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -94,6 +94,7 @@
     "@zaiusinc/node-sdk": "^3.0.0"
   },
   "resolutions": {
-    "@babel/core": "^7.26.10"
+    "@babel/core": "^7.26.10",
+    "underscore": "1.13.8"
   }
 }
