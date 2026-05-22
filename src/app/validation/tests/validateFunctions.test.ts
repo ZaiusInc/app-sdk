@@ -251,9 +251,37 @@ describe('validateFunctions', () => {
       .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
-    expect(await validateFunctions(runtime)).toEqual([
-      'Invalid JSON path expression: Lexical error on line 1. Unrecognized text.\n' + '/test/foo\n' + '^'
-    ]);
+    expect(await validateFunctions(runtime)).toEqual(['Invalid JSON path expression: Expected "$" but "/" found.']);
+    getFunctionClass.mockRestore();
+  });
+
+  it('accepts a valid JSON_BODY_FIELD JSONPath expression', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+    runtime.manifest.functions!.foo.installation_resolution = {
+      type: 'JSON_BODY_FIELD',
+      key: '$.user.id'
+    };
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([]);
+    getFunctionClass.mockRestore();
+  });
+
+  it('accepts a complex valid JSON_BODY_FIELD JSONPath expression', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+    runtime.manifest.functions!.foo.installation_resolution = {
+      type: 'JSON_BODY_FIELD',
+      key: '$.store.book[*].author'
+    };
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([]);
     getFunctionClass.mockRestore();
   });
 

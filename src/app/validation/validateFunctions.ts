@@ -1,4 +1,4 @@
-import jp from 'jsonpath';
+import {query as jsonPathQuery} from 'jsonpath-rfc9535';
 
 import {Function} from '../Function';
 import {GlobalFunction} from '../GlobalFunction';
@@ -72,7 +72,7 @@ async function validateInstallationResolution(definition: AppFunction): Promise<
     const {type, key} = definition.installation_resolution;
     if (type === 'JSON_BODY_FIELD') {
       try {
-        jp.parse(key);
+        jsonPathQuery({}, key);
       } catch (e: any) {
         return [`Invalid JSON path expression: ${e.message}`];
       }
