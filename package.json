@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "3.4.1",
+  "version": "3.4.2-dev.1",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -23,7 +23,8 @@
   },
   "directories": {},
   "scripts": {
-    "build": "yarn update-schema && tsc",
+    "build": "yarn update-schema && tsc && yarn build-isolate",
+    "build-isolate": "esbuild src/isolate/index.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/isolate/index.js --alias:buffer=buffer/index.js",
     "build-watch": "tsc -w",
     "lint": "npx eslint 'src/**/*.ts'",
     "test": "jest -i",
@@ -69,6 +70,8 @@
     "@types/url-regex-safe": "^1.0.2",
     "@zaiusinc/eslint-config-presets": "^3.1.0",
     "@zaiusinc/node-sdk": "^3.0.0",
+    "buffer": "^6.0.3",
+    "esbuild": "^0.28.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^28.11.0",
