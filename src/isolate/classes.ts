@@ -26,3 +26,8 @@ export {LiquidExtension} from '../app/LiquidExtension';
 export {SourceFunction} from '../app/SourceFunction';
 export {SourceLifecycle} from '../app/SourceLifecycle';
 export {SourceSchemaFunction} from '../app/SourceSchemaFunction';
+// Lifecycle result classes — apps construct these; their .getResponse() runs
+// in-isolate (structured-clone would drop the methods across the boundary).
+export {FormResult} from '../app/lib/FormResult';
+export {LifecycleSettingsResult} from '../app/lib/LifecycleSettingsResult';
+export {AuthorizationGrantResult} from '../app/lib/AuthorizationGrantResult';

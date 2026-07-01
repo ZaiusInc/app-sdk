@@ -19,12 +19,18 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
   // storage.* — nested stores over the 'store' channel.
   const makeStore = (name: string) => ({
     get: (key: string) => callHost('store', {store: name, method: 'get', key}),
-    put: (key: string, value: unknown) => callHost('store', {store: name, method: 'put', key, value}).then(() => true),
+    put: (key: string, value: unknown, options?: unknown) =>
+      callHost('store', {store: name, method: 'put', key, value, options}).then(() => true),
     delete: (key: string, fields?: string[]) =>
       callHost('store', {store: name, method: 'delete', key, fields}).then(() => true)
   });
   const storage = {
-    settings: makeStore('settings'),
+    settings: {
+      ...makeStore('settings'),
+      // SettingsStore-only: read every section at once (used by the lifecycle
+      // settings/auth response, mirroring the fork worker).
+      getAllSections: () => callHost('store', {store: 'settings', method: 'getAllSections'})
+    },
     secrets: makeStore('secrets'),
     kvStore: makeStore('kvStore'),
     sharedKvStore: makeStore('sharedKvStore')

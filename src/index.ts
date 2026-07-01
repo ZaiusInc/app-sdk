@@ -7,3 +7,6 @@ export * from './logging';
 export * from './notifications';
 export * from './store';
 export * from './util';
+// Project Mallorn — host-side helper to assemble the per-isolate bootstrap script.
+export {buildIsolateBootstrap} from './isolate/bootstrap';
+export type {IsolateBootstrapOptions} from './isolate/bootstrap';

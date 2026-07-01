@@ -13,8 +13,10 @@ import {Buffer} from 'buffer';
 
 import * as classes from './classes';
 import {createCrypto} from './cryptoShim';
+import {installLifecycleRunner} from './lifecycleRunner';
 import {installPolyfills} from './polyfills';
 import {createSdkApi} from './sdkApi';
+import {installTaskRunners} from './taskRunners';
 import {HostTransport} from './transport';
 
 export function installIsolateRuntime(
@@ -159,4 +161,9 @@ export function installIsolateRuntime(
     body: res.bodyAsU8Array ?? null
   });
   g.__isResponse = (x: unknown) => x instanceof classes.Response;
+
+  // In-isolate task runners (__runFunction/__runJob) + lifecycle dispatcher
+  // (__runLifecycle) — read __App/__appSdk/__makeRequest at call time.
+  installTaskRunners(g);
+  installLifecycleRunner(g);
 }
