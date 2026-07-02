@@ -16,21 +16,20 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
   const callHost = (channel: string, payload: unknown): Promise<unknown> =>
     transport.invoke(channel, JSON.stringify(payload)).then((s) => JSON.parse(s));
 
-  // storage.* — nested stores over the 'store' channel.
-  const makeStore = (name: string) => ({
-    get: (key: string) => callHost('store', {store: name, method: 'get', key}),
-    put: (key: string, value: unknown, options?: unknown) =>
-      callHost('store', {store: name, method: 'put', key, value, options}).then(() => true),
-    delete: (key: string, fields?: string[]) =>
-      callHost('store', {store: name, method: 'delete', key, fields}).then(() => true)
-  });
+  // storage.* — generic forwarder (like functions/sources): any method + args go
+  // to the host's real app-storage client, covering the whole KVStore surface.
+  const makeStore = (name: string) =>
+    new Proxy(
+      {},
+      {
+        get:
+          (_t, method: string) =>
+          (...args: unknown[]) =>
+            callHost('store', {store: name, method, args})
+      }
+    );
   const storage = {
-    settings: {
-      ...makeStore('settings'),
-      // SettingsStore-only: read every section at once (used by the lifecycle
-      // settings/auth response, mirroring the fork worker).
-      getAllSections: () => callHost('store', {store: 'settings', method: 'getAllSections'})
-    },
+    settings: makeStore('settings'),
     secrets: makeStore('secrets'),
     kvStore: makeStore('kvStore'),
     sharedKvStore: makeStore('sharedKvStore')
