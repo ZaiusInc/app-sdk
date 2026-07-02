@@ -50,9 +50,9 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
     error: mkNotify('error')
   };
 
-  // functions (FunctionApi) + sources (SourceApi): generic method-forwarders —
-  // any method call goes to the host, which invokes the real client. No surface
-  // mirroring; new SDK methods need no isolate change.
+  // functions (FunctionApi): generic forwarder — every method is a 1:1 passthrough
+  // to the host client. (getAuthorizationGrantUrl is sync in the fork facade but
+  // async here; callers should await it.)
   const makeApi = (channel: string) =>
     new Proxy(
       {},
@@ -63,6 +63,13 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
             callHost(channel, {method, args})
       }
     );
+
+  // sources: mirror the app-sdk facade — emit(name, data) delegates to the host's
+  // emitToSource(name, data), NOT the deprecated Source.emit(data).
+  const sources = {
+    emit: (sourceName: string, data: unknown) =>
+      callHost('sources', {method: 'emitToSource', args: [sourceName, data]})
+  };
 
   const logger = {
     debug: (...a: unknown[]) => transport.log('debug', a.map(fmt).join(' ')),
@@ -79,7 +86,7 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
     jobs,
     notifications,
     functions: makeApi('functions'),
-    sources: makeApi('sources'),
+    sources,
     // common no-op helpers apps may import (real impls live host-side)
     setLogContext: () => undefined,
     setLogLevel: () => undefined,
