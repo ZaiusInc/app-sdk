@@ -67,8 +67,7 @@ export function createSdkApi(transport: HostTransport, appContext: unknown) {
   // sources: mirror the app-sdk facade — emit(name, data) delegates to the host's
   // emitToSource(name, data), NOT the deprecated Source.emit(data).
   const sources = {
-    emit: (sourceName: string, data: unknown) =>
-      callHost('sources', {method: 'emitToSource', args: [sourceName, data]})
+    emit: (sourceName: string, data: unknown) => callHost('sources', {method: 'emitToSource', args: [sourceName, data]})
   };
 
   const logger = {
