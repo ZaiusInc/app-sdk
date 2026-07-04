@@ -43,8 +43,13 @@ export function installPolyfills(g: Record<string, unknown>, env?: Record<string
     g.atob = (s: string): string => Buffer.from(String(s), 'base64').toString('binary');
   }
 
-  // Bundled Node libraries (e.g. node-sdk) read `process` at module load.
+  // Bundled Node libraries read `process` at module load. node-sdk needs `env`;
+  // readable-stream (the fs stream shim) needs `nextTick` + a few descriptor
+  // fields. `env` is the host allowlist (never host secrets).
   if (!g.process) {
-    g.process = {env: env || {}};
+    const nextTick = (cb: (...a: unknown[]) => void, ...args: unknown[]): void => {
+      void Promise.resolve().then(() => cb(...args));
+    };
+    g.process = {env: env || {}, nextTick, browser: false, version: 'v22.0.0', platform: 'linux', argv: []};
   }
 }

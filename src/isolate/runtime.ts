@@ -13,6 +13,7 @@ import {Buffer} from 'buffer';
 
 import * as classes from './classes';
 import {createCrypto} from './cryptoShim';
+import {createFs} from './fsShim';
 import {installLifecycleRunner} from './lifecycleRunner';
 import {installPolyfills} from './polyfills';
 import {createSdkApi} from './sdkApi';
@@ -38,12 +39,29 @@ export function installIsolateRuntime(
   const {nodeCrypto, webCrypto} = createCrypto(transport);
   g.crypto = webCrypto;
 
+  // fs/os/path/stream: bridged filesystem + pure-JS path/stream (via require).
+  const fsMods = createFs(transport);
+  const moduleTable: Record<string, unknown> = {
+    fs: fsMods.fs,
+    'fs/promises': fsMods.fs.promises,
+    os: fsMods.os,
+    path: fsMods.path,
+    stream: fsMods.stream,
+    'stream/promises': fsMods.streamPromises,
+    events: fsMods.events,
+    util: fsMods.util
+  };
+
   g.require = (name: string) => {
     if (name === '@zaiusinc/app-sdk') {
       return appSdk;
     }
     if (name === 'crypto' || name === 'node:crypto') {
       return nodeCrypto;
+    }
+    const bare = name.startsWith('node:') ? name.slice(5) : name;
+    if (Object.prototype.hasOwnProperty.call(moduleTable, bare)) {
+      return moduleTable[bare];
     }
     const fail = () => {
       throw new Error('module not available in isolate: ' + name);

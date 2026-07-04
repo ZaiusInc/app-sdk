@@ -20,4 +20,12 @@ export interface HostTransport {
    * returns the JSON-encoded result.
    */
   crypto(payload: string): string;
+  /**
+   * Synchronous host filesystem. Node `fs` sync APIs (readFileSync/mkdirSync/…)
+   * are synchronous, so they use a sync host call; `fs.promises.*` rides the async
+   * {@link invoke} `'fs'` channel. `payload` is the JSON `{method,args}` op;
+   * returns the JSON `{ok,value}|{ok:false,error}` envelope (binary as `{$b64}`).
+   * Optional — absent when the host provides no fs.
+   */
+  fsSync?(payload: string): string;
 }
