@@ -67,8 +67,6 @@
     "@types/mock-fs": "^4.13.4",
     "@types/node": "^22.13.10",
     "@types/object-hash": "^3.0.6",
-    "@types/path-browserify": "^1.0.3",
-    "@types/readable-stream": "^4.0.18",
     "@types/url-regex-safe": "^1.0.2",
     "@zaiusinc/eslint-config-presets": "^3.1.0",
     "@zaiusinc/node-sdk": "^3.0.0",

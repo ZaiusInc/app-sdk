@@ -15,8 +15,8 @@
  */
 import {Buffer} from 'buffer';
 import type * as eventsNs from 'events';
-import type * as pathNs from 'path-browserify';
-import type * as streamNs from 'readable-stream';
+import type * as pathNs from 'path';
+import type * as streamNs from 'stream';
 import type * as utilNs from 'util';
 
 import {HostTransport} from './transport';
