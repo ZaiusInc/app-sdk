@@ -47,7 +47,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
       .concat(await validateAssets(runtime))
-      .concat(validateOutboundDomains(runtime));
+      .concat(validateOutboundDomains(runtime))
+      .concat(validateAppTypeSeparation(runtime));
   }
 
   if (runtime.manifest.destinations) {
@@ -85,6 +86,29 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
   }
 
   errors = errors.concat(await runPluginValidators(runtime, plugins));
+
+  return errors;
+}
+
+export function validateAppTypeSeparation(runtime: Runtime): string[] {
+  const errors: string[] = [];
+  const manifest = runtime.manifest as Record<string, unknown>;
+  const uiExtensions = manifest['ui_extensions'];
+  const hasUiExtensions =
+    uiExtensions != null && typeof uiExtensions === 'object' && Object.keys(uiExtensions).length > 0;
+
+  if (hasUiExtensions) {
+    if (runtime.manifest.sources && Object.keys(runtime.manifest.sources).length > 0) {
+      errors.push('Invalid app.yml: ui_extensions cannot be combined with sources');
+    }
+    if (runtime.manifest.destinations && Object.keys(runtime.manifest.destinations).length > 0) {
+      errors.push('Invalid app.yml: ui_extensions cannot be combined with destinations');
+    }
+    const hasOpalTools = Object.values(runtime.manifest.functions ?? {}).some((fn) => fn.opal_tool === true);
+    if (hasOpalTools) {
+      errors.push('Invalid app.yml: ui_extensions cannot be combined with opal_tool functions');
+    }
+  }
 
   return errors;
 }
