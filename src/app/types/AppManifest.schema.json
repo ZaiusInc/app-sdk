@@ -657,8 +657,7 @@
                 "display_name",
                 "summary",
                 "support_url",
-                "vendor",
-                "version"
+                "vendor"
             ],
             "type": "object"
         },

@@ -190,7 +190,7 @@ export interface AppManifest {
   meta: {
     app_id: string;
     display_name: string;
-    version: string;
+    version?: string;
     vendor: string;
     support_url: string;
     summary: string;

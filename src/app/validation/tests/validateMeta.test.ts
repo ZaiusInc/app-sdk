@@ -66,7 +66,7 @@ describe('validateMeta', () => {
     expect(await validateMeta(runtime)).toEqual(['Invalid app.yml: meta.display_name must not be blank']);
   });
 
-  it('detects invalid version', async () => {
+  it('detects invalid version when provided', async () => {
     const manifest = {...appManifest, meta: {...appManifest.meta, version: '1.3'}};
     const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 
@@ -74,6 +74,15 @@ describe('validateMeta', () => {
       'Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ' +
         'or -private (/^\\d+\\.\\d+\\.\\d+(-(((dev|beta)(\\.\\d+)?)|private))?$/)'
     ]);
+  });
+
+  it('accepts a missing version', async () => {
+    const meta = {...appManifest.meta};
+    delete (meta as {version?: string}).version;
+    const manifest = {...appManifest, meta};
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+    expect(await validateMeta(runtime)).toEqual([]);
   });
 
   it('detects invalid vendor', async () => {
