@@ -10,6 +10,7 @@ export type AppValidator = (runtime: Runtime) => Promise<string[] | void> | stri
 
 export interface AppSdkPlugin {
   id: string;
+  exclusive?: boolean;
   manifestSchema?: ManifestSchemaFragment;
   validators?: AppValidator[];
 }
@@ -35,6 +36,28 @@ export function buildManifestSchema(plugins: readonly AppSdkPlugin[] = []): JSON
       ignoreAdditionalProperties: true
     }
   ) as JSONSchema7;
+}
+
+export function validateExclusivePlugins(runtime: Runtime, plugins: readonly AppSdkPlugin[] = []): string[] {
+  const exclusivePlugin = plugins.find((p) => p.exclusive);
+  if (!exclusivePlugin) return [];
+
+  const errors: string[] = [];
+  const manifest = runtime.manifest;
+  const id = exclusivePlugin.id;
+
+  if (manifest.sources && Object.keys(manifest.sources).length > 0) {
+    errors.push(`Invalid app.yml: '${id}' cannot be combined with sources`);
+  }
+  if (manifest.destinations && Object.keys(manifest.destinations).length > 0) {
+    errors.push(`Invalid app.yml: '${id}' cannot be combined with destinations`);
+  }
+  const hasOpalTools = Object.values(manifest.functions ?? {}).some((fn) => fn.opal_tool === true);
+  if (hasOpalTools) {
+    errors.push(`Invalid app.yml: '${id}' cannot be combined with opal_tool functions`);
+  }
+
+  return errors;
 }
 
 export async function runPluginValidators(runtime: Runtime, plugins: readonly AppSdkPlugin[] = []): Promise<string[]> {
