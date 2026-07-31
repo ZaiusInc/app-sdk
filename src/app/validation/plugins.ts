@@ -39,22 +39,33 @@ export function buildManifestSchema(plugins: readonly AppSdkPlugin[] = []): JSON
 }
 
 export function validatePluginCompatibility(runtime: Runtime, plugins: readonly AppSdkPlugin[] = []): string[] {
-  const cmsPlugin = plugins.find((p) => p.requiredInstallationScope === 'CMS');
-  if (!cmsPlugin) return [];
+  const scopedPlugins = plugins.filter((p) => p.requiredInstallationScope);
+  if (scopedPlugins.length === 0) return [];
 
   const errors: string[] = [];
+
+  const uniqueScopes = [...new Set(scopedPlugins.map((p) => p.requiredInstallationScope))];
+  if (uniqueScopes.length > 1) {
+    const descriptions = scopedPlugins.map((p) => `'${p.id}' (${p.requiredInstallationScope})`).join(' and ');
+    errors.push(
+      `Invalid app.yml: plugins ${descriptions} can't be used together — they require different installation scopes`
+    );
+    return errors;
+  }
+
   const manifest = runtime.manifest;
-  const id = cmsPlugin.id;
+  const plugin = scopedPlugins[0];
+  const error = `Invalid app.yml: plugin '${plugin.id}' requires ${plugin.requiredInstallationScope} installation scope and cannot be combined with`;
 
   if (manifest.sources && Object.keys(manifest.sources).length > 0) {
-    errors.push(`Invalid app.yml: '${id}' cannot be combined with sources`);
+    errors.push(`${error} data sync sources`);
   }
   if (manifest.destinations && Object.keys(manifest.destinations).length > 0) {
-    errors.push(`Invalid app.yml: '${id}' cannot be combined with destinations`);
+    errors.push(`${error} data sync destinations`);
   }
   const hasOpalTools = Object.values(manifest.functions ?? {}).some((fn) => fn.opal_tool === true);
   if (hasOpalTools) {
-    errors.push(`Invalid app.yml: '${id}' cannot be combined with opal tool`);
+    errors.push(`${error} opal tool functions`);
   }
 
   return errors;

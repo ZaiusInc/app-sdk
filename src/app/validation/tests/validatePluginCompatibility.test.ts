@@ -47,7 +47,7 @@ describe('validatePluginCompatibility', () => {
       sources: {foo_source: {description: 'foo', schema: 'asset', function: {entry_point: 'FooSource'}}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with sources"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with data sync sources"
     );
   });
 
@@ -57,7 +57,7 @@ describe('validatePluginCompatibility', () => {
       destinations: {foo_dest: {entry_point: 'FooDest', description: 'foo', schema: 'asset'}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with destinations"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with data sync destinations"
     );
   });
 
@@ -67,7 +67,7 @@ describe('validatePluginCompatibility', () => {
       functions: {opal_fn: {entry_point: 'OpalFn', description: 'opal', opal_tool: true}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal tool"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with opal tool functions"
     );
   });
 
@@ -79,9 +79,15 @@ describe('validatePluginCompatibility', () => {
       functions: {opal_fn: {entry_point: 'OpalFn', description: 'opal', opal_tool: true}}
     });
     const errors = validatePluginCompatibility(runtime, [exclusivePlugin]);
-    expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with sources");
-    expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with destinations");
-    expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal tool");
+    expect(errors).toContain(
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with data sync sources"
+    );
+    expect(errors).toContain(
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with data sync destinations"
+    );
+    expect(errors).toContain(
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with opal tool functions"
+    );
   });
 
   it('allows non-OPAL functions alongside an exclusive plugin', () => {
@@ -90,5 +96,29 @@ describe('validatePluginCompatibility', () => {
       functions: {regular_fn: {entry_point: 'Fn', description: 'fn', opal_tool: false}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toEqual([]);
+  });
+
+  it('rejects plugins with conflicting installation scopes', () => {
+    const anotherScopedPlugin: AppSdkPlugin = {id: 'another-scoped-plugin', requiredInstallationScope: 'OTHER'};
+    const runtime = buildRuntime({...baseManifest});
+    const errors = validatePluginCompatibility(runtime, [exclusivePlugin, anotherScopedPlugin]);
+    expect(errors[0]).toContain("can't be used together");
+    expect(errors[0]).toContain("'test-exclusive-plugin' (CMS)");
+    expect(errors[0]).toContain("'another-scoped-plugin' (OTHER)");
+    expect(errors[0]).toContain("can't be used together");
+  });
+
+  it('allows multiple plugins with the same installation scope', () => {
+    const sameScopePlugin: AppSdkPlugin = {id: 'another-cms-plugin', requiredInstallationScope: 'CMS'};
+    const runtime = buildRuntime({...baseManifest});
+    const errors = validatePluginCompatibility(runtime, [exclusivePlugin, sameScopePlugin]);
+    expect(errors.some((e) => e.includes("can't be used together"))).toBe(false);
+  });
+
+  it('allows a plugin without scope alongside a scoped plugin', () => {
+    const unscopedPlugin: AppSdkPlugin = {id: 'generic-plugin'};
+    const runtime = buildRuntime({...baseManifest});
+    const errors = validatePluginCompatibility(runtime, [exclusivePlugin, unscopedPlugin]);
+    expect(errors.some((e) => e.includes("can't be used together"))).toBe(false);
   });
 });
