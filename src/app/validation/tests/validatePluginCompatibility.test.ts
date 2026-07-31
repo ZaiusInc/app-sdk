@@ -2,7 +2,7 @@ import 'jest';
 
 import {Runtime} from '../../Runtime';
 import {AppManifest} from '../../types';
-import {type AppSdkPlugin, validateExclusivePlugins} from '../plugins';
+import {type AppSdkPlugin, validatePluginCompatibility} from '../plugins';
 
 const baseManifest: AppManifest = {
   meta: {
@@ -23,22 +23,22 @@ const baseManifest: AppManifest = {
   }
 };
 
-const exclusivePlugin: AppSdkPlugin = {id: 'test-exclusive-plugin', exclusive: true};
+const exclusivePlugin: AppSdkPlugin = {id: 'test-exclusive-plugin', requiredInstallationScope: 'CMS'};
 const nonExclusivePlugin: AppSdkPlugin = {id: 'test-plugin'};
 
 function buildRuntime(manifest: Record<string, unknown>): Runtime {
   return Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
 }
 
-describe('validateExclusivePlugins', () => {
+describe('validatePluginCompatibility', () => {
   it('returns no errors when no exclusive plugins are registered', () => {
     const runtime = buildRuntime({...baseManifest, sources: {foo: {}}, destinations: {bar: {}}});
-    expect(validateExclusivePlugins(runtime, [nonExclusivePlugin])).toEqual([]);
+    expect(validatePluginCompatibility(runtime, [nonExclusivePlugin])).toEqual([]);
   });
 
   it('returns no errors when exclusive plugin is registered but no conflicting sections', () => {
     const runtime = buildRuntime({...baseManifest});
-    expect(validateExclusivePlugins(runtime, [exclusivePlugin])).toEqual([]);
+    expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toEqual([]);
   });
 
   it('rejects sources when an exclusive plugin is registered', () => {
@@ -46,7 +46,7 @@ describe('validateExclusivePlugins', () => {
       ...baseManifest,
       sources: {foo_source: {description: 'foo', schema: 'asset', function: {entry_point: 'FooSource'}}}
     });
-    expect(validateExclusivePlugins(runtime, [exclusivePlugin])).toContain(
+    expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
       "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with sources"
     );
   });
@@ -56,7 +56,7 @@ describe('validateExclusivePlugins', () => {
       ...baseManifest,
       destinations: {foo_dest: {entry_point: 'FooDest', description: 'foo', schema: 'asset'}}
     });
-    expect(validateExclusivePlugins(runtime, [exclusivePlugin])).toContain(
+    expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
       "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with destinations"
     );
   });
@@ -66,8 +66,8 @@ describe('validateExclusivePlugins', () => {
       ...baseManifest,
       functions: {opal_fn: {entry_point: 'OpalFn', description: 'opal', opal_tool: true}}
     });
-    expect(validateExclusivePlugins(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal_tool functions"
+    expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
+      "Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal tool"
     );
   });
 
@@ -78,10 +78,10 @@ describe('validateExclusivePlugins', () => {
       destinations: {foo_dest: {}},
       functions: {opal_fn: {entry_point: 'OpalFn', description: 'opal', opal_tool: true}}
     });
-    const errors = validateExclusivePlugins(runtime, [exclusivePlugin]);
+    const errors = validatePluginCompatibility(runtime, [exclusivePlugin]);
     expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with sources");
     expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with destinations");
-    expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal_tool functions");
+    expect(errors).toContain("Invalid app.yml: 'test-exclusive-plugin' cannot be combined with opal tool");
   });
 
   it('allows non-OPAL functions alongside an exclusive plugin', () => {
@@ -89,6 +89,6 @@ describe('validateExclusivePlugins', () => {
       ...baseManifest,
       functions: {regular_fn: {entry_point: 'Fn', description: 'fn', opal_tool: false}}
     });
-    expect(validateExclusivePlugins(runtime, [exclusivePlugin])).toEqual([]);
+    expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toEqual([]);
   });
 });
