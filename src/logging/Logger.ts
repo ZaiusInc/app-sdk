@@ -55,6 +55,7 @@ export interface LogContext extends ValueHash {
   app_version: string;
   entry_point: string;
   tracker_id?: string;
+  scope?: string;
 }
 
 export interface LoggerOptions {

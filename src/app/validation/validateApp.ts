@@ -6,7 +6,7 @@ import * as manifestSchema from '../types/AppManifest.schema.json';
 import * as destinationSchema from '../types/DestinationSchema.schema.json';
 import * as schemaObjectSchema from '../types/SchemaObject.schema.json';
 import * as sourceSchema from '../types/SourceSchema.schema.json';
-import {buildManifestSchema, runPluginValidators} from './plugins';
+import {buildManifestSchema, runPluginValidators, validatePluginCompatibility} from './plugins';
 import {validateAssets} from './validateAssets';
 import {validateChannel} from './validateChannel';
 import {validateDestinations} from './validateDestinations';
@@ -47,7 +47,8 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
       .concat(await validateAssets(runtime))
-      .concat(validateOutboundDomains(runtime));
+      .concat(validateOutboundDomains(runtime))
+      .concat(validatePluginCompatibility(runtime, plugins));
   }
 
   if (runtime.manifest.destinations) {
