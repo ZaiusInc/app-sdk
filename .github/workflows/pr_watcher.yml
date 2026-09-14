@@ -4,7 +4,6 @@ on:
   pull_request
 
 jobs:
+  # Installs from the public registry only, so no auth is passed and a dependency that needs
   build:
     uses: ZaiusInc/node-sdk/.github/workflows/reusable-build.yaml@master
-    secrets:
-      nodeAuthToken: ${{ secrets.GITHUB_TOKEN }}
