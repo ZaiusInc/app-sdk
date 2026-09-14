@@ -17,7 +17,8 @@ export async function validateMeta(runtime: Runtime): Promise<string[]> {
         `and be between 3 and 32 characters long (${APP_ID_FORMAT.toString()})`
     );
   }
-  if (!version.match(VERSION_FORMAT)) {
+  // meta.version is optional (deployed version wins), but when provided (e.g. ocp app prepare) it must be valid semver.
+  if (version && !version.match(VERSION_FORMAT)) {
     errors.push(
       'Invalid app.yml: meta.version must be a semantic version number, optionally with -dev/-beta (and increment) ' +
         `or -private (${VERSION_FORMAT.toString()})`

@@ -69,6 +69,11 @@ export class Runtime {
     return this.appManifest;
   }
 
+  // Running version: injected APP_VERSION (preview sha or semver), else manifest meta.version.
+  public get version(): string | undefined {
+    return process.env.APP_VERSION ?? this.appManifest?.meta?.version;
+  }
+
   public get baseDir(): string {
     return this.dirName;
   }
