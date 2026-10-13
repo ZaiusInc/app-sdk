@@ -37,6 +37,11 @@ jest.mock('jsonpath-rfc9535', () => {
   mockLoaded.push('jsonpath-rfc9535');
   return jest.requireActual('jsonpath-rfc9535');
 });
+// Runtime only needs ajv to validate the manifest, so it must not load with the root either
+jest.mock('ajv', () => {
+  mockLoaded.push('ajv');
+  return jest.requireActual('ajv');
+});
 // Keep the module's real exports so a regressed barrel that re-exports it still exposes the full API, and the
 // test fails on mockLoaded rather than on a missing export.
 jest.mock('../index', () => {
