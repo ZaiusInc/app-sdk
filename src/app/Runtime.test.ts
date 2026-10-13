@@ -6,8 +6,11 @@ import * as jsYaml from 'js-yaml';
 import mockFs from 'mock-fs';
 
 import {Runtime} from './Runtime';
+import * as config from './config';
 import {AppManifest} from './types';
+import manifestSchema from './types/AppManifest.schema.json';
 import {SchemaObject} from './types/SchemaObject';
+import * as plugins from './validation/plugins';
 
 jest.mock('js-yaml');
 
@@ -131,9 +134,12 @@ describe('Runtime', () => {
       const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
       const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(true);
 
+      const buildSchemaFn = jest.spyOn(plugins, 'buildManifestSchema');
+
       const runtime = await Runtime.initialize('/tmp/foo');
       expect(yamlLoadFn).toHaveBeenCalled();
-      expect(validateFn).toHaveBeenCalled();
+      expect(validateFn).toHaveBeenCalledWith(manifestSchema, appManifest);
+      expect(buildSchemaFn).not.toHaveBeenCalled();
 
       expect(JSON.parse(runtime.toJson())).toEqual({
         appManifest,
@@ -142,6 +148,25 @@ describe('Runtime', () => {
 
       yamlLoadFn.mockRestore();
       validateFn.mockRestore();
+      buildSchemaFn.mockRestore();
+    });
+
+    it('validates the manifest against the schema extended by plugins', async () => {
+      const yamlLoadFn = jest.spyOn(jsYaml, 'load').mockImplementation((data) => JSON.parse(data));
+      const validateFn = jest.spyOn(Ajv.prototype, 'validate').mockReturnValue(true);
+      const plugin: plugins.AppSdkPlugin = {id: 'test-plugin', manifestSchema: {properties: {extra: {type: 'object'}}}};
+      const configFn = jest.spyOn(config, 'loadAppSdkConfig').mockResolvedValue({plugins: [plugin]});
+      const buildSchemaFn = jest.spyOn(plugins, 'buildManifestSchema').mockReturnValue({title: 'merged'});
+
+      const runtime = await Runtime.initialize('/tmp/foo');
+      expect(buildSchemaFn).toHaveBeenCalledWith([plugin]);
+      expect(validateFn).toHaveBeenCalledWith({title: 'merged'}, appManifest);
+      expect(runtime.plugins).toEqual([plugin]);
+
+      yamlLoadFn.mockRestore();
+      validateFn.mockRestore();
+      configFn.mockRestore();
+      buildSchemaFn.mockRestore();
     });
 
     it('throws an error when the manifest is invalid', async () => {

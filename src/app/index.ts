@@ -15,4 +15,4 @@ export * from './DestinationSchemaFunction';
 export * from './SourceFunction';
 export * from './SourceLifecycle';
 export * from './SourceSchemaFunction';
-export * from './validation';
+export * from './validation/lazy';
