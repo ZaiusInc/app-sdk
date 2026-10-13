@@ -25,7 +25,7 @@ import manifestSchema from './types/AppManifest.schema.json';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import {SchemaObjects} from './types/SchemaObject';
 import {SourceSchemaObjects} from './types/SourceSchema';
-import {buildManifestSchema, type AppSdkPlugin} from './validation/plugins';
+import type {AppSdkPlugin} from './validation/plugins';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -252,7 +252,9 @@ export class Runtime {
 
     if (!skipJsonValidation) {
       const ajv: Ajv = new Ajv({allowUnionTypes: true});
-      const schema = plugins.length > 0 ? buildManifestSchema(plugins) : manifestSchema;
+      // merging plugin schemas pulls in lodash, so only load it for apps that have plugins
+      const schema =
+        plugins.length > 0 ? (await import('./validation/plugins')).buildManifestSchema(plugins) : manifestSchema;
       if (!ajv.validate(schema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }
