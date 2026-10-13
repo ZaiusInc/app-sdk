@@ -14,8 +14,8 @@ When adding or changing code:
 
 - **Runtime code must not value-import from `src/app/validation/`.** Runtime code is anything reachable from
   `src/index.ts` through static imports. Use `import type` for types. Load values with `await import(...)` at
-  the call site, on the path that needs them only. Example: `Runtime.initialize` loads `buildManifestSchema`
-  only when the app has plugins.
+  the call site, on the path that needs them only. Example: `Runtime.initialize` loads Ajv only when it
+  validates the manifest, and `buildManifestSchema` only when the app also has plugins.
 - **Expose validation APIs on the root through `src/app/validation/lazy.ts`.** It holds thin wrappers that load
   the real module on first call, and must have no top-level value imports from the validation directory.
   Never add `export * from './validation'`, or any other validation module, to a barrel.
@@ -24,7 +24,7 @@ When adding or changing code:
   `src/app/validation/` or one of the packages it tracks. If it fails, fix the import; don't add the module to
   the test's exclusions. When you add a heavy build-time-only package, add it to the tracked list.
 
-To check the size directly, count what the root loads (235 modules after OCP-2399):
+To check the size directly, count what the root loads (167 modules after OCP-2399):
 
 ```sh
 npx tsc && node -e "const before = new Set(Object.keys(require.cache)); require('./dist'); console.log(Object.keys(require.cache).filter((k) => !before.has(k)).length)"
@@ -34,7 +34,7 @@ npx tsc && node -e "const before = new Set(Object.keys(require.cache)); require(
 
 `export * from './validation'` was added to the app barrel in 3.3.2 (OCP-1680), and nothing flagged that the
 barrel is also the runtime's hot path. Importing the root went from 234 modules to over 700: about 40 ms and
-13 MB more per process, or ~140 MB in a pod running a parent and ten workers. OCP-2399 took it back to 235.
+13 MB more per process, or ~140 MB in a pod running a parent and ten workers. OCP-2399 took it down to 167.
 
 ## The root API and some `dist/` paths are a contract with the platform
 

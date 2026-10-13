@@ -1,5 +1,4 @@
 /* eslint-disable max-classes-per-file */
-import Ajv from 'ajv';
 import deepFreeze from 'deep-freeze';
 import {readFileSync} from 'fs';
 import * as glob from 'glob';
@@ -251,7 +250,9 @@ export class Runtime {
     const manifest = (await import('js-yaml')).load(readFileSync(join(dirName, 'app.yml'), 'utf8'));
 
     if (!skipJsonValidation) {
-      const ajv: Ajv = new Ajv({allowUnionTypes: true});
+      // only needed to validate the manifest, which callers that already validated at build time skip
+      const {default: Ajv} = await import('ajv');
+      const ajv = new Ajv({allowUnionTypes: true});
       // merging plugin schemas pulls in lodash, so only load it for apps that have plugins
       const schema =
         plugins.length > 0 ? (await import('./validation/plugins')).buildManifestSchema(plugins) : manifestSchema;
