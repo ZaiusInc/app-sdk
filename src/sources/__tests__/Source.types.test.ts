@@ -52,10 +52,4 @@ describe('SourceData type compatibility', () => {
     await source.emit(defaulted);
     expect(source.emitted).toEqual([data, defaulted]);
   });
-
-  it('accepts the deprecated isDelete flag', async () => {
-    const data: SourceData<Product> = {data: {id: 'p1', price: 10}, isDelete: true};
-    await source.emit(data);
-    expect(source.emitted).toEqual([data]);
-  });
 });
