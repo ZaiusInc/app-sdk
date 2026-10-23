@@ -3,7 +3,15 @@ export interface SourceResponse {
   message?: string;
 }
 
-export interface SourceData<T extends {_isDeleted?: boolean}> {
+/**
+ * Reserved fields the data sync pipeline reads on emitted items and sets on delivered items.
+ */
+export interface DataSyncItemFlags {
+  /** true marks a delete: set it when emitting from a source, check it when delivering to a destination. */
+  _isDeleted?: boolean;
+}
+
+export interface SourceData<T extends object = DataSyncItemFlags> {
   data: T;
 }
 
@@ -22,5 +30,5 @@ export interface Source {
    * @returns A SourceResponse with success/failure and optional message in case
    *          of failure.
    */
-  emit<T extends {_isDeleted?: boolean}>(data: SourceData<T>): Promise<SourceResponse>;
+  emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
 }
