@@ -3,8 +3,20 @@ export interface SourceResponse {
   message?: string;
 }
 
-export interface SourceData<T extends {_isDeleted?: boolean; _locale?: string}> {
+/**
+ * Reserved fields the data sync pipeline reads on emitted items and sets on delivered items.
+ */
+export interface DataSyncItemFlags {
+  /** true marks a delete: set it when emitting from a source, check it when delivering to a destination. */
+  _isDeleted?: boolean;
+  /** BCP 47 locale of the record. */
+  _locale?: string;
+}
+
+export interface SourceData<T extends object = DataSyncItemFlags> {
   data: T;
+  /** @deprecated Ignored by the runtime. Set `_isDeleted: true` on `data` instead. */
+  isDelete?: boolean;
 }
 
 /**
@@ -27,5 +39,5 @@ export interface Source {
    * @deprecated Use {@link sources.emit} instead, which allows emitting data to a source
    * from any function or job without requiring a SourceFunction/SourceJob context.
    */
-  emit<T extends {_isDeleted?: boolean; _locale?: string}>(data: SourceData<T>): Promise<SourceResponse>;
+  emit<T extends object>(data: SourceData<T>): Promise<SourceResponse>;
 }
