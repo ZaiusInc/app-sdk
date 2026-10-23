@@ -1,4 +1,6 @@
-export interface DestinationBatch<T extends {_isDeleted?: boolean}> {
+import {DataSyncItemFlags} from '../sources/Source';
+
+export interface DestinationBatch<T = DataSyncItemFlags> {
   items: T[];
   attempt: number;
   sync: DataSync;
@@ -35,7 +37,7 @@ export interface DestinationSchemaResult {
   fields: DestinationField[];
 }
 
-export abstract class Destination<T extends {_isDeleted?: boolean}> {
+export abstract class Destination<T = DataSyncItemFlags> {
   /**
    * Checks if the Destination ready to use.
    * This should ensure that any required credentials and/or other configuration exist and are valid.
@@ -47,8 +49,9 @@ export abstract class Destination<T extends {_isDeleted?: boolean}> {
 
   /**
    * Delivers the given batch to i.e. an external system.
-   * @param batch - The batch to be delivered. Each item in batch.items may have an _isDeleted flag
-   *                to indicate delete operations. Check batchItem._isDeleted for each item to handle deletions.
+   * @param batch - The batch to be delivered. If the destination declares `supports_delete`, each item in
+   *                batch.items may have an _isDeleted flag (see {@link DataSyncItemFlags}) to indicate
+   *                delete operations. Check batchItem._isDeleted for each item to handle deletions.
    * @returns A DestinationDeliverResult with success/failure,
    *          if the batch should be retried and a failure reason if applicable.
    */
