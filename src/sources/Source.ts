@@ -15,8 +15,6 @@ export interface DataSyncItemFlags {
 
 export interface SourceData<T extends object = DataSyncItemFlags> {
   data: T;
-  /** @deprecated Ignored by the runtime. Set `_isDeleted: true` on `data` instead. */
-  isDelete?: boolean;
 }
 
 /**
