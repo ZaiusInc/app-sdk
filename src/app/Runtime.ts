@@ -1,5 +1,4 @@
 /* eslint-disable max-classes-per-file */
-import Ajv from 'ajv';
 import deepFreeze from 'deep-freeze';
 import {readFileSync} from 'fs';
 import * as glob from 'glob';
@@ -25,7 +24,7 @@ import manifestSchema from './types/AppManifest.schema.json';
 import {DestinationSchemaObjects} from './types/DestinationSchema';
 import {SchemaObjects} from './types/SchemaObject';
 import {SourceSchemaObjects} from './types/SourceSchema';
-import {buildManifestSchema, type AppSdkPlugin} from './validation/plugins';
+import type {AppSdkPlugin} from './validation/plugins';
 
 interface SerializedRuntime {
   appManifest: AppManifest;
@@ -251,8 +250,12 @@ export class Runtime {
     const manifest = (await import('js-yaml')).load(readFileSync(join(dirName, 'app.yml'), 'utf8'));
 
     if (!skipJsonValidation) {
-      const ajv: Ajv = new Ajv({allowUnionTypes: true});
-      const schema = plugins.length > 0 ? buildManifestSchema(plugins) : manifestSchema;
+      // only needed to validate the manifest, which callers that already validated at build time skip
+      const {default: Ajv} = await import('ajv');
+      const ajv = new Ajv({allowUnionTypes: true});
+      // merging plugin schemas pulls in lodash, so only load it for apps that have plugins
+      const schema =
+        plugins.length > 0 ? (await import('./validation/plugins')).buildManifestSchema(plugins) : manifestSchema;
       if (!ajv.validate(schema, manifest)) {
         throw new Error('Invalid app.yml manifest (failed JSON schema validation)');
       }
