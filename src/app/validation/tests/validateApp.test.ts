@@ -257,9 +257,34 @@ describe('validateApp', () => {
         '"Audience Sync","CDP / DMP","CRM","Channel","Commerce Platform","Content Management","Customer Experience",' +
         '"Data Quality & Enrichment","Lead Capture","Loyalty & Rewards","Marketing","Merchandising & Products",' +
         '"Offers","Opal","Personalization & Content","Point of Sale","Productivity","Reviews & Ratings",' +
-        '"Site & Content Experience","Subscriptions","Surveys & Feedback","Testing & Utilities"])',
-      'Invalid app.yml: runtime must be equal to one of the allowed values ' +
-        '(allowedValues: ["node12","node18","node18_rt","node22","node22-cms-ext"])'
+        '"Site & Content Experience","Subscriptions","Surveys & Feedback","Testing & Utilities"])'
+    ]);
+  });
+
+  // Which runtimes are usable is decided by the OCP runtime support list (checked by the CLI and the app builder).
+  it('accepts any runtime name, including ones released after this SDK', async () => {
+    const runtime = Runtime.fromJson(
+      JSON.stringify({appManifest: {...appManifest, runtime: 'node24'}, dirName: '/tmp/foo'})
+    );
+
+    expect(await validateApp(runtime)).toEqual([]);
+  });
+
+  it('rejects an empty runtime', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: {...appManifest, runtime: ''}, dirName: '/tmp/foo'}));
+
+    expect(await validateApp(runtime)).toEqual([
+      'Invalid app.yml: runtime must NOT have fewer than 1 characters (limit: 1)'
+    ]);
+  });
+
+  it('requires a runtime', async () => {
+    const withoutRuntime = JSON.parse(JSON.stringify(appManifest));
+    delete withoutRuntime.runtime;
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: withoutRuntime, dirName: '/tmp/foo'}));
+
+    expect(await validateApp(runtime)).toEqual([
+      'Invalid app.yml: must have required property \'runtime\' (missingProperty: "runtime")'
     ]);
   });
 
