@@ -49,6 +49,18 @@ export async function validateFunctions(runtime: Runtime): Promise<string[]> {
       if (fnDefinition.global && fnDefinition.accepts === FunctionAccepts.CmsUiExtension) {
         errors.push('Global functions cannot have accepts: cms_ui_extension');
       }
+      if (fnDefinition.accepts === FunctionAccepts.AgentPlatform && fnDefinition.opal_tool === true) {
+        errors.push(
+          withManifestLine({
+            manifestSource,
+            pathSegments: ['functions', name, 'opal_tool'],
+            message:
+              `Function ${name} declares both opal_tool and accepts: agent_platform. ` +
+              'opal_tool is deprecated: remove it and keep accepts: agent_platform, ' +
+              'which marks the function as an agent platform tool'
+          })
+        );
+      }
       const installationResolutionErrors = await validateInstallationResolution(fnDefinition);
       if (installationResolutionErrors.length) {
         errors.push(...installationResolutionErrors);

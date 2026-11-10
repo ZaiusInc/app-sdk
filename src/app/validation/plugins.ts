@@ -2,6 +2,7 @@ import type {JSONSchema7} from 'json-schema';
 import mergeAllOf from 'json-schema-merge-allof';
 
 import type {Runtime} from '../Runtime';
+import {AppFunction, FunctionAccepts} from '../types';
 import manifestSchema from '../types/AppManifest.schema.json';
 
 export type ManifestSchemaFragment = JSONSchema7;
@@ -17,6 +18,11 @@ export interface AppSdkPlugin {
 
 function cloneSchema<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
+}
+
+/** Whether the function is a Mark tool: `accepts: agent_platform` or the deprecated `opal_tool: true`. */
+export function isAgentPlatformTool(fn: AppFunction): boolean {
+  return fn.opal_tool === true || fn.accepts === FunctionAccepts.AgentPlatform;
 }
 
 export function buildManifestSchema(plugins: readonly AppSdkPlugin[] = []): JSONSchema7 {
@@ -63,9 +69,9 @@ export function validatePluginCompatibility(runtime: Runtime, plugins: readonly 
   if (manifest.destinations && Object.keys(manifest.destinations).length > 0) {
     errors.push(`${error} data sync destinations`);
   }
-  const hasOpalTools = Object.values(manifest.functions ?? {}).some((fn) => fn.opal_tool === true);
-  if (hasOpalTools) {
-    errors.push(`${error} opal tool functions`);
+  const hasAgentPlatformTools = Object.values(manifest.functions ?? {}).some(isAgentPlatformTool);
+  if (hasAgentPlatformTools) {
+    errors.push(`${error} agent platform tool functions`);
   }
 
   return errors;
