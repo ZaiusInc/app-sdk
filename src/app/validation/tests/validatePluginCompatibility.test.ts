@@ -67,17 +67,17 @@ describe('validatePluginCompatibility', () => {
       functions: {opal_fn: {entry_point: 'OpalFn', description: 'opal', opal_tool: true}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with agent platform tool functions"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with Mark (Optimizely Agent Platform) tool functions"
     );
   });
 
-  it('rejects accepts: agent_platform functions as OPAL tools when an exclusive plugin is registered', () => {
+  it('rejects accepts: agent_platform functions as Mark tools when an exclusive plugin is registered', () => {
     const runtime = buildRuntime({
       ...baseManifest,
       functions: {mark_fn: {entry_point: 'MarkFn', description: 'mark', accepts: FunctionAccepts.AgentPlatform}}
     });
     expect(validatePluginCompatibility(runtime, [exclusivePlugin])).toContain(
-      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with agent platform tool functions"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with Mark (Optimizely Agent Platform) tool functions"
     );
   });
 
@@ -96,7 +96,7 @@ describe('validatePluginCompatibility', () => {
       "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with data sync destinations"
     );
     expect(errors).toContain(
-      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with agent platform tool functions"
+      "Invalid app.yml: plugin 'test-exclusive-plugin' requires CMS installation scope and cannot be combined with Mark (Optimizely Agent Platform) tool functions"
     );
   });
 
@@ -138,7 +138,7 @@ describe('isAgentPlatformTool', () => {
     expect(isAgentPlatformTool({entry_point: 'Fn', description: 'fn', opal_tool: true})).toBe(true);
   });
 
-  it('treats accepts: agent_platform as an OPAL tool', () => {
+  it('treats accepts: agent_platform as a Mark tool', () => {
     expect(isAgentPlatformTool({entry_point: 'Fn', description: 'fn', accepts: FunctionAccepts.AgentPlatform})).toBe(
       true
     );

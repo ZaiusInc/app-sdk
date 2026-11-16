@@ -71,7 +71,7 @@ export function validatePluginCompatibility(runtime: Runtime, plugins: readonly 
   }
   const hasAgentPlatformTools = Object.values(manifest.functions ?? {}).some(isAgentPlatformTool);
   if (hasAgentPlatformTools) {
-    errors.push(`${error} agent platform tool functions`);
+    errors.push(`${error} Mark (Optimizely Agent Platform) tool functions`);
   }
 
   return errors;

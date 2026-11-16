@@ -18,7 +18,8 @@ export interface AppFunction {
   description: string;
   global?: boolean;
   /**
-   * Deprecated: use `accepts: agent_platform` instead, which also makes the function callable by Mark only.
+   * Deprecated: use `accepts: agent_platform` instead. Note that this restricts the function to calls from
+   * Mark (Optimizely Agent Platform): direct HTTP requests to its URL are not supported and will be rejected.
    * @deprecated Use `accepts: agent_platform`.
    */
   opal_tool?: boolean;

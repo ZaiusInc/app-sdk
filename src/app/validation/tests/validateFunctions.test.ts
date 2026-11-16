@@ -340,27 +340,11 @@ describe('validateFunctions', () => {
     getFunctionClass.mockRestore();
   });
 
-  it('detects functions with both accepts: agent_platform and opal_tool: true', async () => {
+  it.each([true, false])('allows accepts: agent_platform with opal_tool: %s', async (opalTool) => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
 
     runtime.manifest.functions!.foo.accepts = FunctionAccepts.AgentPlatform;
-    runtime.manifest.functions!.foo.opal_tool = true;
-    const getFunctionClass = jest
-      .spyOn(Runtime.prototype, 'getFunctionClass')
-      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
-
-    expect(await validateFunctions(runtime)).toEqual([
-      'Function foo declares both opal_tool and accepts: agent_platform. opal_tool is deprecated: remove it ' +
-        'and keep accepts: agent_platform, which marks the function as an agent platform tool'
-    ]);
-    getFunctionClass.mockRestore();
-  });
-
-  it('allows accepts: agent_platform with opal_tool: false', async () => {
-    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
-
-    runtime.manifest.functions!.foo.accepts = FunctionAccepts.AgentPlatform;
-    runtime.manifest.functions!.foo.opal_tool = false;
+    runtime.manifest.functions!.foo.opal_tool = opalTool;
     const getFunctionClass = jest
       .spyOn(Runtime.prototype, 'getFunctionClass')
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
