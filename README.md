@@ -12,7 +12,9 @@ ocp app init
 
 ### The basics
 
-OCP apps are built on the Node platform with support for Node 18 and Typescript. Follow Typescript best practices to ensure more stable integrations with fewer bugs.
+OCP apps are built on the Node platform with Typescript. Follow Typescript best practices to ensure more stable integrations with fewer bugs.
+
+**Runtimes** – The `runtime` in _app.yml_ selects the Node version your app runs on. Run `ocp app runtimes` (OCP CLI) to see which runtimes are supported, deprecated (with their sunset date) or unsupported. See [Runtimes](https://docs.optimizely.com/optimizely-connect-platform/docs/runtimes) in the developer docs.
 
 OCP apps are required to follow conventions outlined in the developer docs. They are composed of:
 

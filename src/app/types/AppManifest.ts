@@ -113,7 +113,13 @@ export type AppCategory =
   | 'Audience Sync'
   | 'Opal';
 
-export type AppRuntime = 'node12' | 'node18' | 'node18_rt' | 'node22' | 'node22-cms-ext';
+/**
+ * The app.yml runtime, e.g. `node22`. Which runtimes new app versions may use is defined by the OCP runtime support
+ * list (run `ocp app runtimes`); the OCP CLI and the app builder check it, so the SDK accepts any name.
+ *
+ * @minLength 1
+ */
+export type AppRuntime = string;
 
 export enum ChannelType {
   Email = 'email',
