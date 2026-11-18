@@ -124,6 +124,34 @@ describe('validateFunctions', () => {
     getFunctionClass.mockRestore();
   });
 
+  it('succeeds with accepts parameter set to agent_platform', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.AgentPlatform;
+    runtime.manifest.functions!.global_foo.accepts = FunctionAccepts.AgentPlatform;
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    const errors = await validateFunctions(runtime);
+
+    expect(errors).toEqual([]);
+
+    getFunctionClass.mockRestore();
+  });
+
+  it('succeeds with accepts parameter set to agent_platform and installation_resolution', async () => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.AgentPlatform;
+    runtime.manifest.functions!.foo.installation_resolution = {type: 'HEADER', key: 'foo'};
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([]);
+
+    getFunctionClass.mockRestore();
+  });
+
   it('detects missing function entry point', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getFunctionClass = jest
@@ -309,6 +337,19 @@ describe('validateFunctions', () => {
       .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
 
     expect(await validateFunctions(runtime)).toEqual(['Global functions cannot have accepts: cms_ui_extension']);
+    getFunctionClass.mockRestore();
+  });
+
+  it.each([true, false])('allows accepts: agent_platform with opal_tool: %s', async (opalTool) => {
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+
+    runtime.manifest.functions!.foo.accepts = FunctionAccepts.AgentPlatform;
+    runtime.manifest.functions!.foo.opal_tool = opalTool;
+    const getFunctionClass = jest
+      .spyOn(Runtime.prototype, 'getFunctionClass')
+      .mockImplementation((name) => Promise.resolve(name === 'foo' ? ProperFoo : ProperGlobalFoo));
+
+    expect(await validateFunctions(runtime)).toEqual([]);
     getFunctionClass.mockRestore();
   });
 });

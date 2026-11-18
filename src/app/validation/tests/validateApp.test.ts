@@ -300,6 +300,25 @@ describe('validateApp', () => {
     ]);
   });
 
+  it('accepts every function accepts value in the manifest schema', async () => {
+    for (const accepts of ['http', 'cms_ui_extension', 'agent_platform']) {
+      const manifest = {...appManifest, functions: {foo: {...appManifest.functions!.foo, accepts}}};
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+      expect(await validateApp(runtime)).toEqual([]);
+    }
+  });
+
+  it('rejects an unknown function accepts value in the manifest schema', async () => {
+    const manifest = {...appManifest, functions: {foo: {...appManifest.functions!.foo, accepts: 'mark'}}};
+    const runtime = Runtime.fromJson(JSON.stringify({appManifest: manifest, dirName: '/tmp/foo'}));
+
+    expect(await validateApp(runtime)).toEqual([
+      'Invalid app.yml: functions/foo/accepts must be equal to one of the allowed values ' +
+        '(allowedValues: ["agent_platform","cms_ui_extension","http"])'
+    ]);
+  });
+
   it('captures json schema errors in schema objects', async () => {
     const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
     const getSchemaObjects = jest.spyOn(runtime, 'getSchemaObjects').mockReturnValue({

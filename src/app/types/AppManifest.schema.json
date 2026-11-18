@@ -102,6 +102,7 @@
             "properties": {
                 "accepts": {
                     "enum": [
+                        "agent_platform",
                         "cms_ui_extension",
                         "http"
                     ],
@@ -139,6 +140,7 @@
                     "type": "object"
                 },
                 "opal_tool": {
+                    "description": "Deprecated: use `accepts: agent_platform` instead. Note that this restricts the function to calls from Mark (Optimizely Agent Platform): direct HTTP requests to its URL are not supported and will be rejected.",
                     "type": "boolean"
                 }
             },

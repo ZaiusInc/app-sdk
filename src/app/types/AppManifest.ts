@@ -5,13 +5,23 @@ import {CampaignTargeting} from '../Channel';
 
 export enum FunctionAccepts {
   Http = 'http',
-  CmsUiExtension = 'cms_ui_extension'
+  CmsUiExtension = 'cms_ui_extension',
+  /**
+   * Callable by the agent platform (Mark) only: the function is served only to Mark's IP addresses.
+   * Also marks the function as an Opal tool, so it can't be combined with `opal_tool: true`.
+   */
+  AgentPlatform = 'agent_platform'
 }
 
 export interface AppFunction {
   entry_point: string;
   description: string;
   global?: boolean;
+  /**
+   * Deprecated: use `accepts: agent_platform` instead. Note that this restricts the function to calls from
+   * Mark (Optimizely Agent Platform): direct HTTP requests to its URL are not supported and will be rejected.
+   * @deprecated Use `accepts: agent_platform`.
+   */
   opal_tool?: boolean;
   accepts?: FunctionAccepts;
   installation_resolution?: {
