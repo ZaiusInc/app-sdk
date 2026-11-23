@@ -1,6 +1,6 @@
 {
   "name": "@zaiusinc/app-sdk",
-  "version": "3.6.1",
+  "version": "3.7.0",
   "description": "Optimizely Connect Platform App SDK and interfaces",
   "repository": "https://github.com/ZaiusInc/app-sdk",
   "license": "Apache-2.0",
@@ -35,7 +35,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@zaiusinc/app-forms-schema": "^2.0.0",
+    "@zaiusinc/app-forms-schema": "2.1.0-OCP-2660.2",
     "ajv": "^8.20.0",
     "chalk": "^4.1.2",
     "cron-expression-validator": "^1.0.20",

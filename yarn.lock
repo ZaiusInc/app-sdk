@@ -1240,10 +1240,10 @@
     "@typescript-eslint/scope-manager" "^8.46.1"
     "@typescript-eslint/utils" "^8.46.1"
 
-"@zaiusinc/app-forms-schema@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@zaiusinc/app-forms-schema/-/app-forms-schema-2.0.0.tgz#bd62f73e9a52dd793cef276262ba0ea226020880"
-  integrity sha512-D46NoRllSVPOvK8g3dSDxDNynlyM1VA0ibRJQVnkUHQOSx0Z9y1ttbI236XqySEPuhgX/4noSZWaPoqkf6vCAw==
+"@zaiusinc/app-forms-schema@2.1.0-OCP-2660.2":
+  version "2.1.0-OCP-2660.2"
+  resolved "https://npm.pkg.github.com/download/@zaiusinc/app-forms-schema/2.1.0-OCP-2660.2/691d3b1e2e0018e0bac00b93f5587095c22237c1#691d3b1e2e0018e0bac00b93f5587095c22237c1"
+  integrity sha512-v5a3/04vI+GctX3ey2vfi5PQFPSieah0vEuSOlIfe0EnV/SR3rzG9kIcnntYczTgRAI1CGQe30XQJWDZqDdLCA==
   dependencies:
     ajv "^8.17.1"
 

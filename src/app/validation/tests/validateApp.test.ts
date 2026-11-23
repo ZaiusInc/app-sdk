@@ -17,6 +17,7 @@ import {validateLifecycle} from '../validateLifecycle';
 import {validateLiquidExtensions} from '../validateLiquidExtensions';
 import {validateMeta} from '../validateMeta';
 import {validateSchemaObject} from '../validateSchemaObject';
+import {validateSettingsDataSources} from '../validateSettingsDataSources';
 import {validateSources} from '../validateSources';
 
 jest.mock('../validateMeta');
@@ -28,6 +29,7 @@ jest.mock('../validateLifecycle');
 jest.mock('../validateChannel');
 jest.mock('../validateSchemaObject');
 jest.mock('../validateAssets');
+jest.mock('../validateSettingsDataSources');
 jest.mock('../validateDestinations');
 jest.mock('../validateSources');
 
@@ -232,6 +234,7 @@ describe('validateApp', () => {
     (validateChannel as jest.Mock).mockResolvedValue([]);
     (validateSchemaObject as jest.Mock).mockReturnValue([]);
     (validateAssets as jest.Mock).mockReturnValue([]);
+    (validateSettingsDataSources as jest.Mock).mockResolvedValue([]);
     (validateDestinations as jest.Mock).mockReturnValue([]);
     (validateSources as jest.Mock).mockReturnValue([]);
   });
@@ -387,6 +390,7 @@ describe('validateApp', () => {
       `schema error ${schemaErrorCounter++}`
     ]);
     (validateAssets as jest.Mock).mockResolvedValue(['asset error 1', 'asset error 2']);
+    (validateSettingsDataSources as jest.Mock).mockResolvedValue(['settings error 1']);
 
     expect(await validateApp(runtime, ['events', 'customers'])).toEqual([
       'meta error 1',
@@ -409,6 +413,7 @@ describe('validateApp', () => {
       'channel error 2',
       'asset error 1',
       'asset error 2',
+      'settings error 1',
       'schema error 1',
       'schema error 2',
       'schema error 3',
@@ -426,6 +431,7 @@ describe('validateApp', () => {
       [runtime, schemaObjects['schema/events.yml'], 'schema/events.yml', ['events', 'customers']]
     ]);
     expect(validateAssets).toBeCalledWith(runtime);
+    expect(validateSettingsDataSources).toBeCalledWith(runtime);
     expect(validateDestinations).toBeCalledWith(runtime);
     expect(validateSources).toBeCalledWith(runtime);
   });

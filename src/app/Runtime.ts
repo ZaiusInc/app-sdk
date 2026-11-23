@@ -13,6 +13,7 @@ import {Function} from './Function';
 import {Job, JobInvocation} from './Job';
 import {Lifecycle} from './Lifecycle';
 import {LiquidExtension} from './LiquidExtension';
+import {SettingsDataSource, SettingsDataSourceFunction} from './SettingsDataSource';
 import {SourceFunction, SourceConfiguration} from './SourceFunction';
 import {SourceJob, SourceJobInvocation} from './SourceJob';
 import {SourceLifecycle} from './SourceLifecycle';
@@ -206,6 +207,17 @@ export class Runtime {
 
     const ext = liquidExtensions[name];
     return (await this.import(join(this.dirName, 'liquid-extensions', ext.entry_point)))[ext.entry_point];
+  }
+
+  /**
+   * Loads `settings/<entryPoint>`: the export named after the entry point (a SettingsDataSource class), else the
+   * default export (a SettingsDataSourceFunction).
+   */
+  public async getSettingsDataSource(
+    entryPoint: string
+  ): Promise<(new () => SettingsDataSource) | SettingsDataSourceFunction | undefined> {
+    const module = await this.import(join(this.dirName, 'settings', entryPoint));
+    return module[entryPoint] ?? module.default;
   }
 
   public getSchemaObjects(): SchemaObjects {

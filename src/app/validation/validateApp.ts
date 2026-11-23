@@ -19,6 +19,7 @@ import {validateLiquidExtensions} from './validateLiquidExtensions';
 import {validateMeta} from './validateMeta';
 import {validateOutboundDomains} from './validateOutboundDomains';
 import {validateSchemaObject} from './validateSchemaObject';
+import {validateSettingsDataSources} from './validateSettingsDataSources';
 import {validateSources} from './validateSources';
 import {validateSourcesSchema} from './validateSourcesSchema';
 
@@ -47,6 +48,7 @@ export async function validateApp(runtime: Runtime, baseObjectNames?: string[]):
       .concat(await validateLifecycle(runtime))
       .concat(await validateChannel(runtime))
       .concat(await validateAssets(runtime))
+      .concat(await validateSettingsDataSources(runtime))
       .concat(validateOutboundDomains(runtime))
       .concat(validatePluginCompatibility(runtime, plugins));
   }

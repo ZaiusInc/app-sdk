@@ -149,8 +149,8 @@ describe('validateAssets', () => {
     badForm['path/to/app/dir']['forms']['settings.yml'] = 'something: wrong';
     mockFs(badForm);
     await expectError([
-      "Invalid forms/settings.yml: must have required property 'sections'",
-      'Invalid forms/settings.yml: must NOT have additional properties'
+      'Invalid forms/settings.yml: must have required property \'sections\' (missingProperty: "sections")',
+      'Invalid forms/settings.yml: must NOT have additional properties (additionalProperty: "something")'
     ]);
   });
 
@@ -187,13 +187,13 @@ describe('validateAssets', () => {
       mockFs(badForms);
       await expectError(
         [
-          "Invalid forms/content-settings.yml: must have required property 'sections'",
-          'Invalid forms/content-settings.yml: must NOT have additional properties',
-          "Invalid forms/content-template.yml: sections[0] must have required property 'key'",
-          "Invalid forms/content-template.yml: sections[0] must have required property 'label'",
-          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'help'",
-          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'key'",
-          "Invalid forms/content-template.yml: sections[0].elements[0] must have required property 'label'"
+          'Invalid forms/content-settings.yml: must have required property \'sections\' (missingProperty: "sections")',
+          'Invalid forms/content-settings.yml: must NOT have additional properties (additionalProperty: "something")',
+          'Invalid forms/content-template.yml: sections[0] must have required property \'key\' (missingProperty: "key")',
+          'Invalid forms/content-template.yml: sections[0] must have required property \'label\' (missingProperty: "label")',
+          'Invalid forms/content-template.yml: sections[0].elements[0] must have required property \'help\' (missingProperty: "help")',
+          'Invalid forms/content-template.yml: sections[0].elements[0] must have required property \'key\' (missingProperty: "key")',
+          'Invalid forms/content-template.yml: sections[0].elements[0] must have required property \'label\' (missingProperty: "label")'
         ],
         channelAppManifest
       );
