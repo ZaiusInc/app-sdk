@@ -324,6 +324,23 @@ describe('Runtime', () => {
     });
   });
 
+  describe('getSettingsDataSource', () => {
+    it.each([
+      ['the export named after the entry point', {ListSegments: 'class'}, 'class'],
+      ['the default export', {default: 'function'}, 'function'],
+      ['the named export over the default one', {ListSegments: 'class', default: 'function'}, 'class'],
+      ['nothing when the module exports neither', {Other: 'other'}, undefined]
+    ])('loads %s from settings/<entry point>', async (_, module, expected) => {
+      const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
+      const importFn = jest.spyOn(runtime as any, 'import').mockResolvedValue(module);
+
+      expect(await runtime.getSettingsDataSource('ListSegments')).toEqual(expected);
+      expect(importFn).toHaveBeenCalledWith('/tmp/foo/settings/ListSegments');
+
+      importFn.mockRestore();
+    });
+  });
+
   describe('getSchemaObjects', () => {
     it('loads all .yml and .yaml files in the schema directory', () => {
       const runtime = Runtime.fromJson(JSON.stringify({appManifest, dirName: '/tmp/foo'}));
